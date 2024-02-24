@@ -62,8 +62,7 @@ public class User {
     private Timestamp lastModification;
 
     // FOREIGN KEYS
-    /*
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdRole")
-    private Role role;*/
+    private Role role;
 }

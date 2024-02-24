@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "roles")
 @Data
@@ -18,4 +20,8 @@ public class Role {
 
     @Column(length = 45, nullable = false,unique = true)
     private String name;
+
+    // Foreign Key
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+    private List<User> user;
 }
