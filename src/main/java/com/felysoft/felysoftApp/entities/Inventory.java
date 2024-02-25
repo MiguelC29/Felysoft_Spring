@@ -23,7 +23,7 @@ public class Inventory {
     @Column(length = 30, nullable = false)
     private String type;
 
-    @Column(length = 45, nullable = true)
+    @Column(length = 45)
     private String state;
 
     @Column(nullable = false)
@@ -32,14 +32,15 @@ public class Inventory {
     @Column(nullable = false)
     private LocalDateTime lastModification;
 
-    // FOREIGN KEYS
+       // FOREIGN KEYS
+
     //@ManyToOne(fetch = FetchType.EAGER)
     //@JoinColumn(name = "fkIdProduct", nullable = false)
     //private Product product;
 
-    //@ManyToOne(fetch = FetchType.EAGER)
-    //@JoinColumn(name = "fkIdBook", nullable = false)
-    //private Book book;
+      @ManyToOne(fetch = FetchType.EAGER)
+      @JoinColumn(name = "fkIdBook", nullable = false)
+      private Book book;
 
     //@ManyToOne(fetch = FetchType.EAGER)
     //@JoinColumn(name = "fkIdNovelty", nullable = false)

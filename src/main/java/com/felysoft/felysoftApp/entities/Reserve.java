@@ -31,4 +31,13 @@ public class Reserve {
 
     @Column(nullable = false)
     private Time time;
+
+    // FOREIGN KEYS
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdBook")
+    private Book book;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdUser")
+    private User user;
 }

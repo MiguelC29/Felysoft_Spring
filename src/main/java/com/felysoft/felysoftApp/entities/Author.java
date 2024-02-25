@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "authors")
@@ -29,4 +30,10 @@ public class Author {
 
     @Column(length = 540, nullable = false)
     private String biography;
+
+    // FOREIGN KEYS
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private List<Book> books;
+
+
 }

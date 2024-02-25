@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "genres")
 @Data
@@ -21,4 +23,9 @@ public class Genre {
 
     @Column(length = 320, nullable = false)
     private String description;
+
+    // FOREIGN KEYS
+    @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL)
+    private List<Book> books;
+
 }

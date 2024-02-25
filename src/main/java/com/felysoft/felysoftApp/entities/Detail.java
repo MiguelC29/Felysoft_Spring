@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 
 @Entity
 @Table(name = "details")
@@ -28,7 +27,10 @@ public class Detail {
 
     //private long fkIdProduct;
 
-    //private long fkIdBook;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdBook")
+    private Book book;
 
     //private long fkIdService;
 

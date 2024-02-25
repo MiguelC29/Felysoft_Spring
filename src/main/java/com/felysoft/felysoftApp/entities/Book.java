@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "books")
@@ -32,4 +33,23 @@ public class Book {
 
     @Column(nullable = false)
     private BigDecimal priceTime;
+
+
+    // FOREIGN KEYS
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdAuthor")
+    private Author author;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdGenre")
+    private Genre genre;
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private List<Reserve> reserves;
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private List<Detail> details;
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private List<Inventory> inventories;
 }
