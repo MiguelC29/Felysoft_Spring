@@ -22,6 +22,7 @@ public class Category {
     @Column(length = 45, nullable = false, unique = true)
     private String name;
 
+    // FOREIGN KEYS
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> products;
 }

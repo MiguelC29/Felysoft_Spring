@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Book {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -28,20 +29,19 @@ public class Book {
     @Column(length = 320, nullable = false)
     private String description;
 
-    @Column(length = 6,nullable = false)
+    @Column(length = 4, nullable = false)
     private int yearPublication;
 
     @Column(nullable = false)
     private BigDecimal priceTime;
 
-
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fkIdAuthor")
+    @JoinColumn(name = "fkIdAuthor", nullable = false)
     private Author author;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fkIdGenre")
+    @JoinColumn(name = "fkIdGenre", nullable = false)
     private Genre genre;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)

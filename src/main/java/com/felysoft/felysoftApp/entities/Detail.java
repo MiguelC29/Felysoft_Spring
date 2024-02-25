@@ -12,26 +12,20 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Detail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idDetail;
+    private Long idDetail;
 
     @Column(nullable = false)
-    private long quantity;
+    private int quantity;
 
     @Column(nullable = false)
     private BigDecimal unitPrice;
 
-    //private long fkIdProduct;
-
-
+    // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdBook")
     private Book book;
-
-    //private long fkIdService;
-
 }

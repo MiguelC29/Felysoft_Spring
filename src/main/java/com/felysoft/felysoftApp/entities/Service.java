@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
-
 
 @Entity
 @Table(name = "services")
@@ -21,11 +23,16 @@ public class Service {
     @Column
     private Long idService;
 
-    @Column(nullable = false)
-    private LocalDateTime dateCreation;
+    @Column(length = 320, nullable = false)
+    private String state;
 
     @Column(nullable = false)
-    private LocalDateTime dateModify;
+    @CreationTimestamp
+    private Timestamp dateCreation;
+
+    @Column(nullable = false)
+    @UpdateTimestamp
+    private Timestamp dateModification;
 
     @Column(nullable = false)
     private BigDecimal priceAdditional;

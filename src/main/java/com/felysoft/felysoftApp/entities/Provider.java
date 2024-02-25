@@ -31,6 +31,7 @@ public class Provider {
     @Column(length = 320, nullable = false)
     private String email;
 
+    // FOREIGN KEYS
     @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL)
     private List<Product> products;
 }

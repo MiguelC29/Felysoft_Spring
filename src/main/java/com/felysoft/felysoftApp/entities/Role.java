@@ -13,15 +13,16 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Long idRole;
 
-    @Column(length = 45, nullable = false,unique = true)
+    @Column(length = 45, nullable = false, unique = true)
     private String name;
 
-    // Foreign Key
+    // FOREIGN KEYS
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
     private List<User> user;
 }

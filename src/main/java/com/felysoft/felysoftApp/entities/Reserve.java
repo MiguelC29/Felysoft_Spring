@@ -15,6 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Reserve {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -34,10 +35,10 @@ public class Reserve {
 
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fkIdBook")
+    @JoinColumn(name = "fkIdBook", nullable = false)
     private Book book;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fkIdUser")
+    @JoinColumn(name = "fkIdUser", nullable = false)
     private User user;
 }

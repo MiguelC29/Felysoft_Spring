@@ -29,6 +29,7 @@ public class TypeService {
     @Column(nullable = false)
     private BigDecimal price;
 
+    // FOREIGN KEYS
     @OneToMany(mappedBy = "typeService", cascade = CascadeType.ALL)
     private List<Service> services;
 }

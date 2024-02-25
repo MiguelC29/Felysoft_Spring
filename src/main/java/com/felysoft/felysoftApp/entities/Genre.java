@@ -13,12 +13,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Genre {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Long idGenre;
 
-    @Column(length = 45, nullable = false,unique = true)
+    @Column(length = 45, nullable = false, unique = true)
     private String name;
 
     @Column(length = 320, nullable = false)
@@ -27,5 +28,4 @@ public class Genre {
     // FOREIGN KEYS
     @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL)
     private List<Book> books;
-
 }

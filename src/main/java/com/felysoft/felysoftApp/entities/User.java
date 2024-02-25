@@ -64,9 +64,12 @@ public class User {
 
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fkIdRole")
+    @JoinColumn(name = "fkIdRole", nullable = false)
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Reserve> reserves;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Employee> employees;
 }

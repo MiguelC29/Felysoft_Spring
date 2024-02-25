@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -46,4 +47,7 @@ public class Product {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdProvider", nullable = false)
     private Provider provider;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Inventory> inventories;
 }

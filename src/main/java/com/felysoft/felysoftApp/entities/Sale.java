@@ -13,13 +13,11 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
-
 public class Sale {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idSale;
+    private Long idSale;
 
     @Column(nullable = false)
     private LocalDateTime dateSale;
@@ -27,5 +25,5 @@ public class Sale {
     @Column(nullable = false)
     private BigDecimal totalSale;
 
-    //private long fkIdPayment;
+    // FOREIGN KEYS
 }

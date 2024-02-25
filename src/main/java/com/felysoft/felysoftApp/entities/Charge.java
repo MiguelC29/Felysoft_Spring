@@ -13,18 +13,17 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Charge {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idCharge;
+    private Long idCharge;
 
-    @Column(nullable = false)
+    @Column(length = 30, nullable = false)
     private String charge;
 
-    @Column(nullable = false)
+    @Column(length = 320, nullable = false)
     private String description;
 
-
+    // FOREIGN KEYS
 }

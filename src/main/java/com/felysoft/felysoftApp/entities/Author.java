@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Author {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -34,6 +35,4 @@ public class Author {
     // FOREIGN KEYS
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Book> books;
-
-
 }

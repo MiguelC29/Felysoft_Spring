@@ -13,17 +13,16 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idPayment;
+    private Long idPayment;
 
-    @Column(nullable = false)
+    @Column(length = 45, nullable = false)
     private String methodPayment;
 
-    @Column(nullable = false)
+    @Column(length = 45, nullable = false)
     private String state;
 
     @Column(nullable = false)
@@ -32,11 +31,11 @@ public class Payment {
     @Column(nullable = false)
     private BigDecimal total;
 
+    // FOREIGN KEYS
     //@OneToOne(targetEntity = Expense.class, cascade = CascadeType.ALL)
     //@JoinColumn(name = "fkIdExpense")
     //private Expense expense;
 
     //@OneToOne(mappedBy = "payment", cascade = CascadeType.ALL)
     //private List<Expense> expenses = new ArrayList<>();
-
 }

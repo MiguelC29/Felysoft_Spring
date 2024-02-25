@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "noveltiesinvetory")
@@ -20,10 +21,13 @@ public class NoveltyInv {
     @Column(length = 320, nullable = false)
     private String description;
 
-    @Column(nullable = false)
-    private int cantidad;
+    @Column(length = 11, nullable = false)
+    private int quantity;
 
     @Column(nullable = false)
     private LocalDateTime date;
 
+    // FOREIGN KEYS
+    @OneToMany(mappedBy = "noveltyInv", cascade = CascadeType.ALL)
+    private List<Inventory> inventory;
 }

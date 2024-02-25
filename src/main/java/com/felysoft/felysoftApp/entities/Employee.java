@@ -14,12 +14,13 @@ import java.sql.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Employee {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Long idEmployee;
 
-    @Column(length = 30, nullable = false,unique = true)
+    @Column(length = 30, nullable = false, unique = true)
     private String specialty;
 
     @Column(nullable = false)
@@ -28,5 +29,8 @@ public class Employee {
     @Column(nullable = false)
     private BigDecimal salary;
 
-    //private User fkIdentification;
+    // FOREIGN KEYS
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdNumIdentification", nullable = false)
+    private User user;
 }
