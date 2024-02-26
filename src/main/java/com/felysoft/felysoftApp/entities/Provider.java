@@ -34,4 +34,7 @@ public class Provider {
     // FOREIGN KEYS
     @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL)
     private List<Product> products;
+
+    @ManyToMany(mappedBy = "providers")
+    private List<Category> categories;
 }

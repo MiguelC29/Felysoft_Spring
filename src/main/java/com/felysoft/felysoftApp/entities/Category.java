@@ -25,4 +25,12 @@ public class Category {
     // FOREIGN KEYS
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> products;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "categories_providers",
+            joinColumns = @JoinColumn(name = "fkIdCategories", referencedColumnName = "idCategory"),
+            inverseJoinColumns = @JoinColumn(name = "fkIdProviders", referencedColumnName = "idProvider")
+    )
+    private List<Provider> providers;
 }
