@@ -32,7 +32,11 @@ public class Expense {
     private String description;
 
     // FOREIGN KEYS
-    //@OneToOne(targetEntity = Payment.class, cascade = CascadeType.PERSIST)
-    //@JoinColumn(name = "fkIdPayment", nullable = false)
-    //private Payment payment1;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdPurchase", nullable = false)
+    private Purchase purchase;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdPayment", nullable = false)
+    private Payment payment;
 }

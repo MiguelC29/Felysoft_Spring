@@ -26,4 +26,7 @@ public class Sale {
     private BigDecimal totalSale;
 
     // FOREIGN KEYS
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdPayment", nullable = false)
+    private Payment payment;
 }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "payments")
@@ -32,10 +33,9 @@ public class Payment {
     private BigDecimal total;
 
     // FOREIGN KEYS
-    //@OneToOne(targetEntity = Expense.class, cascade = CascadeType.ALL)
-    //@JoinColumn(name = "fkIdExpense")
-    //private Expense expense;
+    @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
+    private List<Sale> sales;
 
-    //@OneToOne(mappedBy = "payment", cascade = CascadeType.ALL)
-    //private List<Expense> expenses = new ArrayList<>();
+    @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
+    private List<Expense> expenses;
 }

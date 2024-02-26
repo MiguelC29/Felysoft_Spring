@@ -26,6 +26,14 @@ public class Detail {
 
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdProduct")
+    private Product product;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdBook")
     private Book book;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdService")
+    private Service service;
 }

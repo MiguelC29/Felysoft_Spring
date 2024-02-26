@@ -9,7 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "services")
@@ -45,7 +45,10 @@ public class Service {
     @JoinColumn(name = "fkIdTypeService", nullable = false)
     private TypeService typeService;
 
-    //@ManyToOne(fetch = FetchType.EAGER)
-    //@JoinColumn(name = "fkIdReserve")
-    //private Reserve reserve;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdReserve")
+    private Reserve reserve;
+
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+    private List<Detail> details;
 }
