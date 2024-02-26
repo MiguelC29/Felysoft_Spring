@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "charges")
@@ -26,4 +27,6 @@ public class Charge {
     private String description;
 
     // FOREIGN KEYS
+    @ManyToMany(mappedBy = "charges")
+    private List<Employee> employees;
 }
