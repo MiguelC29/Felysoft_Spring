@@ -40,4 +40,7 @@ public class Detail {
 
     @ManyToMany(mappedBy = "details")
     private List<Sale> sales;
+
+    @ManyToMany(mappedBy = "details")
+    private List<Purchase> purchases;
 }

@@ -33,4 +33,12 @@ public class Purchase {
 
     @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL)
     private List<Expense> expenses;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "details_purchases",
+            joinColumns = @JoinColumn(name = "fkIdPurchase", referencedColumnName = "idPurchase"),
+            inverseJoinColumns = @JoinColumn(name = "fkIdDetail", referencedColumnName = "idDetail")
+    )
+    private List<Detail> details;
 }
