@@ -38,7 +38,6 @@ public class Provider {
     @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL)
     private List<Purchase> purchases;
 
-
     @ManyToMany(mappedBy = "providers")
     private List<Category> categories;
 }
