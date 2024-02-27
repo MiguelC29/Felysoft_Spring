@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "sales")
@@ -29,4 +30,11 @@ public class Sale {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdPayment", nullable = false)
     private Payment payment;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "sales_detail", joinColumns = @JoinColumn(name = "fkIdSale", referencedColumnName = "idSale"),
+            inverseJoinColumns = @JoinColumn(name = "fkIdDetail", referencedColumnName = "idDetail")
+    )
+    private List<Detail> details;
 }

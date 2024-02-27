@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "details")
@@ -36,4 +37,7 @@ public class Detail {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdService")
     private Service service;
+
+    @ManyToMany(mappedBy = "details")
+    private List<Sale> sales;
 }
