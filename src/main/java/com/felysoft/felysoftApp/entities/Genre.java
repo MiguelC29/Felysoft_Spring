@@ -28,4 +28,12 @@ public class Genre {
     // FOREIGN KEYS
     @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL)
     private List<Book> books;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "genres_authors",
+            joinColumns = @JoinColumn(name = "fkIdGenres", referencedColumnName = "idGenre"),
+            inverseJoinColumns = @JoinColumn(name = "fkIdAuthors", referencedColumnName = "idAuthor")
+    )
+    private List<Author> authors;
 }

@@ -35,4 +35,7 @@ public class Author {
     // FOREIGN KEYS
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Book> books;
+
+    @ManyToMany(mappedBy = "authors")
+    private List<Genre> genres;
 }
