@@ -7,6 +7,8 @@ public interface PaymentService {
 
     public List<Payment> findAll() throws Exception;
 
+    public Payment findById(Long id);
+
     public void create(Payment payment);
 
     public void update(Payment payment);

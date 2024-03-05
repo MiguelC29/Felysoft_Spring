@@ -7,6 +7,8 @@ public interface SaleService {
 
     public List<Sale> findAll() throws Exception;
 
+    public Sale findById(Long id);
+
     public void create(Sale sale);
 
     public void update(Sale sale);
