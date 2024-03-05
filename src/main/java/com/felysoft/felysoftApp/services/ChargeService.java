@@ -6,6 +6,8 @@ import java.util.List;
 public interface ChargeService {
     public List<Charge> findAll() throws Exception;
 
+    public Charge findById(Long id);
+
     public void create(Charge charge);
 
     public void update(Charge charge);

@@ -7,6 +7,8 @@ public interface DetailService {
 
     public List<Detail> findAll() throws Exception;
 
+    public Detail findById(Long id);
+
     public void create(Detail detail);
 
     public void update(Detail detail);
