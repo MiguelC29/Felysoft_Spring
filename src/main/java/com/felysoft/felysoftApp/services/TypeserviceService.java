@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface TypeserviceService {
     public List<TypeService> findAll() throws Exception;
+    public TypeService findById(Long id);
     public void create(TypeService typeService);
     public void update(TypeService typeService);
     public void delete(TypeService typeService);
