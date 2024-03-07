@@ -1,6 +1,5 @@
 package com.felysoft.felysoftApp.services;
 
-import com.felysoft.felysoftApp.entities.TypeService;
 import com.felysoft.felysoftApp.entities.User;
 
 import java.util.List;

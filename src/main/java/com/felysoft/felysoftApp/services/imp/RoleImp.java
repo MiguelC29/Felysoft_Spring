@@ -22,7 +22,6 @@ public class RoleImp implements RoleService {
     @Override
     public Role findById(Long id) {
         return this.roleRepository.findById(id).orElse(null);
-
     }
 
     @Override

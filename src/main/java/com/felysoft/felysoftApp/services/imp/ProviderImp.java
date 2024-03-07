@@ -13,6 +13,7 @@ public class ProviderImp implements ProviderService {
 
     @Autowired
     private ProviderRepository providerRepository;
+
     @Override
     public List<Provider> findAll() throws Exception {
         return this.providerRepository.findAll();

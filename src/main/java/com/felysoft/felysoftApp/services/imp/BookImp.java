@@ -10,8 +10,10 @@ import java.util.List;
 
 @Service
 public class BookImp implements BookService {
+
     @Autowired
     private BookRepository bookRepository;
+
     @Override
     public List<Book> findAll() throws Exception {
         return this.bookRepository.findAll();
