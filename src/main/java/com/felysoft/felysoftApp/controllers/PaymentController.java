@@ -1,11 +1,7 @@
 package com.felysoft.felysoftApp.controllers;
 
-import com.felysoft.felysoftApp.entities.Expense;
 import com.felysoft.felysoftApp.entities.Payment;
-import com.felysoft.felysoftApp.entities.Purchase;
-import com.felysoft.felysoftApp.services.imp.ExpenseImp;
 import com.felysoft.felysoftApp.services.imp.PaymentImp;
-import com.felysoft.felysoftApp.services.imp.PurchaseImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,25 +15,19 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "/api/expense/", method = {RequestMethod.GET, RequestMethod.POST,RequestMethod.PUT, RequestMethod.HEAD})
+@RequestMapping(path = "/api/payment/", method = {RequestMethod.GET, RequestMethod.POST,RequestMethod.PUT, RequestMethod.HEAD})
 @CrossOrigin("*")
-public class ExpenseController {
-    @Autowired
-    private ExpenseImp expenseImp;
-
+public class PaymentController {
     @Autowired
     private PaymentImp paymentImp;
-
-    @Autowired
-    private PurchaseImp purchaseImp;
 
     @GetMapping("all")
     public ResponseEntity<Map<String, Object>> findAll() {
         Map<String, Object> response = new HashMap<>();
         try {
-            List<Expense> expenseList = this.expenseImp.findAll();
+            List<Payment> paymentList = this.paymentImp.findAll();
             response.put("status", "success");
-            response.put("data", expenseList);
+            response.put("data", paymentList);
 
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
@@ -45,36 +35,29 @@ public class ExpenseController {
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
 
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request){
         Map<String, Object> response = new HashMap<>();
         try {
-            Expense expense = new Expense();
+            Payment payment = new Payment();
 
-            //TIPO
-            expense.setType(request.get("type").toString());
+            payment.setMethodPayment(request.get("methodPayment").toString());
+            payment.setState(request.get("state").toString());
 
             //FECHA
-            expense.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            // Convertir la cadena de fecha a LocalDateTime con formato específico
+            //OJO CHINOS, PONER LA FECHA DEL MOMENTO AL REGISTRO
+            payment.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
             //TOTAL
             Integer totalInteger = (Integer) request.get("total");
             BigDecimal total = new BigDecimal(totalInteger);
-            expense.setTotal(total);
+            payment.setTotal(total);
 
-            //DESCRPCION
-            expense.setDescription(request.get("description").toString());
-
-            //FORÁNEAS
-            Purchase purchase = purchaseImp.findById(Long.parseLong(request.get("fkIdPurchase").toString()));
-            expense.setPurchase(purchase);
-
-            Payment payment = paymentImp.findById(Long.parseLong(request.get("fkIdPayment").toString()));
-            expense.setPayment(payment);
-
-            this.expenseImp.create(expense);
+            this.paymentImp.create(payment);
 
             response.put("status", "success");
             response.put("data", "Registro Exitoso");
