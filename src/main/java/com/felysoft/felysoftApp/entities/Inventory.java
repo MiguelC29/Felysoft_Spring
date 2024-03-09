@@ -40,14 +40,14 @@ public class Inventory implements Serializable {
 
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fkIdProduct", nullable = false)
+    @JoinColumn(name = "fkIdProduct", unique = true)
     private Product product;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fkIdBook", nullable = false)
+    @JoinColumn(name = "fkIdBook", unique = true)
     private Book book;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fkIdNovelty", nullable = false)
+    @JoinColumn(name = "fkIdNovelty", unique = true)
     private NoveltyInv noveltyInv;
 }
