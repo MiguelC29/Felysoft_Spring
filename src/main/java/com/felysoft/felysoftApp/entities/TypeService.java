@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,6 +32,7 @@ public class TypeService implements Serializable {
     private BigDecimal price;
 
     // FOREIGN KEYS
+    @JsonIgnore
     @OneToMany(mappedBy = "typeService", cascade = CascadeType.ALL)
     private List<Service> services;
 }
