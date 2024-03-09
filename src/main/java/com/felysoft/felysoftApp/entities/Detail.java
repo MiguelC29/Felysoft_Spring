@@ -26,6 +26,7 @@ public class Detail implements Serializable {
     @Column(nullable = false)
     private BigDecimal unitPrice;
 
+
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdProduct")
