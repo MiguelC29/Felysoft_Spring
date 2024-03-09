@@ -13,8 +13,8 @@ import java.util.List;
 @Entity
 @Table(name = "sales")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class Sale implements Serializable {
 
     @Id
@@ -22,7 +22,7 @@ public class Sale implements Serializable {
     private Long idSale;
 
     @Column(nullable = false)
-    private LocalDateTime dateSale;
+    public LocalDateTime dateSale;
 
     @Column(nullable = false)
     private BigDecimal totalSale;
@@ -38,4 +38,5 @@ public class Sale implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "fkIdDetail", referencedColumnName = "idDetail")
     )
     private List<Detail> details;
+
 }
