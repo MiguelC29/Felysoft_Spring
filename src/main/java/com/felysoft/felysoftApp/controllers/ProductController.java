@@ -44,6 +44,21 @@ public class ProductController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("list/{id}")
+    public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Product product = this.productImp.findById(id);
+            response.put("status", "success");
+            response.put("data", product);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
@@ -56,9 +71,7 @@ public class ProductController {
             product.setTypeImg(request.get("typeImg").toString());
             product.setName(request.get("name").toString());
             product.setBrand(request.get("brand").toString());
-            Integer salePriceInteger = (Integer) request.get("salePrice");
-            BigDecimal salePrice = new BigDecimal(salePriceInteger);
-            product.setSalePrice(salePrice);
+            product.setSalePrice(new BigDecimal(request.get("salePrice").toString()));
             SimpleDateFormat formateador = new SimpleDateFormat("yyyy-MM-dd");
             java.sql.Date fechaAnalizada = new java.sql.Date(formateador.parse((String) request.get("expiryDate")).getTime());
             product.setExpiryDate(fechaAnalizada);
@@ -73,6 +86,23 @@ public class ProductController {
 
             response.put("status", "success");
             response.put("data", "Registro Exitoso");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Product product = this.productImp.findById(id);
+            productImp.delete(product);
+
+            response.put("status", "success");
+            response.put("data", "Eliminado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
