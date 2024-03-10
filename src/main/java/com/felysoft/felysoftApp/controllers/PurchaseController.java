@@ -1,6 +1,7 @@
 package com.felysoft.felysoftApp.controllers;
 
 
+import com.felysoft.felysoftApp.entities.Payment;
 import com.felysoft.felysoftApp.entities.Provider;
 import com.felysoft.felysoftApp.entities.Purchase;
 import com.felysoft.felysoftApp.services.imp.ProviderImp;
@@ -81,6 +82,23 @@ public class PurchaseController {
             response.put("status", "success");
             response.put("data", "Registro Exitoso");
 
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Purchase purchase = this.purchaseImp.findById(id);
+            purchaseImp.delete(purchase);
+
+            response.put("status", "success");
+            response.put("data", "Eliminado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());

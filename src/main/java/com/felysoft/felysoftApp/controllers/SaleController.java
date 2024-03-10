@@ -88,8 +88,7 @@ public class SaleController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
-    @DeleteMapping("list/{id}")
+    @DeleteMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {

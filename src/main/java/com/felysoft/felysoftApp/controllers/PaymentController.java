@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.controllers;
 
+import com.felysoft.felysoftApp.entities.Expense;
 import com.felysoft.felysoftApp.entities.Payment;
 import com.felysoft.felysoftApp.services.imp.PaymentImp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,23 @@ public class PaymentController {
             response.put("status", "success");
             response.put("data", "Registro Exitoso");
 
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Payment payment = this.paymentImp.findById(id);
+            paymentImp.delete(payment);
+
+            response.put("status", "success");
+            response.put("data", "Eliminado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
