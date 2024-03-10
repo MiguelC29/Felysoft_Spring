@@ -68,9 +68,8 @@ public class SaleController {
             sale.setDateSale(LocalDateTime.now());
 
             //TOTAL
-            Integer totalSaleInteger = (Integer) request.get("totalSale");
-            BigDecimal totalSale = new BigDecimal(totalSaleInteger);
-            sale.setTotalSale(totalSale);
+            sale.setTotalSale(new BigDecimal(request.get("totalSale").toString()));
+
 
             //FORÁNEAS
             Payment payment = paymentImp.findById(Long.parseLong(request.get("fkIdPayment").toString()));
@@ -90,6 +89,22 @@ public class SaleController {
     }
 
 
+    @DeleteMapping("list/{id}")
+    public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Sale sale = this.saleImp.findById(id);
+            saleImp.delete(sale);
+
+            response.put("status", "success");
+            response.put("data", "Eliminado Correctamente");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 }
 
