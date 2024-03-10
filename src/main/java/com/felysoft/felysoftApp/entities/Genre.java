@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,9 +29,11 @@ public class Genre implements Serializable {
 
     // FOREIGN KEYS
     @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Book> books;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JsonIgnore
     @JoinTable(
             name = "genres_authors",
             joinColumns = @JoinColumn(name = "fkIdGenres", referencedColumnName = "idGenre"),

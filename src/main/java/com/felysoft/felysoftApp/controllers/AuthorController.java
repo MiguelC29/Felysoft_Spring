@@ -35,6 +35,20 @@ public class AuthorController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @GetMapping("list/{id}")
+    public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Author author = this.authorImp.findById(id);
+            response.put("status", "success");
+            response.put("data", author);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String,Object> request){
@@ -57,6 +71,22 @@ public class AuthorController {
             response.put("data","Registro Exitoso");
         }catch (Exception e){
             response.put("status",HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @DeleteMapping(value = "delete/{id}")
+    public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Author author = this.authorImp.findById(id);
+            authorImp.delete(author);
+
+            response.put("status", "success");
+            response.put("data", "Eliminado Correctamente");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }

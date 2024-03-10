@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.time.LocalDateTime.parse;
+
 @RestController
 @RequestMapping(path = "/api/reserve/", method = {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.HEAD})
 @CrossOrigin("*")
@@ -45,7 +47,20 @@ public class ReserveController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
+    @GetMapping("list/{id}")
+    public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Reserve reserve = this.reserveImp.findById(id);
+            response.put("status", "success");
+            response.put("data", reserve);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String,Object> request){
         Map<String,Object> response= new HashMap<>();
@@ -54,7 +69,7 @@ public class ReserveController {
             //INSTANCIA DEL OBJETO RESERVE
             Reserve reserve = new Reserve();
             //CAMPOS PROPIOS DE LA TABLA RESERVES
-            reserve.setDateReserve(LocalDate.from(LocalDateTime.parse((String) request.get("dateReserve"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
+            reserve.setDateReserve(LocalDate.from(parse((String) request.get("dateReserve"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
             reserve.setDescription(request.get("description").toString());
             reserve.setDeposit(new BigDecimal(request.get("deposit").toString()));
             reserve.setTime(Time.valueOf(request.get("time").toString()));
@@ -75,4 +90,21 @@ public class ReserveController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Reserve reserve = this.reserveImp.findById(id);
+            reserveImp.delete(reserve);
+
+            response.put("status", "success");
+            response.put("data", "Eliminado Correctamente");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }

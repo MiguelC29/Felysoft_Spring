@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,8 +36,10 @@ public class Author implements Serializable {
 
     // FOREIGN KEYS
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Book> books;
 
     @ManyToMany(mappedBy = "authors")
+    @JsonIgnore
     private List<Genre> genres;
 }
