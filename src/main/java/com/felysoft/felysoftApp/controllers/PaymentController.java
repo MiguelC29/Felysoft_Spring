@@ -35,7 +35,21 @@ public class PaymentController {
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
+    @GetMapping("list/{id}")
+    public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Payment payment = this.paymentImp.findById(id);
+            response.put("status", "success");
+            response.put("data", payment);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("create")
@@ -48,8 +62,6 @@ public class PaymentController {
             payment.setState(request.get("state").toString());
 
             //FECHA
-            // Convertir la cadena de fecha a LocalDateTime con formato específico
-            //OJO CHINOS, PONER LA FECHA DEL MOMENTO AL REGISTRO
             payment.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
             //TOTAL

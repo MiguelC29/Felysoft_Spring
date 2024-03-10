@@ -1,8 +1,6 @@
 package com.felysoft.felysoftApp.controllers;
 
 import com.felysoft.felysoftApp.entities.Charge;
-import com.felysoft.felysoftApp.entities.Payment;
-import com.felysoft.felysoftApp.entities.Sale;
 import com.felysoft.felysoftApp.services.imp.ChargeImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,8 +35,25 @@ public class ChargeController {
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
+
+    @GetMapping("list/{id}")
+    public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Charge charge = this.chargeImp.findById(id);
+            response.put("status", "success");
+            response.put("data", charge);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request){
         Map<String, Object> response = new HashMap<>();

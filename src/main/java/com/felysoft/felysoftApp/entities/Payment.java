@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,8 +36,10 @@ public class Payment implements Serializable {
 
     // FOREIGN KEYS
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Sale> sales;
 
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Expense> expenses;
 }
