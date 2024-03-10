@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -50,5 +51,6 @@ public class Product implements Serializable {
     private Provider provider;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Inventory> inventories;
 }

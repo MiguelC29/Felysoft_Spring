@@ -18,6 +18,7 @@ public class CategoryController {
 
     @Autowired
     private CategoryImp categoryImp;
+
     @GetMapping("all")
     public ResponseEntity<Map<String, Object>> findAll() {
         Map<String, Object> response = new HashMap<>();
@@ -25,6 +26,21 @@ public class CategoryController {
             List<Category> categoryList = this.categoryImp.findAll();
             response.put("status", "success");
             response.put("data", categoryList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("list/{id}")
+    public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Category category = this.categoryImp.findById(id);
+            response.put("status", "success");
+            response.put("data", category);
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -49,6 +65,23 @@ public class CategoryController {
 
             response.put("status", "success");
             response.put("data", "Registro Exitoso");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Category category = this.categoryImp.findById(id);
+            categoryImp.delete(category);
+
+            response.put("status", "success");
+            response.put("data", "Eliminado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());

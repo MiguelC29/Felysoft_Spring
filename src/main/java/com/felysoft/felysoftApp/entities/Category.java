@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,9 +26,11 @@ public class Category implements Serializable {
 
     // FOREIGN KEYS
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Product> products;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JsonIgnore
     @JoinTable(
             name = "categories_providers",
             joinColumns = @JoinColumn(name = "fkIdCategories", referencedColumnName = "idCategory"),
