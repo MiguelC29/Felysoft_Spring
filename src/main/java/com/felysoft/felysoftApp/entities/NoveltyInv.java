@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,5 +32,6 @@ public class NoveltyInv implements Serializable {
 
     // FOREIGN KEYS
     @OneToMany(mappedBy = "noveltyInv", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Inventory> inventory;
 }
