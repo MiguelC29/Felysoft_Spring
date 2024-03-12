@@ -90,6 +90,34 @@ public class ReserveController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @PutMapping("update/{id}")
+    public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Reserve reserve = this.reserveImp.findById(id);
+
+            reserve.setDateReserve(LocalDate.from(parse((String) request.get("dateReserve"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
+            reserve.setDescription(request.get("description").toString());
+            reserve.setDeposit(new BigDecimal(request.get("deposit").toString()));
+            reserve.setTime(Time.valueOf(request.get("time").toString()));
+
+            //CAMPOS DE LAS LLAVES FORANEAS
+            Book book = bookImp.findById(Long.parseLong(request.get("fkIdBook").toString()));
+            reserve.setBook(book);
+            User user = userImp.findById(Long.parseLong(request.get("fkIdUser").toString()));
+            reserve.setUser(user);
+
+            this.reserveImp.update(reserve);
+
+            response.put("status", "success");
+            response.put("data", "Actualización exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();

@@ -94,6 +94,47 @@ public class UserController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @PutMapping("update/{id}")
+    public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            User user = this.userImp.findById(id);
+
+            user.setNumIdentification(Long.valueOf((Integer) request.get("numIdentification")));
+            user.setTypeDoc(request.get("typeDoc").toString());
+            user.setNames(request.get("names").toString());
+            user.setLastNames(request.get("lastNames").toString());
+            user.setAddress(request.get("address").toString());
+            user.setPhoneNumber(Integer.parseInt(request.get("phoneNumber").toString()));
+            user.setEmail(request.get("email").toString());
+            user.setGender(request.get("gender").toString());
+            user.setUsername(request.get("username").toString());
+            user.setPassword(request.get("password").toString());
+            //CONFIGURA LO DE LAS IMAGENES
+            if (request.containsKey("image") && request.get("image") != null) {
+                user.setImage(request.get("image").toString().getBytes());
+            }
+
+            if (request.containsKey("typeImg") && request.get("typeImg") != null) {
+                user.setTypeImg(request.get("typeImg").toString());
+            }
+            // Configurar fechas de creación y actualización
+            user.setDateRegister(new Timestamp(System.currentTimeMillis()));
+            user.setLastModification(new Timestamp(System.currentTimeMillis()));
+            //CAMPOS DE LAS LLAVES FORANEAS
+            Role role = roleImp.findById(Long.parseLong(request.get("fkIdRole").toString()));
+            user.setRole(role);
+            this.userImp.update(user);
+
+            response.put("status", "success");
+            response.put("data", "Actualización exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
