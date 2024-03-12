@@ -61,10 +61,10 @@ public class ChargeController {
             Charge charge = new Charge();
 
             //CARGO (NOMBRE)
-            charge.setCharge(request.get("charge").toString());
+            charge.setCharge(request.get("charge").toString().toUpperCase());
 
             //DESCRIPCION
-            charge.setDescription(request.get("description").toString());
+            charge.setDescription(request.get("description").toString().toUpperCase());
 
 
             this.chargeImp.create(charge);
@@ -88,10 +88,11 @@ public class ChargeController {
             Charge charge = this.chargeImp.findById(id);
 
             //NOMBRE
-            charge.setCharge(request.get("charge").toString());
+            charge.setCharge(request.get("charge").toString().toUpperCase());
 
             //DESCRIPCION
-            charge.setDescription(request.get("description").toString());
+            charge.setDescription(request.get("description").toString().toUpperCase());
+
 
             this.chargeImp.update(charge);
 

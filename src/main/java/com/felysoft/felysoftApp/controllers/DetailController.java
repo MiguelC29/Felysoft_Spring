@@ -72,9 +72,7 @@ public class DetailController {
             detail.setQuantity((Integer.parseInt(request.get("quantity").toString())));
 
             //PRECIO UNICO
-            Integer unitPriceInteger = (Integer) request.get("unitPrice");
-            BigDecimal unitPrice = new BigDecimal(unitPriceInteger);
-            detail.setUnitPrice(unitPrice);
+            detail.setUnitPrice(new BigDecimal(request.get("unitPrice").toString()));
 
 
             //FORANEAS
@@ -110,9 +108,7 @@ public class DetailController {
             detail.setQuantity((Integer.parseInt(request.get("quantity").toString())));
 
             //PRECIO UNICO
-            Integer unitPriceInteger = (Integer) request.get("unitPrice");
-            BigDecimal unitPrice = new BigDecimal(unitPriceInteger);
-            detail.setUnitPrice(unitPrice);
+            detail.setUnitPrice(new BigDecimal(request.get("unitPrice").toString()));
 
 
             //FORANEAS

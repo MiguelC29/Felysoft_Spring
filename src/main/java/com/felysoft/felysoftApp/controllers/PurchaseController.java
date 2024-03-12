@@ -71,9 +71,7 @@ public class PurchaseController {
             purchase.setDate(LocalDateTime.now());
 
             //TOTAL
-            Integer totalPurchaseInteger = (Integer) request.get("total");
-            BigDecimal total = new BigDecimal(totalPurchaseInteger);
-            purchase.setTotal(total);
+            purchase.setTotal(new BigDecimal(request.get("total").toString()));
 
             //FORÁNEAS
             Provider provider = providerImp.findById(Long.parseLong(request.get("fkIdProvider").toString()));
@@ -103,9 +101,7 @@ public class PurchaseController {
             purchase.setDate(LocalDateTime.now());
 
             //TOTAL
-            Integer totalPurchaseInteger = (Integer) request.get("total");
-            BigDecimal total = new BigDecimal(totalPurchaseInteger);
-            purchase.setTotal(total);
+            purchase.setTotal(new BigDecimal(request.get("total").toString()));
 
             //FORÁNEAS
             Provider provider = providerImp.findById(Long.parseLong(request.get("fkIdProvider").toString()));

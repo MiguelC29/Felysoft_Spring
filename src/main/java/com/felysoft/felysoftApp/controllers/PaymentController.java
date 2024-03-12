@@ -61,19 +61,17 @@ public class PaymentController {
             Payment payment = new Payment();
 
             //MÉTODO
-            payment.setMethodPayment(request.get("methodPayment").toString());
+            payment.setMethodPayment(request.get("methodPayment").toString().toUpperCase());
 
             //ESTADO
-            payment.setState(request.get("state").toString());
+            payment.setState(request.get("state").toString().toUpperCase());
 
             //FECHA
             //payment.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             payment.setDate(LocalDateTime.now());
 
             //TOTAL
-            Integer totalInteger = (Integer) request.get("total");
-            BigDecimal total = new BigDecimal(totalInteger);
-            payment.setTotal(total);
+            payment.setTotal(new BigDecimal(request.get("total").toString()));
 
             this.paymentImp.create(payment);
 
@@ -95,19 +93,17 @@ public class PaymentController {
             Payment payment = this.paymentImp.findById(id);
 
             //MÉTODO
-            payment.setMethodPayment(request.get("methodPayment").toString());
+            payment.setMethodPayment(request.get("methodPayment").toString().toUpperCase());
 
             //ESTADO
-            payment.setState(request.get("state").toString());
+            payment.setState(request.get("state").toString().toUpperCase());
 
             //FECHA
             //payment.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             payment.setDate(LocalDateTime.now());
 
             //TOTAL
-            Integer totalInteger = (Integer) request.get("total");
-            BigDecimal total = new BigDecimal(totalInteger);
-            payment.setTotal(total);
+            payment.setTotal(new BigDecimal(request.get("total").toString()));
 
             this.paymentImp.update(payment);
 

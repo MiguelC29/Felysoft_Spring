@@ -67,19 +67,17 @@ public class ExpenseController {
             Expense expense = new Expense();
 
             //TIPO
-            expense.setType(request.get("type").toString());
+            expense.setType(request.get("type").toString().toUpperCase());
 
             //FECHA
             //expense.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             expense.setDate(LocalDateTime.now());
 
             //TOTAL
-            Integer totalInteger = (Integer) request.get("total");
-            BigDecimal total = new BigDecimal(totalInteger);
-            expense.setTotal(total);
+            expense.setTotal(new BigDecimal(request.get("total").toString()));
 
-            //DESCRPCION
-            expense.setDescription(request.get("description").toString());
+            //DESCRIPCION
+            expense.setDescription(request.get("description").toString().toUpperCase());
 
             //FORÁNEAS
             Purchase purchase = purchaseImp.findById(Long.parseLong(request.get("fkIdPurchase").toString()));
@@ -109,19 +107,17 @@ public class ExpenseController {
             Expense expense = this.expenseImp.findById(id);
 
             //TIPO
-            expense.setType(request.get("type").toString());
+            expense.setType(request.get("type").toString().toUpperCase());
 
             //FECHA
             //expense.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             expense.setDate(LocalDateTime.now());
 
             //TOTAL
-            Integer totalInteger = (Integer) request.get("total");
-            BigDecimal total = new BigDecimal(totalInteger);
-            expense.setTotal(total);
+            expense.setTotal(new BigDecimal(request.get("total").toString()));
 
-            //DESCRPCION
-            expense.setDescription(request.get("description").toString());
+            //DESCRIPCION
+            expense.setDescription(request.get("description").toString().toUpperCase());
 
             //FORÁNEAS
             Purchase purchase = purchaseImp.findById(Long.parseLong(request.get("fkIdPurchase").toString()));
