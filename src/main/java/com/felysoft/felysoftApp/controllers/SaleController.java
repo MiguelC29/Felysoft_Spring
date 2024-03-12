@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.controllers;
 
+import com.felysoft.felysoftApp.entities.Charge;
 import com.felysoft.felysoftApp.entities.Payment;
 import com.felysoft.felysoftApp.entities.Sale;
 import com.felysoft.felysoftApp.services.imp.PaymentImp;
@@ -80,6 +81,37 @@ public class SaleController {
             response.put("status", "success");
             response.put("data", "Registro Exitoso");
 
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("update/{id}")
+    public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Sale sale = this.saleImp.findById(id);
+
+            //FECHA
+            // Convertir la cadena de fecha a LocalDateTime con formato específico
+            //OJO CHINOS, PONER LA FECHA DEL MOMENTO AL REGISTRO
+            sale.setDateSale(LocalDateTime.now());
+
+            //TOTAL
+            sale.setTotalSale(new BigDecimal(request.get("totalSale").toString()));
+
+
+            //FORÁNEAS
+            Payment payment = paymentImp.findById(Long.parseLong(request.get("fkIdPayment").toString()));
+            sale.setPayment(payment);
+
+            this.saleImp.update(sale);
+
+            response.put("status", "success");
+            response.put("data", "Actualización exitosa");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());

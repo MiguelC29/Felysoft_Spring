@@ -1,6 +1,7 @@
 package com.felysoft.felysoftApp.controllers;
 
 
+import com.felysoft.felysoftApp.entities.Charge;
 import com.felysoft.felysoftApp.entities.Payment;
 import com.felysoft.felysoftApp.entities.Provider;
 import com.felysoft.felysoftApp.entities.Purchase;
@@ -66,7 +67,8 @@ public class PurchaseController {
             Purchase purchase = new Purchase();
 
             //FECHA
-            purchase.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            //purchase.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            purchase.setDate(LocalDateTime.now());
 
             //TOTAL
             Integer totalPurchaseInteger = (Integer) request.get("total");
@@ -82,6 +84,37 @@ public class PurchaseController {
             response.put("status", "success");
             response.put("data", "Registro Exitoso");
 
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("update/{id}")
+    public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Purchase purchase = this.purchaseImp.findById(id);
+
+            //FECHA
+            //purchase.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            purchase.setDate(LocalDateTime.now());
+
+            //TOTAL
+            Integer totalPurchaseInteger = (Integer) request.get("total");
+            BigDecimal total = new BigDecimal(totalPurchaseInteger);
+            purchase.setTotal(total);
+
+            //FORÁNEAS
+            Provider provider = providerImp.findById(Long.parseLong(request.get("fkIdProvider").toString()));
+            purchase.setProvider(provider);
+
+            this.purchaseImp.update(purchase);
+
+            response.put("status", "success");
+            response.put("data", "Actualización exitosa");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());

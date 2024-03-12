@@ -80,6 +80,33 @@ public class ChargeController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
+    @PutMapping("update/{id}")
+    public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Charge charge = this.chargeImp.findById(id);
+
+            //NOMBRE
+            charge.setCharge(request.get("charge").toString());
+
+            //DESCRIPCION
+            charge.setDescription(request.get("description").toString());
+
+            this.chargeImp.update(charge);
+
+            response.put("status", "success");
+            response.put("data", "Actualización exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
