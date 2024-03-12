@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,20 +30,25 @@ public class Detail implements Serializable {
 
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinColumn(name = "fkIdProduct")
     private Product product;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinColumn(name = "fkIdBook")
     private Book book;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinColumn(name = "fkIdService")
     private Service service;
 
     @ManyToMany(mappedBy = "details")
+    @JsonIgnore
     private List<Sale> sales;
 
     @ManyToMany(mappedBy = "details")
+    @JsonIgnore
     private List<Purchase> purchases;
 }
