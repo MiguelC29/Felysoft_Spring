@@ -56,23 +56,6 @@ public class TypeserviceController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "delete/{id}")
-    public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            TypeService typeService = this.typeserviceImp.findById(id);
-            typeserviceImp.delete(typeService);
-
-            response.put("status", "success");
-            response.put("data", "Eliminado Correctamente");
-        } catch (Exception e) {
-            response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request) {
 
@@ -113,4 +96,53 @@ public class TypeserviceController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+
+    @PutMapping("update/{id}")
+    public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            TypeService typeService = this.typeserviceImp.findById(id);
+
+            if (typeService == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "El tipo de servicio con el ID proporcionado no fue encontrado.");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            // Actualizar los campos del tipo de servicio según la solicitud
+            typeService.setName(request.get("name").toString());
+            typeService.setDescription(request.get("description").toString());
+            BigDecimal price = new BigDecimal(request.get("price").toString());
+            typeService.setPrice(price);
+
+            // Guardar la actualización en la base de datos
+            this.typeserviceImp.update(typeService);
+
+            response.put("status", "success");
+            response.put("data", "Actualización exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "delete/{id}")
+    public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            TypeService typeService = this.typeserviceImp.findById(id);
+            typeserviceImp.delete(typeService);
+
+            response.put("status", "success");
+            response.put("data", "Eliminado Correctamente");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }
