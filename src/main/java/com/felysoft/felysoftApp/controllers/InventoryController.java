@@ -1,9 +1,6 @@
 package com.felysoft.felysoftApp.controllers;
 
-import com.felysoft.felysoftApp.entities.Book;
-import com.felysoft.felysoftApp.entities.Inventory;
-import com.felysoft.felysoftApp.entities.NoveltyInv;
-import com.felysoft.felysoftApp.entities.Product;
+import com.felysoft.felysoftApp.entities.*;
 import com.felysoft.felysoftApp.services.imp.BookImp;
 import com.felysoft.felysoftApp.services.imp.InventoryImp;
 import com.felysoft.felysoftApp.services.imp.NoveltyInvImp;
@@ -85,6 +82,68 @@ public class InventoryController {
 
             response.put("status", "success");
             response.put("data", "Registro Exitoso");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("update/{id}")
+    public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // INSTANCIA OBJETO INVENTARIO
+            Inventory inventory = this.inventoryImp.findById(id);
+
+            // CAMPOS PROPIOS ENTIDAD INVENTARIO
+            inventory.setStock(Integer.parseInt(request.get("stock").toString()));
+            inventory.setTypeInv(request.get("typeInv").toString());
+            inventory.setState(request.get("state").toString());
+            // Configurar fechas de creación y actualización
+            inventory.setLastModification(new Timestamp(System.currentTimeMillis()));
+
+            // CAMPOS LLAVES FORANEAS
+            // Verificar si la clave "fkIdProduct" está presente en el mapa y no es null
+            if (request.containsKey("fkIdProduct") && request.get("fkIdProduct") != null) {
+                Product product = productImp.findById(Long.parseLong(request.get("fkIdProduct").toString()));
+                inventory.setProduct(product);
+            }
+
+            // Verificar si la clave "fkIdBook" está presente en el mapa y no es null
+            if (request.containsKey("fkIdBook") && request.get("fkIdBook") != null) {
+                Book book = bookImp.findById(Long.parseLong(request.get("fkIdBook").toString()));
+                inventory.setBook(book);
+            }
+
+            // Verificar si la clave "fkIdNovelty" está presente en el mapa y no es null
+            if (request.containsKey("fkIdNovelty") && request.get("fkIdNovelty") != null) {
+                NoveltyInv noveltyInv = noveltyInvImp.findById(Long.parseLong(request.get("fkIdNovelty").toString()));
+                inventory.setNoveltyInv(noveltyInv);
+            }
+
+            this.inventoryImp.update(inventory);
+
+            response.put("status", "success");
+            response.put("data", "Actualización exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Inventory inventory = this.inventoryImp.findById(id);
+            inventoryImp.delete(inventory);
+
+            response.put("status", "success");
+            response.put("data", "Eliminado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
