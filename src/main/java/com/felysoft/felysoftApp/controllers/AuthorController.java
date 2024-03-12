@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -60,17 +61,38 @@ public class AuthorController {
             //CAMPOS PROPIOS DE LA TABLA AUTHORS
             author.setName(request.get("name").toString());
             author.setNationality(request.get("nationality").toString());
-            SimpleDateFormat formateador = new SimpleDateFormat("yyyy-MM-dd");
-            java.sql.Date fechaAnalizada = new java.sql.Date(formateador.parse((String) request.get("dateBirth")).getTime());
-            author.setDateBirth(fechaAnalizada);
-
+            author.setDateBirth(Date.valueOf(request.get("dateBirth").toString()));
             author.setBiography(request.get("biography").toString());
+
             this.authorImp.create(author);
 
             response.put("status","success");
             response.put("data","Registro Exitoso");
         }catch (Exception e){
             response.put("status",HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("update/{id}")
+    public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Author author = this.authorImp.findById(id);
+
+            author.setName(request.get("name").toString());
+            author.setNationality(request.get("nationality").toString());
+            author.setDateBirth(Date.valueOf(request.get("dateBirth").toString()));
+            author.setBiography(request.get("biography").toString());
+
+            this.authorImp.update(author);
+
+            response.put("status", "success");
+            response.put("data", "Actualización exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }

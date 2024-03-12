@@ -86,6 +86,36 @@ public class BookController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @PutMapping("update/{id}")
+    public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Book book = this.bookImp.findById(id);
+
+            book.setTitle(request.get("title").toString());
+            book.setEditorial(request.get("editorial").toString());
+            book.setDescription(request.get("description").toString());
+            book.setYearPublication(Integer.parseInt(request.get("yearPublication").toString()));
+            book.setPriceTime(new BigDecimal(request.get("priceTime").toString()));
+
+            //CAMPOS DE LA LLAVES FORANEAS
+            Author author = authorImp.findById(Long.parseLong(request.get("fkIdAuthor").toString()));
+            book.setAuthor(author);
+
+            Genre genre = genreImp.findById(Long.parseLong(request.get("fkIdGenre").toString()));
+            book.setGenre(genre);
+
+            this.bookImp.update(book);
+
+            response.put("status", "success");
+            response.put("data", "Actualización exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
