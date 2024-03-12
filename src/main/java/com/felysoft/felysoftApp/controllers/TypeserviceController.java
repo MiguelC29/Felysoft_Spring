@@ -33,7 +33,7 @@ public class TypeserviceController {
         } catch (Exception e) {
 
             response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
+            response.put("data", e.getMessage().toUpperCase());
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
 
         }
@@ -50,7 +50,7 @@ public class TypeserviceController {
             response.put("data", typeService);
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
+            response.put("data", e.getMessage().toUpperCase());
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -71,13 +71,13 @@ public class TypeserviceController {
             //typeService.setIdTypeService(Long.parseLong(request.get("idTypeService").toString()));
 
             //Name
-            typeService.setName(request.get("name").toString());
+            typeService.setName(request.get("name").toString().toUpperCase());
 
             //Description
-            typeService.setDescription(request.get("description").toString());
+            typeService.setDescription(request.get("description").toString().toUpperCase());
 
             //Price
-            BigDecimal price = new BigDecimal(request.get("price").toString());
+            BigDecimal price = new BigDecimal(request.get("price").toString().toUpperCase());
             typeService.setPrice(price);
 
             this.typeserviceImp.create(typeService);
@@ -88,7 +88,7 @@ public class TypeserviceController {
         } catch (Exception e) {
 
             response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
+            response.put("data", e.getMessage().toUpperCase());
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
 
         }
@@ -109,20 +109,18 @@ public class TypeserviceController {
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
 
-            // Actualizar los campos del tipo de servicio según la solicitud
-            typeService.setName(request.get("name").toString());
-            typeService.setDescription(request.get("description").toString());
-            BigDecimal price = new BigDecimal(request.get("price").toString());
+            typeService.setName(request.get("name").toString().toUpperCase());
+            typeService.setDescription(request.get("description").toString().toUpperCase());
+            BigDecimal price = new BigDecimal(request.get("price").toString().toUpperCase());
             typeService.setPrice(price);
 
-            // Guardar la actualización en la base de datos
             this.typeserviceImp.update(typeService);
 
             response.put("status", "success");
             response.put("data", "Actualización exitosa");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
+            response.put("data", e.getMessage().toUpperCase());
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -139,7 +137,7 @@ public class TypeserviceController {
             response.put("data", "Eliminado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
+            response.put("data", e.getMessage().toUpperCase());
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);

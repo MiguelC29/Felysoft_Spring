@@ -36,7 +36,7 @@ public class ServiceController {
             response.put("data", serviceList);
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
+            response.put("data", e.getMessage().toUpperCase());
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
 
@@ -52,7 +52,7 @@ public class ServiceController {
             response.put("data", service);
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
+            response.put("data", e.getMessage().toUpperCase());
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -64,7 +64,7 @@ public class ServiceController {
 
         try {
             Service service = new Service();
-            service.setState(request.get("state").toString());
+            service.setState(request.get("state").toString().toUpperCase());
             service.setPriceAdditional(new BigDecimal(request.get("priceAdditional").toString()));
             service.setTotal(new BigDecimal(request.get("total").toString()));
 
@@ -80,7 +80,7 @@ public class ServiceController {
             response.put("data", "Registro Exitoso");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
+            response.put("data", e.getMessage().toUpperCase());
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
 
@@ -93,7 +93,7 @@ public class ServiceController {
         try {
             Service service = this.serviceImp.findById(id);
 
-            service.setState(request.get("state").toString());
+            service.setState(request.get("state").toString().toUpperCase());
             service.setPriceAdditional(new BigDecimal(request.get("priceAdditional").toString()));
             service.setTotal(new BigDecimal(request.get("total").toString()));
             service.setDateModification(new Timestamp(System.currentTimeMillis()));
@@ -107,12 +107,11 @@ public class ServiceController {
             response.put("data", "Actualización exitosa");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
+            response.put("data", e.getMessage().toUpperCase());
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 
     @DeleteMapping(value = "delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
@@ -125,7 +124,7 @@ public class ServiceController {
             response.put("data", "Eliminado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
+            response.put("data", e.getMessage().toUpperCase());
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
