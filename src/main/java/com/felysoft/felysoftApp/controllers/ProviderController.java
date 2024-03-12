@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.controllers;
 
+import com.felysoft.felysoftApp.entities.Category;
 import com.felysoft.felysoftApp.entities.Provider;
 import com.felysoft.felysoftApp.services.imp.ProviderImp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,21 +74,29 @@ public class ProviderController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-/*
-    @PostMapping("/update")
-    public ResponseEntity<Map<String, Object>> updateProvider(@RequestBody Map<String, Object> request) {
+
+    @PutMapping("update/{id}")
+    public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
         try {
-            Provider provider = new Provider();
+            Provider provider = this.providerImp.findById(id);
+
+            provider.setNit(request.get("nit").toString());
+            provider.setName(request.get("name").toString());
+            provider.setPhoneNumber(Integer.parseInt(request.get("phoneNumber").toString()));
+            provider.setEmail(request.get("email").toString());
+
             this.providerImp.update(provider);
-            response.put("status", "Success");
-            response.put("msj", "Actualización exitosa");
+
+            response.put("status", "success");
+            response.put("data", "Actualización exitosa");
         } catch (Exception e) {
-            response.put("status", "Failed");
-            response.put("msj", "Fallo exitoso por " + e.getMessage());
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }*/
+    }
 
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
