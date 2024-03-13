@@ -53,8 +53,8 @@ public class InventoryController {
 
             // CAMPOS PROPIOS ENTIDAD INVENTARIO
             inventory.setStock(Integer.parseInt(request.get("stock").toString()));
-            inventory.setTypeInv(request.get("typeInv").toString());
-            inventory.setState(request.get("state").toString());
+            inventory.setTypeInv(Inventory.TypeInv.valueOf(request.get("typeInv").toString().toUpperCase()));
+            inventory.setState(Inventory.State.valueOf(request.get("state").toString().toUpperCase()));
             // Configurar fechas de creación y actualización
             inventory.setDateRegister(new Timestamp(System.currentTimeMillis()));
             inventory.setLastModification(new Timestamp(System.currentTimeMillis()));
@@ -99,8 +99,8 @@ public class InventoryController {
 
             // CAMPOS PROPIOS ENTIDAD INVENTARIO
             inventory.setStock(Integer.parseInt(request.get("stock").toString()));
-            inventory.setTypeInv(request.get("typeInv").toString());
-            inventory.setState(request.get("state").toString());
+            inventory.setTypeInv(Inventory.TypeInv.valueOf(request.get("typeInv").toString().toUpperCase()));
+            inventory.setState(Inventory.State.valueOf(request.get("state").toString().toUpperCase()));
             // Configurar fechas de creación y actualización
             inventory.setLastModification(new Timestamp(System.currentTimeMillis()));
 

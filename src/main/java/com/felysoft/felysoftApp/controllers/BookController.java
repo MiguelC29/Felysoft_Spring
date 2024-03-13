@@ -62,9 +62,9 @@ public class BookController {
             //INSTANCIA DEL OBJETO BOOK
             Book book = new Book();
             //CAMPOS PROPIOS DE LA TABLA BOOKS
-            book.setTitle(request.get("title").toString());
-            book.setEditorial(request.get("editorial").toString());
-            book.setDescription(request.get("description").toString());
+            book.setTitle(request.get("title").toString().toUpperCase());
+            book.setEditorial(request.get("editorial").toString().toUpperCase());
+            book.setDescription(request.get("description").toString().toUpperCase());
             book.setYearPublication(Integer.parseInt(request.get("yearPublication").toString()));
             book.setPriceTime(new BigDecimal(request.get("priceTime").toString()));
 
@@ -92,9 +92,9 @@ public class BookController {
         try {
             Book book = this.bookImp.findById(id);
 
-            book.setTitle(request.get("title").toString());
-            book.setEditorial(request.get("editorial").toString());
-            book.setDescription(request.get("description").toString());
+            book.setTitle(request.get("title").toString().toUpperCase());
+            book.setEditorial(request.get("editorial").toString().toUpperCase());
+            book.setDescription(request.get("description").toString().toUpperCase());
             book.setYearPublication(Integer.parseInt(request.get("yearPublication").toString()));
             book.setPriceTime(new BigDecimal(request.get("priceTime").toString()));
 

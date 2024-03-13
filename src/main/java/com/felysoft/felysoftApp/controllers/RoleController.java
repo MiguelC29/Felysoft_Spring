@@ -57,7 +57,7 @@ public class RoleController {
             Role role = new Role();
 
             // CAMPOS PROPIOS ENTIDAD ROL
-            role.setName(request.get("name").toString());
+            role.setName(request.get("name").toString().toUpperCase());
 
             this.roleImp.create(role);
 
@@ -79,7 +79,7 @@ public class RoleController {
             Role role = this.roleImp.findById(id);
 
             // CAMPOS PROPIOS ENTIDAD ROL
-            role.setName(request.get("name").toString());
+            role.setName(request.get("name").toString().toUpperCase());
 
             this.roleImp.update(role);
 

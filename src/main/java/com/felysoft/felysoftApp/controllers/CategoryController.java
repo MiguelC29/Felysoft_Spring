@@ -59,7 +59,7 @@ public class CategoryController {
 
             // CAMPOS PROPIOS ENTIDAD CATEGORIA
             //category.setIdCategory(Long.parseLong(get("id").toString()));
-            category.setName(request.get("name").toString());
+            category.setName(request.get("name").toString().toUpperCase());
 
             this.categoryImp.create(category);
 
@@ -79,7 +79,7 @@ public class CategoryController {
         try {
             Category category = this.categoryImp.findById(id);
 
-            category.setName(request.get("name").toString());
+            category.setName(request.get("name").toString().toUpperCase());
 
             this.categoryImp.update(category);
 

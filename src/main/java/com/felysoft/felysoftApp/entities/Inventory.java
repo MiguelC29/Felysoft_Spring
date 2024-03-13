@@ -16,6 +16,8 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Inventory implements Serializable {
+    public enum TypeInv {PRODUCTOS, LIBROS};
+    public enum State {DISPONIBLE, AGOTADO};
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +26,13 @@ public class Inventory implements Serializable {
     @Column(length = 11, nullable = false)
     private int stock;
 
-    @Column(length = 30, nullable = false)
-    private String typeInv;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TypeInv typeInv;
 
-    @Column(length = 45)
-    private String state;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private State state;
 
     @Column(nullable = false)
     @CreationTimestamp

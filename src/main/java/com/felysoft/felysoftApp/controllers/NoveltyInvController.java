@@ -59,7 +59,7 @@ public class NoveltyInvController {
             NoveltyInv noveltyInv = new NoveltyInv();
 
             // CAMPOS PROPIOS ENTIDAD NOVEDAD INVENTARIO
-            noveltyInv.setDescription(request.get("description").toString());
+            noveltyInv.setDescription(request.get("description").toString().toUpperCase());
             noveltyInv.setQuantity(Integer.parseInt(request.get("quantity").toString()));
             noveltyInv.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
@@ -83,7 +83,7 @@ public class NoveltyInvController {
             NoveltyInv noveltyInv = this.noveltyInvImp.findById(id);
 
             // CAMPOS PROPIOS ENTIDAD NOVEDAD INVENTARIO
-            noveltyInv.setDescription(request.get("description").toString());
+            noveltyInv.setDescription(request.get("description").toString().toUpperCase());
             noveltyInv.setQuantity(Integer.parseInt(request.get("quantity").toString()));
             noveltyInv.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 

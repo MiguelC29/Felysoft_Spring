@@ -69,12 +69,10 @@ public class ProductController {
             // CAMPOS PROPIOS ENTIDAD PRODUCTO
             product.setImage(request.get("image").toString().getBytes());
             product.setTypeImg(request.get("typeImg").toString());
-            product.setName(request.get("name").toString());
-            product.setBrand(request.get("brand").toString());
+            product.setName(request.get("name").toString().toUpperCase());
+            product.setBrand(request.get("brand").toString().toUpperCase());
             product.setSalePrice(new BigDecimal(request.get("salePrice").toString()));
-            SimpleDateFormat formateador = new SimpleDateFormat("yyyy-MM-dd");
-            java.sql.Date fechaAnalizada = new java.sql.Date(formateador.parse((String) request.get("expiryDate")).getTime());
-            product.setExpiryDate(fechaAnalizada);
+            product.setExpiryDate(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse((String) request.get("expiryDate")).getTime()));
 
             // CAMPOS LLAVES FORANEAS
             Category category = categoryImp.findById(Long.parseLong(request.get("fkIdCategory").toString()));
@@ -104,12 +102,10 @@ public class ProductController {
             // CAMPOS PROPIOS ENTIDAD PRODUCTO
             product.setImage(request.get("image").toString().getBytes());
             product.setTypeImg(request.get("typeImg").toString());
-            product.setName(request.get("name").toString());
-            product.setBrand(request.get("brand").toString());
+            product.setName(request.get("name").toString().toUpperCase());
+            product.setBrand(request.get("brand").toString().toUpperCase());
             product.setSalePrice(new BigDecimal(request.get("salePrice").toString()));
-            SimpleDateFormat formateador = new SimpleDateFormat("yyyy-MM-dd");
-            java.sql.Date fechaAnalizada = new java.sql.Date(formateador.parse((String) request.get("expiryDate")).getTime());
-            product.setExpiryDate(fechaAnalizada);
+            product.setExpiryDate(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse((String) request.get("expiryDate")).getTime()));
 
             // CAMPOS LLAVES FORANEAS
             Category category = categoryImp.findById(Long.parseLong(request.get("fkIdCategory").toString()));
