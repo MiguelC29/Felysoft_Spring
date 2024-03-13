@@ -60,13 +60,13 @@ public class UserController {
             User user = new User();
             //CAMPOS PROPIOS DE LA TABLA USERS
             user.setNumIdentification(Long.valueOf((Integer) request.get("numIdentification")));
-            user.setTypeDoc(request.get("typeDoc").toString());
-            user.setNames(request.get("names").toString());
-            user.setLastNames(request.get("lastNames").toString());
-            user.setAddress(request.get("address").toString());
+            user.setTypeDoc(User.TypeDoc.valueOf(request.get("typeDoc").toString().toUpperCase()));
+            user.setNames(request.get("names").toString().toUpperCase());
+            user.setLastNames(request.get("lastNames").toString().toUpperCase());
+            user.setAddress(request.get("address").toString().toUpperCase());
             user.setPhoneNumber(Integer.parseInt(request.get("phoneNumber").toString()));
-            user.setEmail(request.get("email").toString());
-            user.setGender(request.get("gender").toString());
+            user.setEmail(request.get("email").toString().toLowerCase());
+            user.setGender(User.Gender.valueOf(request.get("gender").toString().toUpperCase()));
             user.setUsername(request.get("username").toString());
             user.setPassword(request.get("password").toString());
             //CONFIGURA LO DE LAS IMAGENES
@@ -101,13 +101,13 @@ public class UserController {
             User user = this.userImp.findById(id);
 
             user.setNumIdentification(Long.valueOf((Integer) request.get("numIdentification")));
-            user.setTypeDoc(request.get("typeDoc").toString());
-            user.setNames(request.get("names").toString());
-            user.setLastNames(request.get("lastNames").toString());
-            user.setAddress(request.get("address").toString());
+            user.setTypeDoc(User.TypeDoc.valueOf(request.get("typeDoc").toString().toUpperCase()));
+            user.setNames(request.get("names").toString().toUpperCase());
+            user.setLastNames(request.get("lastNames").toString().toUpperCase());
+            user.setAddress(request.get("address").toString().toUpperCase());
             user.setPhoneNumber(Integer.parseInt(request.get("phoneNumber").toString()));
-            user.setEmail(request.get("email").toString());
-            user.setGender(request.get("gender").toString());
+            user.setEmail(request.get("email").toString().toLowerCase());
+            user.setGender(User.Gender.valueOf(request.get("gender").toString().toUpperCase()));
             user.setUsername(request.get("username").toString());
             user.setPassword(request.get("password").toString());
             //CONFIGURA LO DE LAS IMAGENES
