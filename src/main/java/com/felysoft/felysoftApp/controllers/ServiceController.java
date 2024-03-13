@@ -64,7 +64,7 @@ public class ServiceController {
 
         try {
             Service service = new Service();
-            service.setState(request.get("state").toString().toUpperCase());
+            service.setState(Service.State.valueOf(request.get("state").toString().toUpperCase()));
             service.setPriceAdditional(new BigDecimal(request.get("priceAdditional").toString()));
             service.setTotal(new BigDecimal(request.get("total").toString()));
 
@@ -93,7 +93,7 @@ public class ServiceController {
         try {
             Service service = this.serviceImp.findById(id);
 
-            service.setState(request.get("state").toString().toUpperCase());
+            service.setState(Service.State.valueOf(request.get("state").toString().toUpperCase()));
             service.setPriceAdditional(new BigDecimal(request.get("priceAdditional").toString()));
             service.setTotal(new BigDecimal(request.get("total").toString()));
             service.setDateModification(new Timestamp(System.currentTimeMillis()));

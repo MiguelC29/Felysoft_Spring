@@ -19,13 +19,16 @@ import java.util.List;
 @AllArgsConstructor
 public class Service implements Serializable {
 
+    public enum State {ACTIVO, INACTIVO};
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Long idService;
 
-    @Column(length = 320, nullable = false)
-    private String state;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private State state;
 
     @Column(nullable = false)
     @CreationTimestamp
