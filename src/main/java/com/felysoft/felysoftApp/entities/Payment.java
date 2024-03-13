@@ -18,15 +18,23 @@ import java.util.List;
 @AllArgsConstructor
 public class Payment implements Serializable {
 
+    //ENUM (ESTADO DEL PAGO)
+    public enum State {PENDIENTE, CANCELADO, REEMBOLSADO, VENCIDO};
+
+    //ENUM (METODO DE PAGO)
+    public enum MethodPayment {EFECTIVO, NEQUI, TRANSACCION};
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPayment;
 
-    @Column(length = 45, nullable = false)
-    private String methodPayment;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MethodPayment methodPayment;
 
-    @Column(length = 45, nullable = false)
-    private String state;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private State state;
 
     @Column(nullable = false)
     private LocalDateTime date;
