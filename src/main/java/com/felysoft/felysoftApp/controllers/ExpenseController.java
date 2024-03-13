@@ -66,8 +66,8 @@ public class ExpenseController {
         try {
             Expense expense = new Expense();
 
-            //TIPO
-            expense.setType(request.get("type").toString().toUpperCase());
+            //TIPO (ENUM)
+            expense.setType(Expense.Type.valueOf(request.get("type").toString().toUpperCase()));
 
             //FECHA
             //expense.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
@@ -107,7 +107,7 @@ public class ExpenseController {
             Expense expense = this.expenseImp.findById(id);
 
             //TIPO
-            expense.setType(request.get("type").toString().toUpperCase());
+            expense.setType(Expense.Type.valueOf(request.get("type").toString().toUpperCase()));
 
             //FECHA
             //expense.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));

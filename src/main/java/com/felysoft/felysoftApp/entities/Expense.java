@@ -17,12 +17,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Expense implements Serializable {
 
+    //ENUM (TIPO DE GASTO)
+    public enum Type {NOMINA, ARRIENDO, SERVICIOS, PROVEEDORES};
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idExpense;
 
-    @Column(length = 90, nullable = false)
-    private String type;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Type type;
 
     @Column(nullable = false)
     private LocalDateTime date;

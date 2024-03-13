@@ -60,11 +60,11 @@ public class PaymentController {
         try {
             Payment payment = new Payment();
 
-            //MÉTODO
-            payment.setMethodPayment(request.get("methodPayment").toString().toUpperCase());
+            //MÉTODO (ENUM)
+            payment.setMethodPayment(Payment.MethodPayment.valueOf(request.get("methodPayment").toString().toUpperCase()));
 
-            //ESTADO
-            payment.setState(request.get("state").toString().toUpperCase());
+            //ESTADO (ENUM)
+            payment.setState(Payment.State.valueOf(request.get("state").toString().toUpperCase()));
 
             //FECHA
             //payment.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
@@ -93,10 +93,10 @@ public class PaymentController {
             Payment payment = this.paymentImp.findById(id);
 
             //MÉTODO
-            payment.setMethodPayment(request.get("methodPayment").toString().toUpperCase());
+            payment.setMethodPayment(Payment.MethodPayment.valueOf(request.get("methodPayment").toString().toUpperCase()));
 
             //ESTADO
-            payment.setState(request.get("state").toString().toUpperCase());
+            payment.setState(Payment.State.valueOf(request.get("state").toString().toUpperCase()));
 
             //FECHA
             //payment.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
