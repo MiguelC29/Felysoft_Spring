@@ -64,7 +64,7 @@ public class EmployeeController {
             Employee employee = new Employee();
 
             // CAMPOS PROPIOS ENTIDAD PROVEEDOR
-            employee.setSpecialty(request.get("specialty").toString());
+            employee.setSpecialty(request.get("specialty").toString().toUpperCase());
             employee.setDateBirth(Date.valueOf(request.get("dateBirth").toString()));
             employee.setSalary(new BigDecimal(request.get("salary").toString()));
             // CAMPOS LLAVES FORANEAS
@@ -91,7 +91,7 @@ public class EmployeeController {
             Employee employee = this.employeeImp.findById(id);
 
             // CAMPOS PROPIOS ENTIDAD PROVEEDOR
-            employee.setSpecialty(request.get("specialty").toString());
+            employee.setSpecialty(request.get("specialty").toString().toUpperCase());
             employee.setDateBirth(Date.valueOf(request.get("dateBirth").toString()));
             employee.setSalary(new BigDecimal(request.get("salary").toString()));
             // CAMPOS LLAVES FORANEAS
