@@ -70,7 +70,7 @@ public class ReserveController {
             Reserve reserve = new Reserve();
             //CAMPOS PROPIOS DE LA TABLA RESERVES
             reserve.setDateReserve(LocalDate.from(parse((String) request.get("dateReserve"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
-            reserve.setDescription(request.get("description").toString());
+            reserve.setDescription(request.get("description").toString().toUpperCase());
             reserve.setDeposit(new BigDecimal(request.get("deposit").toString()));
             reserve.setTime(Time.valueOf(request.get("time").toString()));
 
@@ -97,7 +97,7 @@ public class ReserveController {
             Reserve reserve = this.reserveImp.findById(id);
 
             reserve.setDateReserve(LocalDate.from(parse((String) request.get("dateReserve"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
-            reserve.setDescription(request.get("description").toString());
+            reserve.setDescription(request.get("description").toString().toUpperCase());
             reserve.setDeposit(new BigDecimal(request.get("deposit").toString()));
             reserve.setTime(Time.valueOf(request.get("time").toString()));
 

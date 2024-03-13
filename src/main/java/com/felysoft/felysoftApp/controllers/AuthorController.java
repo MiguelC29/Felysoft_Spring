@@ -59,10 +59,10 @@ public class AuthorController {
             //INSTANCIA DEL OBJETO AUTHOR
             Author author = new Author();
             //CAMPOS PROPIOS DE LA TABLA AUTHORS
-            author.setName(request.get("name").toString());
-            author.setNationality(request.get("nationality").toString());
+            author.setName(request.get("name").toString().toUpperCase());
+            author.setNationality(request.get("nationality").toString().toUpperCase());
             author.setDateBirth(Date.valueOf(request.get("dateBirth").toString()));
-            author.setBiography(request.get("biography").toString());
+            author.setBiography(request.get("biography").toString().toUpperCase());
 
             this.authorImp.create(author);
 
@@ -82,10 +82,10 @@ public class AuthorController {
         try {
             Author author = this.authorImp.findById(id);
 
-            author.setName(request.get("name").toString());
-            author.setNationality(request.get("nationality").toString());
-            author.setDateBirth(Date.valueOf(request.get("dateBirth").toString()));
-            author.setBiography(request.get("biography").toString());
+            author.setName(request.get("name").toString().toUpperCase());
+            author.setNationality(request.get("nationality").toString().toUpperCase());
+            author.setDateBirth(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse((String) request.get("dateBirth")).getTime()));
+            author.setBiography(request.get("biography").toString().toUpperCase());
 
             this.authorImp.update(author);
 

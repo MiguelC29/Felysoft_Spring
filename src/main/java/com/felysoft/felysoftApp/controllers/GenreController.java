@@ -54,8 +54,8 @@ public class GenreController {
             //INSTANCIA DEL OBJETO GENRE
             Genre genre = new Genre();
             //CAMPOS PROPIOS DE LA TABLA GENRES
-            genre.setName(request.get("name").toString());
-            genre.setDescription(request.get("description").toString());
+            genre.setName(request.get("name").toString().toUpperCase());
+            genre.setDescription(request.get("description").toString().toUpperCase());
             this.genreImp.create(genre);
 
             response.put("status","success");
@@ -72,8 +72,8 @@ public class GenreController {
         Map<String, Object> response = new HashMap<>();
         try {
             Genre genre = this.genreImp.findById(id);
-            genre.setName(request.get("name").toString());
-            genre.setDescription(request.get("description").toString());
+            genre.setName(request.get("name").toString().toUpperCase());
+            genre.setDescription(request.get("description").toString().toUpperCase());
 
             this.genreImp.update(genre);
 

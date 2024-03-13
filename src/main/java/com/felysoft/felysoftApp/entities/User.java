@@ -18,13 +18,16 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements Serializable {
+    public enum Gender {FEMENINO, MASCULINO};
+    public enum TypeDoc {CC,TI,CE};
 
     @Id
     @Column(unique = true)
     private Long numIdentification;
 
-    @Column(length = 20, nullable = false)
-    private String typeDoc;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TypeDoc typeDoc;
 
     @Column(length = 45, nullable = false)
     private String names;
@@ -41,8 +44,9 @@ public class User implements Serializable {
     @Column(length = 320, nullable = false)
     private String email;
 
-    @Column(length = 20, nullable = false)
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender;
 
     @Column(length = 45, nullable = false)
     private String username;
