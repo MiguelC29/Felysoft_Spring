@@ -37,6 +37,9 @@ public class Book implements Serializable {
     @Column(nullable = false)
     private BigDecimal priceTime;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore

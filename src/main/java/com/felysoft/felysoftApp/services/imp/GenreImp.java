@@ -16,7 +16,7 @@ public class GenreImp implements GenreService {
 
     @Override
     public List<Genre> findAll() throws Exception {
-        return this.genreRepository.findAll();
+        return this.genreRepository.findGenresByEliminateFalse();
     }
 
     @Override
@@ -36,6 +36,6 @@ public class GenreImp implements GenreService {
 
     @Override
     public void delete(Genre genre) {
-        this.genreRepository.delete(genre);
+        this.genreRepository.save(genre);
     }
 }

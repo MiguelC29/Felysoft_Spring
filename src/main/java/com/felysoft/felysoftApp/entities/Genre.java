@@ -27,6 +27,9 @@ public class Genre implements Serializable {
     @Column(length = 320, nullable = false)
     private String description;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL)
     @JsonIgnore
