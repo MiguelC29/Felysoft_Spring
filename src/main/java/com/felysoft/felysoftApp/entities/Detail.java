@@ -27,6 +27,9 @@ public class Detail implements Serializable {
     @Column(nullable = false)
     private BigDecimal unitPrice;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
 
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
