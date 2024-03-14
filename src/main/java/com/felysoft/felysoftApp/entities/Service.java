@@ -44,6 +44,9 @@ public class Service implements Serializable {
     @Column(nullable = false)
     private BigDecimal total;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdTypeService", nullable = false)

@@ -16,7 +16,7 @@ public class TypeserviceImp implements TypeserviceService {
 
     @Override
     public List<TypeService> findAll() throws Exception {
-        return this.typeserviceRepository.findAll();
+        return this.typeserviceRepository.findTypeservicesByByEliminatedFalse();
     }
 
     @Override
@@ -36,6 +36,6 @@ public class TypeserviceImp implements TypeserviceService {
 
     @Override
     public void delete(TypeService typeService) {
-        this.typeserviceRepository.delete(typeService);
+        this.typeserviceRepository.save(typeService);
     }
 }
