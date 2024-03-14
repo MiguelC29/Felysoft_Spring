@@ -33,6 +33,9 @@ public class Provider implements Serializable {
     @Column(length = 320, nullable = false)
     private String email;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL)
     @JsonIgnore

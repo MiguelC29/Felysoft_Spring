@@ -24,6 +24,9 @@ public class Role implements Serializable {
     @Column(length = 45, nullable = false, unique = true)
     private String name;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
     @JsonIgnore
