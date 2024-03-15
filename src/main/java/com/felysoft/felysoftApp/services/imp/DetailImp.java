@@ -16,12 +16,12 @@ public class DetailImp implements DetailService {
 
     @Override
     public List<Detail> findAll() throws Exception {
-        return this.detailRepository.findAll();
+        return this.detailRepository.findDetailByEliminatedFalse();
     }
 
     @Override
     public Detail findById(Long id) {
-        return this.detailRepository.findById(id).orElse(null);
+        return this.detailRepository.findDetailByIdDetailAndEliminatedFalse(id);
     }
 
     @Override
@@ -36,6 +36,6 @@ public class DetailImp implements DetailService {
 
     @Override
     public void delete(Detail detail) {
-        this.detailRepository.delete(detail);
+        this.detailRepository.save(detail);
     }
 }

@@ -133,11 +133,14 @@ public class DetailController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Detail detail = this.detailImp.findById(id);
+
+            detail.setEliminated(true);
+
             detailImp.delete(detail);
 
             response.put("status", "success");
