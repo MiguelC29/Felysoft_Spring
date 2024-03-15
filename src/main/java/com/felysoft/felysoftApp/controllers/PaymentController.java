@@ -123,6 +123,9 @@ public class PaymentController {
         Map<String, Object> response = new HashMap<>();
         try {
             Payment payment = this.paymentImp.findById(id);
+
+            payment.setEliminated(true);
+
             paymentImp.delete(payment);
 
             response.put("status", "success");

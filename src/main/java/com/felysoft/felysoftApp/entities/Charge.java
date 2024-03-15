@@ -26,6 +26,9 @@ public class Charge implements Serializable {
     @Column(length = 320, nullable = false)
     private String description;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @ManyToMany(mappedBy = "charges")
     @JsonIgnore

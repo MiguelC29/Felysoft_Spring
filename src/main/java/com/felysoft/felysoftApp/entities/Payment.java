@@ -42,6 +42,9 @@ public class Payment implements Serializable {
     @Column(nullable = false)
     private BigDecimal total;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
     @JsonIgnore

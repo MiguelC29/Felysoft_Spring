@@ -120,12 +120,15 @@ public class SaleController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Sale sale = this.saleImp.findById(id);
-            saleImp.delete(sale);
+
+            sale.setEliminated(true);
+
+            this.saleImp.delete(sale);
 
             response.put("status", "success");
             response.put("data", "Eliminado Correctamente");

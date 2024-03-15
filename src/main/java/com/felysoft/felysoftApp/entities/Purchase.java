@@ -28,6 +28,9 @@ public class Purchase implements Serializable {
     @Column(nullable = false)
     private BigDecimal total;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore

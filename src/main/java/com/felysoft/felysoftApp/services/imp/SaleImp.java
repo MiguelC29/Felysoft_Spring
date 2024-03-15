@@ -16,12 +16,12 @@ public class SaleImp implements SaleService{
 
     @Override
     public List<Sale> findAll() throws Exception {
-        return this.saleRepository.findAll();
+        return this.saleRepository.findSaleByEliminatedFalse();
     }
 
     @Override
     public Sale findById(Long id){
-        return this.saleRepository.findById(id).orElse(null);
+        return this.saleRepository.findSaleByIdSaleAndEliminatedFalse(id);
     }
     @Override
     public void create(Sale sale) {
@@ -35,6 +35,6 @@ public class SaleImp implements SaleService{
 
     @Override
     public void delete(Sale sale) {
-        this.saleRepository.delete(sale);
+        this.saleRepository.save(sale);
     }
 }

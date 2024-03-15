@@ -16,12 +16,12 @@ public class PaymentImp implements PaymentService {
 
     @Override
     public List<Payment> findAll() throws Exception {
-        return  this.paymentRepository.findAll();
+        return  this.paymentRepository.findPaymentByEliminatedFalse();
     }
 
     @Override
     public Payment findById(Long id) {
-        return this.paymentRepository.findById(id).orElse(null);
+        return this.paymentRepository.findPaymentByIdPaymentAndEliminatedFalse(id);
     }
 
     @Override
@@ -36,6 +36,6 @@ public class PaymentImp implements PaymentService {
 
     @Override
     public void delete(Payment payment) {
-        this.paymentRepository.delete(payment);
+        this.paymentRepository.save(payment);
     }
 }

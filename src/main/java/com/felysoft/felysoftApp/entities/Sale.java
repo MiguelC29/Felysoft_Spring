@@ -28,6 +28,9 @@ public class Sale implements Serializable {
     @Column(nullable = false)
     private BigDecimal totalSale;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore

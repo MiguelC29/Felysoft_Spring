@@ -37,6 +37,9 @@ public class Expense implements Serializable {
     @Column(length = 320, nullable = false)
     private String description;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
