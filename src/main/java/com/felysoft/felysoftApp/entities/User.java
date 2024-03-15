@@ -68,6 +68,9 @@ public class User implements Serializable {
     @UpdateTimestamp
     private Timestamp lastModification;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore

@@ -16,12 +16,12 @@ public class BookImp implements BookService {
 
     @Override
     public List<Book> findAll() throws Exception {
-        return this.bookRepository.findAll();
+        return this.bookRepository.findBooksByEliminatedFalse();
     }
 
     @Override
     public Book findById(Long id) {
-        return this.bookRepository.findById(id).orElse(null);
+        return this.bookRepository.findBookByIdBookAndEliminatedFalse(id);
     }
 
     @Override

@@ -118,12 +118,13 @@ public class ReserveController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Reserve reserve = this.reserveImp.findById(id);
-            reserveImp.delete(reserve);
+            reserve.setEliminated(true);
+            this.reserveImp.delete(reserve);
 
             response.put("status", "success");
             response.put("data", "Eliminado Correctamente");

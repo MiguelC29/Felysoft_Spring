@@ -35,6 +35,9 @@ public class Reserve implements Serializable {
     @Column(nullable = false)
     private Time time;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore

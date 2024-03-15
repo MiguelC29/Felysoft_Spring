@@ -16,12 +16,12 @@ public class AuthorImp implements AuthorService {
 
     @Override
     public List<Author> findAll() throws Exception {
-        return this.authorRepository.findAll();
+        return this.authorRepository.findAuthorsByEliminatedFalse();
     }
 
     @Override
     public Author findById(Long id) {
-        return this.authorRepository.findById(id).orElse(null);
+        return this.authorRepository.findAuthorByIdAuthorAndEliminatedFalse(id);
     }
 
     @Override

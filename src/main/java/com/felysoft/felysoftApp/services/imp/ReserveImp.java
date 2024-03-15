@@ -16,12 +16,12 @@ public class ReserveImp implements ReserveService {
 
     @Override
     public List<Reserve> findAll() throws Exception {
-        return this.reserveRepository.findAll();
+        return this.reserveRepository.findReservesByEliminatedFalse();
     }
 
     @Override
     public Reserve findById(Long id) {
-        return this.reserveRepository.findById(id).orElse(null);
+        return this.reserveRepository.findReservesByIdReserveAndEliminatedFalse(id);
     }
 
     @Override

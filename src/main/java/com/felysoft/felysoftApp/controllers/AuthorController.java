@@ -98,11 +98,13 @@ public class AuthorController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @DeleteMapping(value = "delete/{id}")
+    @PutMapping(value = "delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Author author = this.authorImp.findById(id);
+            author.setEliminated(true);
+
             authorImp.delete(author);
 
             response.put("status", "success");

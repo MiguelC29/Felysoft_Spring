@@ -86,12 +86,14 @@ public class GenreController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Genre genre = this.genreImp.findById(id);
-            genreImp.delete(genre);
+
+            genre.setEliminated(true);
+            this.genreImp.delete(genre);
 
             response.put("status", "success");
             response.put("data", "Eliminado Correctamente");
