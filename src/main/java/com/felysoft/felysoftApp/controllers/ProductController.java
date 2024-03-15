@@ -125,11 +125,14 @@ public class ProductController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Product product = this.productImp.findById(id);
+
+            product.setEliminated(true);
+
             productImp.delete(product);
 
             response.put("status", "success");

@@ -16,13 +16,12 @@ public class ProviderImp implements ProviderService {
 
     @Override
     public List<Provider> findAll() throws Exception {
-        return this.providerRepository.findAll();
+        return this.providerRepository.findProvidersByEliminatedFalse();
     }
 
     @Override
     public Provider findById(Long id) {
-        return this.providerRepository.findById(id).orElse(null);
-        // Sin el .orElse(null); da error | RECOMENDACION IDE AGREGAR Optional<Provider>
+        return this.providerRepository.findProviderByIdProviderAndEliminatedFalse(id);
     }
 
     @Override
@@ -37,6 +36,6 @@ public class ProviderImp implements ProviderService {
 
     @Override
     public void delete(Provider provider) {
-        this.providerRepository.delete(provider);
+        this.providerRepository.save(provider);
     }
 }

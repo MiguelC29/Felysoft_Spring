@@ -99,11 +99,14 @@ public class NoveltyInvController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             NoveltyInv noveltyInv = this.noveltyInvImp.findById(id);
+
+            noveltyInv.setEliminated(true);
+
             noveltyInvImp.delete(noveltyInv);
 
             response.put("status", "success");
