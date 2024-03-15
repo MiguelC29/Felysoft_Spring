@@ -93,11 +93,14 @@ public class RoleController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Role role = this.roleImp.findById(id);
+
+            role.setEliminated(true);
+
             roleImp.delete(role);
 
             response.put("status", "success");

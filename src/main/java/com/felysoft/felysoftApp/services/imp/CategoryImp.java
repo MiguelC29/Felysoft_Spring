@@ -16,12 +16,12 @@ public class CategoryImp implements CategoryService {
 
     @Override
     public List<Category> findAll() throws Exception {
-        return this.categoryRepository.findAll();
+        return this.categoryRepository.findCategoriesByEliminatedFalse();
     }
 
     @Override
     public Category findById(Long id) {
-        return this.categoryRepository.findById(id).orElse(null);
+        return this.categoryRepository.findCategoryByIdCategoryAndEliminatedFalse(id);
     }
 
     @Override
@@ -36,6 +36,6 @@ public class CategoryImp implements CategoryService {
 
     @Override
     public void delete(Category category) {
-        this.categoryRepository.delete(category);
+        this.categoryRepository.save(category);
     }
 }

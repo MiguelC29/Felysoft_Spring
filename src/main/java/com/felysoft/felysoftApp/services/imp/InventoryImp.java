@@ -16,12 +16,12 @@ public class InventoryImp implements InventoryService {
 
     @Override
     public List<Inventory> findAll() throws Exception {
-        return this.inventoryRepository.findAll();
+        return this.inventoryRepository.findInventoriesByEliminatedFalse();
     }
 
     @Override
     public Inventory findById(Long id) {
-        return this.inventoryRepository.findById(id).orElse(null);
+        return this.inventoryRepository.findInventoryByIdInventoryAndEliminatedFalse(id);
     }
 
     @Override
@@ -36,6 +36,6 @@ public class InventoryImp implements InventoryService {
 
     @Override
     public void delete(Inventory inventory) {
-        this.inventoryRepository.delete(inventory);
+        this.inventoryRepository.save(inventory);
     }
 }

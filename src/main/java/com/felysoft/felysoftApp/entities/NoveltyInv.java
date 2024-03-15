@@ -30,6 +30,9 @@ public class NoveltyInv implements Serializable {
     @Column(nullable = false)
     private LocalDateTime date;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @OneToMany(mappedBy = "noveltyInv", cascade = CascadeType.ALL)
     @JsonIgnore

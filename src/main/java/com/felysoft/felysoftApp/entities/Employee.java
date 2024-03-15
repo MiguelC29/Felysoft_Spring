@@ -31,6 +31,9 @@ public class Employee implements Serializable {
     @Column(nullable = false)
     private BigDecimal salary;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdNumIdentification", nullable = false)

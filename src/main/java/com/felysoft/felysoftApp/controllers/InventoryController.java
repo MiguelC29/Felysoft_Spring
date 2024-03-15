@@ -135,11 +135,14 @@ public class InventoryController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Inventory inventory = this.inventoryImp.findById(id);
+
+            inventory.setEliminated(true);
+
             inventoryImp.delete(inventory);
 
             response.put("status", "success");

@@ -41,6 +41,9 @@ public class Product implements Serializable {
     @Column
     private Date expiryDate;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdCategory", nullable = false)
