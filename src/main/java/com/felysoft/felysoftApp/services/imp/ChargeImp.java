@@ -16,12 +16,12 @@ public class ChargeImp implements ChargeService {
 
     @Override
     public List<Charge> findAll() throws Exception {
-        return this.chargeRepository.findAll();
+        return this.chargeRepository.findChargeByEliminatedFalse();
     }
 
     @Override
     public Charge findById(Long id) {
-        return this.chargeRepository.findById(id).orElse(null);
+        return this.chargeRepository.findChargeByIdChargeAndEliminatedFalse(id);
     }
 
     @Override
@@ -36,6 +36,6 @@ public class ChargeImp implements ChargeService {
 
     @Override
     public void delete(Charge charge) {
-        this.chargeRepository.delete(charge);
+        this.chargeRepository.save(charge);
     }
 }

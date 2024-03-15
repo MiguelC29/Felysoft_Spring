@@ -140,11 +140,14 @@ public class ExpenseController {
 
 
 
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Expense expense = this.expenseImp.findById(id);
+
+            expense.setEliminated(true);
+
             expenseImp.delete(expense);
 
             response.put("status", "success");

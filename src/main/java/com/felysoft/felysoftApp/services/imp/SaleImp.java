@@ -21,7 +21,7 @@ public class SaleImp implements SaleService{
 
     @Override
     public Sale findById(Long id){
-        return this.saleRepository.findById(id).orElse(null);
+        return this.saleRepository.findSaleByIdSaleAndEliminatedFalse(id);
     }
     @Override
     public void create(Sale sale) {

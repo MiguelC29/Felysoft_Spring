@@ -108,11 +108,14 @@ public class ChargeController {
 
 
 
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Charge charge = this.chargeImp.findById(id);
+
+            charge.setEliminated(true);
+
             chargeImp.delete(charge);
 
             response.put("status", "success");

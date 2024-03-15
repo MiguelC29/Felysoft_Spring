@@ -16,12 +16,12 @@ public class PurchaseImp implements PurchaseService {
 
     @Override
     public List<Purchase> findAll() throws Exception {
-        return this.purchaseRepository.findAll();
+        return this.purchaseRepository.findPurchaseByEliminatedFalse();
     }
 
     @Override
     public Purchase findById(Long id) {
-        return this.purchaseRepository.findById(id).orElse(null);
+        return this.purchaseRepository.findPurchaseByIdPurchaseAndEliminatedFalse(id);
     }
 
     @Override
@@ -36,6 +36,6 @@ public class PurchaseImp implements PurchaseService {
 
     @Override
     public void delete(Purchase purchase) {
-        this.purchaseRepository.delete(purchase);
+        this.purchaseRepository.save(purchase);
     }
 }

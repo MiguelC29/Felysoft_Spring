@@ -124,6 +124,9 @@ public class PurchaseController {
         Map<String, Object> response = new HashMap<>();
         try {
             Purchase purchase = this.purchaseImp.findById(id);
+
+            purchase.setEliminated(true);
+
             purchaseImp.delete(purchase);
 
             response.put("status", "success");

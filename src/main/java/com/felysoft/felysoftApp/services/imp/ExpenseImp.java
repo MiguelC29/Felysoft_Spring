@@ -16,12 +16,12 @@ public class ExpenseImp implements ExpenseService {
 
     @Override
     public List<Expense> findAll() throws Exception {
-        return this.expenseRepository.findAll();
+        return this.expenseRepository.findExpenseByEliminatedFalse();
     }
 
     @Override
     public Expense findById(Long id) {
-        return this.expenseRepository.findById(id).orElse(null);
+        return this.expenseRepository.findExpenseByIdExpenseAndEliminatedFalse(id);
     }
 
     @Override
@@ -36,6 +36,6 @@ public class ExpenseImp implements ExpenseService {
 
     @Override
     public void delete(Expense expense) {
-        this.expenseRepository.delete(expense);
+        this.expenseRepository.save(expense);
     }
 }
