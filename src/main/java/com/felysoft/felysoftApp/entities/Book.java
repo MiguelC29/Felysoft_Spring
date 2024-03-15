@@ -22,10 +22,10 @@ public class Book implements Serializable {
     @Column
     private Long idBook;
 
-    @Column(length = 320, nullable = false)
+    @Column(length = 320, nullable = false, unique = true)
     private String title;
 
-    @Column(length = 320, nullable = false, unique = true)
+    @Column(length = 320, nullable = false)
     private String editorial;
 
     @Column(length = 320, nullable = false)

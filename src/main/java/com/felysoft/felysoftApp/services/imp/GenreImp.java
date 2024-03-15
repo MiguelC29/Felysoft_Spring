@@ -16,12 +16,12 @@ public class GenreImp implements GenreService {
 
     @Override
     public List<Genre> findAll() throws Exception {
-        return this.genreRepository.findGenresByEliminateFalse();
+        return this.genreRepository.findGenresByEliminatedFalse();
     }
 
     @Override
     public Genre findById(Long id) {
-        return this.genreRepository.findById(id).orElse(null);
+        return this.genreRepository.findGenreByIdGenreAndEliminatedFalse(id);
     }
 
     @Override

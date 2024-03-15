@@ -16,12 +16,12 @@ public class UserImp implements UserService {
 
     @Override
     public List<User> findAll() throws Exception {
-        return this.userRepository.findAll();
+        return this.userRepository.findUsersByEliminatedFalse();
     }
 
     @Override
     public User findById(Long id) {
-        return this.userRepository.findById(id).orElse(null);
+        return this.userRepository.findUserByNumIdentificationAndEliminatedFalse(id);
     }
 
     @Override

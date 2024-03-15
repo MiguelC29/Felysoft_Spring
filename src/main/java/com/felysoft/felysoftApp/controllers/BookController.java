@@ -116,12 +116,13 @@ public class BookController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Book book = this.bookImp.findById(id);
-            bookImp.delete(book);
+            book.setEliminated(true);
+            this.bookImp.delete(book);
 
             response.put("status", "success");
             response.put("data", "Eliminado Correctamente");

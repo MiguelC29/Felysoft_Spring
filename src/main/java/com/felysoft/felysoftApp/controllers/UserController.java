@@ -135,12 +135,13 @@ public class UserController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             User user = this.userImp.findById(id);
-            userImp.delete(user);
+            user.setEliminated(true);
+            this.userImp.delete(user);
 
             response.put("status", "success");
             response.put("data", "Eliminado Correctamente");
