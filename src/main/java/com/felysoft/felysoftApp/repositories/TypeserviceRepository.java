@@ -8,8 +8,9 @@ import java.util.List;
 
 @Repository
 public interface TypeserviceRepository extends JpaRepository<TypeService, Long> {
-    /*@Query("SELECT t FROM TypeService t WHERE t.eliminated = false")
-    List<TypeService> findAll();*/
 
-    List<TypeService> findTypeservicesByByEliminatedFalse();
+    //CONSULTA CON INVERSION DE CONTROL
+    List<TypeService> findTypeServicesByEliminatedFalse();
+
+    TypeService findTypeServiceByIdTypeServiceAndEliminatedFalse(Long id);
 }
