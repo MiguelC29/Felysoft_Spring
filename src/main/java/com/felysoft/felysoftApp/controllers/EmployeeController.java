@@ -110,11 +110,14 @@ public class EmployeeController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Employee employee = this.employeeImp.findById(id);
+
+            employee.setEliminated(true);
+
             employeeImp.delete(employee);
 
             response.put("status", "success");

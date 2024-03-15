@@ -16,12 +16,12 @@ public class EmployeeImp implements EmployeeService {
 
     @Override
     public List<Employee> findAll() throws Exception {
-        return this.employeeRepository.findAll();
+        return this.employeeRepository.findEmployeesByEliminatedFalse();
     }
 
     @Override
     public Employee findById(Long id) {
-        return this.employeeRepository.findById(id).orElse(null);
+        return this.employeeRepository.findEmployeeByIdEmployeeAndEliminatedFalse(id);
     }
 
     @Override
@@ -36,6 +36,6 @@ public class EmployeeImp implements EmployeeService {
 
     @Override
     public void delete(Employee employee) {
-        this.employeeRepository.delete(employee);
+        this.employeeRepository.save(employee);
     }
 }

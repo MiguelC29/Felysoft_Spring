@@ -98,11 +98,14 @@ public class ProviderController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Provider provider = this.providerImp.findById(id);
+
+            provider.setEliminated(true);
+
             providerImp.delete(provider);
 
             response.put("status", "success");

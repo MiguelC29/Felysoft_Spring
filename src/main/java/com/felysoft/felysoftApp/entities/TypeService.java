@@ -31,6 +31,9 @@ public class TypeService implements Serializable {
     @Column(nullable = false)
     private BigDecimal price;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @JsonIgnore
     @OneToMany(mappedBy = "typeService", cascade = CascadeType.ALL)

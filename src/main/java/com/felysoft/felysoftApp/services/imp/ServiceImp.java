@@ -15,12 +15,12 @@ public class ServiceImp implements ServiceService {
 
     @Override
     public List<Service> findAll() throws Exception {
-        return this.serviceRepository.findAll();
+        return this.serviceRepository.findServicesByEliminatedFalse();
     }
 
     @Override
     public Service findById(Long id) {
-        return this.serviceRepository.findById(id).orElse(null);
+        return this.serviceRepository.findServicesByIdServiceAndEliminatedFalse(id);
     }
 
     @Override
@@ -35,6 +35,6 @@ public class ServiceImp implements ServiceService {
 
     @Override
     public void delete(Service service) {
-        this.serviceRepository.delete(service);
+        this.serviceRepository.save(service);
     }
 }

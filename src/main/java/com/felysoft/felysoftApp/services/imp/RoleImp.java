@@ -16,12 +16,12 @@ public class RoleImp implements RoleService {
 
     @Override
     public List<Role> findAll() throws Exception {
-        return this.roleRepository.findAll();
+        return this.roleRepository.findRolesByEliminatedFalse();
     }
 
     @Override
     public Role findById(Long id) {
-        return this.roleRepository.findById(id).orElse(null);
+        return this.roleRepository.findRoleByIdRoleAndEliminatedFalse(id);
     }
 
     @Override
@@ -36,6 +36,6 @@ public class RoleImp implements RoleService {
 
     @Override
     public void delete(Role role) {
-        this.roleRepository.delete(role);
+        this.roleRepository.save(role);
     }
 }

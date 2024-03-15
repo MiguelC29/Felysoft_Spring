@@ -93,12 +93,15 @@ public class CategoryController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Category category = this.categoryImp.findById(id);
-            categoryImp.delete(category);
+
+            category.setEliminated(true);
+
+            this.categoryImp.delete(category);
 
             response.put("status", "success");
             response.put("data", "Eliminado Correctamente");

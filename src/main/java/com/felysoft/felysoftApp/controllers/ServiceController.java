@@ -113,12 +113,15 @@ public class ServiceController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "delete/{id}")
+    @PutMapping(value = "delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Service service = this.serviceImp.findById(id);
-            serviceImp.delete(service);
+
+            service.setEliminated(true);
+
+            this.serviceImp.delete(service);
 
             response.put("status", "success");
             response.put("data", "Eliminado Correctamente");

@@ -16,12 +16,12 @@ public class NoveltyInvImp implements NoveltyInvService {
 
     @Override
     public List<NoveltyInv> findAll() throws Exception {
-        return this.noveltyInvRepository.findAll();
+        return this.noveltyInvRepository.findNoveltyInvsByEliminatedFalse();
     }
 
     @Override
     public NoveltyInv findById(Long id) {
-        return this.noveltyInvRepository.findById(id).orElse(null);
+        return this.noveltyInvRepository.findNoveltyInvByIdNoveltyAndEliminatedFalse(id);
     }
 
     @Override
@@ -36,6 +36,6 @@ public class NoveltyInvImp implements NoveltyInvService {
 
     @Override
     public void delete(NoveltyInv noveltyInv) {
-        this.noveltyInvRepository.delete(noveltyInv);
+        this.noveltyInvRepository.save(noveltyInv);
     }
 }

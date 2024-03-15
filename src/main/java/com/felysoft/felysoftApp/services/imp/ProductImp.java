@@ -16,12 +16,12 @@ public class ProductImp implements ProductService {
 
     @Override
     public List<Product> findAll() throws Exception {
-        return this.productRepository.findAll();
+        return this.productRepository.findProductsByEliminatedFalse();
     }
 
     @Override
     public Product findById(Long id) {
-        return this.productRepository.findById(id).orElse(null);
+        return this.productRepository.findProductByIdProductAndEliminatedFalse(id);
     }
 
     @Override
@@ -36,6 +36,6 @@ public class ProductImp implements ProductService {
 
     @Override
     public void delete(Product product) {
-        this.productRepository.delete(product);
+        this.productRepository.save(product);
     }
 }

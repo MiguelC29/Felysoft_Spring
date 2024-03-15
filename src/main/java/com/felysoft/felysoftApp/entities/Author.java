@@ -34,6 +34,9 @@ public class Author implements Serializable {
     @Column(length = 540, nullable = false)
     private String biography;
 
+    @Column(nullable = false)
+    private boolean eliminated;
+
     // FOREIGN KEYS
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     @JsonIgnore
