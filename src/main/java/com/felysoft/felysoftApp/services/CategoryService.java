@@ -9,7 +9,6 @@ import java.util.List;
 public interface CategoryService {
     public List<Category> findAll() throws Exception;
     public Category findById(Long id);
-
     public List<Category> findByIdProvider(Long id);
 
     @Transactional

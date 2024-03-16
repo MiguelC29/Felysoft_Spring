@@ -50,6 +50,21 @@ public class ProviderController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("providersByCategory/{id}")
+    public ResponseEntity<Map<String, Object>> findByIdCategory(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Provider> providerList = this.providerImp.findByIdCategory(id);
+            response.put("status", "success");
+            response.put("data", providerList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
