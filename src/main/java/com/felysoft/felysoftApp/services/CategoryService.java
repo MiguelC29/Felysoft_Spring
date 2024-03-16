@@ -22,5 +22,5 @@ public interface CategoryService {
     public void delete(Category category);
 
     @Transactional
-    void addProviderToCategory(Long categoryId, Long providerId);
+    public void addProviderToCategory(Long categoryId, Long providerId);
 }
