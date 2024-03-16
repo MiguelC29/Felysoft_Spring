@@ -16,9 +16,6 @@ public class ChargeImp implements ChargeService {
     @Autowired
     private ChargeRepository chargeRepository;
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
     @Override
     public List<Charge> findAll() throws Exception {
         return this.chargeRepository.findChargeByEliminatedFalse();
@@ -41,15 +38,6 @@ public class ChargeImp implements ChargeService {
 
     @Override
     public void delete(Charge charge) {
-        this.chargeRepository.save(charge);
-    }
-
-    @Override
-    public void addEmployeeToCharge(Long employeeId, Long chargeId) {
-        Employee employee = this.employeeRepository.findById(employeeId).orElse(null);
-        Charge charge = this.chargeRepository.findById(chargeId).orElse(null);
-
-        charge.getEmployees().add(employee);
         this.chargeRepository.save(charge);
     }
 }

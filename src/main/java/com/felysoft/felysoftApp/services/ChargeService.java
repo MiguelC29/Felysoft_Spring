@@ -21,6 +21,4 @@ public interface ChargeService {
     @Modifying
     public void delete(Charge charge);
 
-    @Transactional
-    public void addEmployeeToCharge(Long employeeId, Long chargeId);
 }

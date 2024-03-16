@@ -80,27 +80,6 @@ public class ChargeController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
-    @PostMapping("add-employee")
-    public ResponseEntity<Map<String, Object>> addEmployeeToCharge(@RequestBody Map<String, Object> request){
-        Map<String, Object> response = new HashMap<>();
-        try {
-            Long employeeId = Long.parseLong(request.get("employeeId").toString());
-            Long chargeId = Long.parseLong(request.get("chargeId").toString());
-
-            this.chargeImp.addEmployeeToCharge(chargeId, employeeId);
-
-            response.put("status", "success");
-            response.put("data", "Asociación Exitosa");
-
-        } catch (Exception e) {
-            response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
     @PutMapping("update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
