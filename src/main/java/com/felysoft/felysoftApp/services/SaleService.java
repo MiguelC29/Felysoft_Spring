@@ -20,4 +20,7 @@ public interface SaleService {
     @Transactional
     @Modifying
     public void delete(Sale sale);
+
+    @Transactional
+    public void addDetailToSale(Long saleId, Long detailId);
 }
