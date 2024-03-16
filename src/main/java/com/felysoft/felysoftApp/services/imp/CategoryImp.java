@@ -30,6 +30,11 @@ public class CategoryImp implements CategoryService {
     }
 
     @Override
+    public List<Category> findByIdProvider(Long id) {
+        return this.categoryRepository.findByProviderId(id);
+    }
+
+    @Override
     public void create(Category category) {
         this.categoryRepository.save(category);
     }
