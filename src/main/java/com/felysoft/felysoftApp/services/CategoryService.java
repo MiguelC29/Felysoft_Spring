@@ -20,4 +20,7 @@ public interface CategoryService {
     @Transactional
     @Modifying
     public void delete(Category category);
+
+    @Transactional
+    public void addProviderToCategory(Long categoryId, Long providerId);
 }

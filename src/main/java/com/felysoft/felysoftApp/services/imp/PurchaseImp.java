@@ -1,6 +1,8 @@
 package com.felysoft.felysoftApp.services.imp;
 
+import com.felysoft.felysoftApp.entities.Detail;
 import com.felysoft.felysoftApp.entities.Purchase;
+import com.felysoft.felysoftApp.repositories.DetailRepository;
 import com.felysoft.felysoftApp.repositories.PurchaseRepository;
 import com.felysoft.felysoftApp.services.PurchaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,9 @@ public class PurchaseImp implements PurchaseService {
 
     @Autowired
     private PurchaseRepository purchaseRepository;
+
+    @Autowired
+    private DetailRepository detailRepository;
 
     @Override
     public List<Purchase> findAll() throws Exception {
@@ -36,6 +41,15 @@ public class PurchaseImp implements PurchaseService {
 
     @Override
     public void delete(Purchase purchase) {
+        this.purchaseRepository.save(purchase);
+    }
+
+    @Override
+    public void addDetailToPurchase(Long purchaseId, Long detailId) {
+        Purchase purchase = this.purchaseRepository.findById(purchaseId).orElse(null);
+        Detail detail = this.detailRepository.findById(detailId).orElse(null);
+
+        purchase.getDetails().add(detail);
         this.purchaseRepository.save(purchase);
     }
 }

@@ -73,6 +73,25 @@ public class CategoryController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PostMapping("add-provider")
+    public ResponseEntity<Map<String, Object>> addProviderToCategory(@RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Long categoryId = Long.parseLong(request.get("categoryId").toString());
+            Long providerId = Long.parseLong(request.get("providerId").toString());
+
+            this.categoryImp.addProviderToCategory(categoryId, providerId);
+
+            response.put("status", "success");
+            response.put("data", "Asociación Exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PutMapping("update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();

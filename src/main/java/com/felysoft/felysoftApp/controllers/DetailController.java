@@ -61,7 +61,6 @@ public class DetailController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
@@ -74,16 +73,23 @@ public class DetailController {
             //PRECIO UNICO
             detail.setUnitPrice(new BigDecimal(request.get("unitPrice").toString()));
 
-
             //FORANEAS
-            Product product = productImp.findById(Long.parseLong(request.get("fkIdProduct").toString()));
-            detail.setProduct(product);
+            // Verificar si la clave "fkIdProduct" está presente en el mapa y no es null
+            if (request.containsKey("fkIdProduct") && request.get("fkIdProduct") != null) {
+                Product product = productImp.findById(Long.parseLong(request.get("fkIdProduct").toString()));
+                detail.setProduct(product);
+            }
 
-            Book book = bookImp.findById(Long.parseLong(request.get("fkIdBook").toString()));
-            detail.setBook(book);
+            // Verificar si la clave "fkIdBook" está presente en el mapa y no es null
+            if (request.containsKey("fkIdBook") && request.get("fkIdBook") != null) {
+                Book book = bookImp.findById(Long.parseLong(request.get("fkIdBook").toString()));
+                detail.setBook(book);
+            }
 
-            Service service = serviceImp.findById(Long.parseLong(request.get("fkIdService").toString()));
-            detail.setService(service);
+            if (request.containsKey("fkIdService") && request.get("fkIdService") != null) {
+                Service service = serviceImp.findById(Long.parseLong(request.get("fkIdService").toString()));
+                detail.setService(service);
+            }
 
             this.detailImp.create(detail);
 
