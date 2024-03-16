@@ -1,7 +1,9 @@
 package com.felysoft.felysoftApp.services.imp;
 
 import com.felysoft.felysoftApp.entities.Charge;
+import com.felysoft.felysoftApp.entities.Employee;
 import com.felysoft.felysoftApp.repositories.ChargeRepository;
+import com.felysoft.felysoftApp.repositories.EmployeeRepository;
 import com.felysoft.felysoftApp.services.ChargeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,9 @@ public class ChargeImp implements ChargeService {
 
     @Autowired
     private ChargeRepository chargeRepository;
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     @Override
     public List<Charge> findAll() throws Exception {
@@ -36,6 +41,15 @@ public class ChargeImp implements ChargeService {
 
     @Override
     public void delete(Charge charge) {
+        this.chargeRepository.save(charge);
+    }
+
+    @Override
+    public void addEmployeeToCharge(Long employeeId, Long chargeId) {
+        Employee employee = this.employeeRepository.findById(employeeId).orElse(null);
+        Charge charge = this.chargeRepository.findById(chargeId).orElse(null);
+
+        charge.getEmployees().add(employee);
         this.chargeRepository.save(charge);
     }
 }

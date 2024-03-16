@@ -20,4 +20,7 @@ public interface ChargeService {
     @Transactional
     @Modifying
     public void delete(Charge charge);
+
+    @Transactional
+    public void addEmployeeToCharge(Long employeeId, Long chargeId);
 }
