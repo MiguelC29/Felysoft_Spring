@@ -1,9 +1,11 @@
 package com.felysoft.felysoftApp.controllers;
 
 import com.felysoft.felysoftApp.entities.Category;
+import com.felysoft.felysoftApp.entities.Inventory;
 import com.felysoft.felysoftApp.entities.Product;
 import com.felysoft.felysoftApp.entities.Provider;
 import com.felysoft.felysoftApp.services.imp.CategoryImp;
+import com.felysoft.felysoftApp.services.imp.InventoryImp;
 import com.felysoft.felysoftApp.services.imp.ProductImp;
 import com.felysoft.felysoftApp.services.imp.ProviderImp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +31,8 @@ public class ProductController {
     private CategoryImp categoryImp;
     @Autowired
     private ProviderImp providerImp;
+    @Autowired
+    private InventoryImp inventoryImp;
 
     @GetMapping("all")
     public ResponseEntity<Map<String, Object>> findAll() {
@@ -75,12 +80,27 @@ public class ProductController {
             product.setExpiryDate(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse((String) request.get("expiryDate")).getTime()));
 
             // CAMPOS LLAVES FORANEAS
-            Category category = categoryImp.findById(Long.parseLong(request.get("fkIdCategory").toString()));
+            Category category = categoryImp.findById(Long.parseLong(request.get("IdCategory").toString()));
             product.setCategory(category);
-            Provider provider = providerImp.findById(Long.parseLong(request.get("fkIdProvider").toString()));
+            Provider provider = providerImp.findById(Long.parseLong(request.get("IdProvider").toString()));
             product.setProvider(provider);
 
             this.productImp.create(product);
+
+            // INSTANCIA OBJETO INVENTARIO
+            Inventory inventory = new Inventory();
+            // CAMPOS PROPIOS ENTIDAD INVENTARIO
+            inventory.setStock(Integer.parseInt(request.get("stockInicial").toString()));
+            inventory.setState(Inventory.State.DISPONIBLE);
+            inventory.setTypeInv(Inventory.TypeInv.PRODUCTOS);
+            // Configurar fechas de creación y actualización
+            inventory.setDateRegister(new Timestamp(System.currentTimeMillis()));
+            inventory.setLastModification(new Timestamp(System.currentTimeMillis()));
+
+            // CAMPOS LLAVES FORANEAS
+            inventory.setProduct(product);
+
+            this.inventoryImp.create(inventory);
 
             response.put("status", "success");
             response.put("data", "Registro Exitoso");
@@ -132,6 +152,8 @@ public class ProductController {
             Product product = this.productImp.findById(id);
 
             product.setEliminated(true);
+
+            // TODO: FALTA CREAR UN METODO O ALGO PARA CUANDO YO MARQUE COMO ELIMINADO UN PRODUCTO TAMBIEN SE MARQUE COMO ELIMINADO EN EL INVENTARIO
 
             productImp.delete(product);
 

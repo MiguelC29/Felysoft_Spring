@@ -44,6 +44,7 @@ public class InventoryController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /*
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
@@ -51,22 +52,8 @@ public class InventoryController {
             // INSTANCIA OBJETO INVENTARIO
             Inventory inventory = new Inventory();
 
-            /*
-            * CAMBIOS REALIZADOS
-            * -QUITE LA OPCION DE RECIBIR POR EL CUERPO DE LA PETICION EL TIPO DE INVENTARIO, YA QUE SI YO LE PROPORCIONO UN ID DE PRODUCTO,
-            * ES PORQUE EL TIPO DE INVENTARIO VA A SER PRODUCTO ENTONCES SE DEBERIA REGISTRAR ESE ESTADO AUTOMATICAMENTE. LO MISMO PARA EL LIBRO.
-            * -QUITE LA OPCION DE RECIBIR POR EL CUERPO DE LA PETICION EL ESTADO, YA QUE PIENSO QUE SI RECIEN ESTOY REGISTRANDO EL PRODUCTO EN EL INVENTARIO,
-            * LE DEBO PROPORCIONAR UN STOCK INICIAL POR LO CUAL EL ESTADO SERA DISPONIBLE
-            * -ADICIONAL ANTERIORMENTE EN LA CONDICION DONDE EVALUO SI EXISTE LA CLAVE FORANEA DE PRODUCTO TENIA EL CONDICIONAL DE LIBRO Y PRODUCTO SEPARADO,
-            * LO QUE ME PERMITIRIA AGREGAR UNA CLAVE FORANEA DE PRODUCTO Y LIBRO AL MISMO TIEMPO, LO CUAL NO ES CORRETO. POR LO TANTO SE USARIA UN IF Y ELSE IF,
-            * PARA VALIDAR SI EXISTE ALGUNO, ENTONCES EL OTRO NO LO TOMARIA EN CUENTA.
-            * - POR ULTIMO QUITE LA VALIDACION DE FK DE NOVEDAD, YA QUE COMO RECIEN ESTOY REGISTRANDO EL PRODUCTO O LIBRO NO DEBERIA HABER NINGUNA NOVEDAD
-            * - HABLAR SOBRE EL CONTROLADOR DE INVENTARIO, YA QUE HAY METODOS QUE NO TIENEN SENTIDO- AJUSTAR PARA PRODUCTO Y LIBRO*/
-
             // CAMPOS PROPIOS ENTIDAD INVENTARIO
             inventory.setStock(Integer.parseInt(request.get("stock").toString()));
-            //inventory.setTypeInv(Inventory.TypeInv.valueOf(request.get("typeInv").toString().toUpperCase()));
-            //inventory.setState(Inventory.State.valueOf(request.get("state").toString().toUpperCase()));
             inventory.setState(Inventory.State.DISPONIBLE);
             // Configurar fechas de creación y actualización
             inventory.setDateRegister(new Timestamp(System.currentTimeMillis()));
@@ -84,13 +71,6 @@ public class InventoryController {
                 inventory.setBook(book);
                 inventory.setTypeInv(Inventory.TypeInv.LIBROS);
             }
-            /*
-            // Verificar si la clave "fkIdNovelty" está presente en el mapa y no es null
-            if (request.containsKey("fkIdNovelty") && request.get("fkIdNovelty") != null) {
-                NoveltyInv noveltyInv = noveltyInvImp.findById(Long.parseLong(request.get("fkIdNovelty").toString()));
-                inventory.setNoveltyInv(noveltyInv);
-            }*/
-
             this.inventoryImp.create(inventory);
 
             response.put("status", "success");
@@ -102,6 +82,7 @@ public class InventoryController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    */
 
     @PutMapping("update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
@@ -122,10 +103,8 @@ public class InventoryController {
             if (request.containsKey("fkIdProduct") && request.get("fkIdProduct") != null) {
                 Product product = productImp.findById(Long.parseLong(request.get("fkIdProduct").toString()));
                 inventory.setProduct(product);
-            }
-
-            // Verificar si la clave "fkIdBook" está presente en el mapa y no es null
-            if (request.containsKey("fkIdBook") && request.get("fkIdBook") != null) {
+            } else if (request.containsKey("fkIdBook") && request.get("fkIdBook") != null) {
+                // Verificar si la clave "fkIdBook" está presente en el mapa y no es null
                 Book book = bookImp.findById(Long.parseLong(request.get("fkIdBook").toString()));
                 inventory.setBook(book);
             }
