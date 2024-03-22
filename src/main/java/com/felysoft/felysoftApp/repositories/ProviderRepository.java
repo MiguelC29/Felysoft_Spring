@@ -14,6 +14,6 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
     List<Provider> findProvidersByEliminatedFalse();
     Provider findProviderByIdProviderAndEliminatedFalse(Long id);
 
-    @Query("SELECT p FROM Provider p JOIN p.categories c WHERE c.idCategory = :categoryId")
+    @Query("SELECT p FROM Provider p JOIN p.categories c WHERE c.idCategory = :categoryId AND p.eliminated = false")
     List<Provider> findByCategoryId(@Param("categoryId") Long idCategory);
 }
