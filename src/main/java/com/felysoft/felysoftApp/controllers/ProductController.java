@@ -124,17 +124,22 @@ public class ProductController {
             Product product = this.productImp.findById(id);
 
             // CAMPOS PROPIOS ENTIDAD PRODUCTO
-            product.setImage(request.get("image").toString().getBytes());
-            product.setTypeImg(request.get("typeImg").toString());
+            if (request.containsKey("image") && request.get("image") != null) {
+                product.setImage(request.get("image").toString().getBytes());
+            }
+            if (request.containsKey("typeImg") && request.get("typeImg") != null) {
+                product.setTypeImg(request.get("typeImg").toString());
+            }
+
             product.setName(request.get("name").toString().toUpperCase());
             product.setBrand(request.get("brand").toString().toUpperCase());
             product.setSalePrice(new BigDecimal(request.get("salePrice").toString()));
             product.setExpiryDate(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse((String) request.get("expiryDate")).getTime()));
 
             // CAMPOS LLAVES FORANEAS
-            Category category = categoryImp.findById(Long.parseLong(request.get("fkIdCategory").toString()));
+            Category category = categoryImp.findById(Long.parseLong(request.get("IdCategory").toString()));
             product.setCategory(category);
-            Provider provider = providerImp.findById(Long.parseLong(request.get("fkIdProvider").toString()));
+            Provider provider = providerImp.findById(Long.parseLong(request.get("IdProvider").toString()));
             product.setProvider(provider);
 
             this.productImp.update(product);
