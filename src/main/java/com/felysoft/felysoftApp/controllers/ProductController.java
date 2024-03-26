@@ -84,9 +84,9 @@ public class ProductController {
             product.setExpiryDate(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse((String) request.get("expiryDate")).getTime()));
 
             // CAMPOS LLAVES FORANEAS
-            Category category = categoryImp.findById(Long.parseLong(request.get("IdCategory").toString()));
+            Category category = categoryImp.findById(Long.parseLong(request.get("category").toString()));
             product.setCategory(category);
-            Provider provider = providerImp.findById(Long.parseLong(request.get("IdProvider").toString()));
+            Provider provider = providerImp.findById(Long.parseLong(request.get("provider").toString()));
             product.setProvider(provider);
 
             this.productImp.create(product);
@@ -137,9 +137,9 @@ public class ProductController {
             product.setExpiryDate(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse((String) request.get("expiryDate")).getTime()));
 
             // CAMPOS LLAVES FORANEAS
-            Category category = categoryImp.findById(Long.parseLong(request.get("IdCategory").toString()));
+            Category category = categoryImp.findById(Long.parseLong(request.get("category").toString()));
             product.setCategory(category);
-            Provider provider = providerImp.findById(Long.parseLong(request.get("IdProvider").toString()));
+            Provider provider = providerImp.findById(Long.parseLong(request.get("provider").toString()));
             product.setProvider(provider);
 
             this.productImp.update(product);
