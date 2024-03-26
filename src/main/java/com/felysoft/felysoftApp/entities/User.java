@@ -1,6 +1,6 @@
 package com.felysoft.felysoftApp.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import  com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -48,7 +50,7 @@ public class User implements Serializable {
     @Column(nullable = false)
     private Gender gender;
 
-    @Column(length = 45, nullable = false)
+    @Column(length = 45, nullable = false, unique = true)
     private String username;
 
     @Column(length = 45, nullable = false)
@@ -71,11 +73,35 @@ public class User implements Serializable {
     @Column(nullable = false)
     private boolean eliminated;
 
+
+    //SPRING SECURITY
+    @Column(name = "is_enabled")
+    private boolean isEnabled;
+
+    @Column(name = "account_No_Expired")
+    private boolean accountNoExpired;
+
+    @Column(name = "account_No_Locked")
+    private boolean accountNoLocked;
+
+    @Column(name = "credential_No_Expired")
+    private boolean credentialNoExpired;
+
+
+
+    //FOREING KEY SPRING SECURITY
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name="user_roles", joinColumns = @JoinColumn(name= "user_id"), inverseJoinColumns = @JoinColumn(name= "role_id"))
+    private Set<Role> roles = new HashSet<>();
+
+
+
+
     // FOREIGN KEYS
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
-    @JoinColumn(name = "fkIdRole", nullable = false)
-    private Role role;
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    @JsonIgnore
+//    @JoinColumn(name = "fkIdRole", nullable = false)
+//    private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore

@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/user/", method = {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:8086/api/user/all")
 public class UserController {
     @Autowired
     private UserImp userImp;
@@ -80,10 +80,11 @@ public class UserController {
             // Configurar fechas de creación y actualización
             user.setDateRegister(new Timestamp(System.currentTimeMillis()));
             user.setLastModification(new Timestamp(System.currentTimeMillis()));
+
             //CAMPOS DE LAS LLAVES FORANEAS
-            Role role = roleImp.findById(Long.parseLong(request.get("fkIdRole").toString()));
-            user.setRole(role);
-            this.userImp.create(user);
+//            Role role = roleImp.findById(Long.parseLong(request.get("fkIdRole").toString()));
+//            user.setRole(role);
+//            this.userImp.create(user);
 
             response.put("status","success");
             response.put("data","Registro Exitoso");
@@ -121,10 +122,10 @@ public class UserController {
             // Configurar fechas de creación y actualización
             user.setDateRegister(new Timestamp(System.currentTimeMillis()));
             user.setLastModification(new Timestamp(System.currentTimeMillis()));
-            //CAMPOS DE LAS LLAVES FORANEAS
-            Role role = roleImp.findById(Long.parseLong(request.get("fkIdRole").toString()));
-            user.setRole(role);
-            this.userImp.update(user);
+//            //CAMPOS DE LAS LLAVES FORANEAS
+//            Role role = roleImp.findById(Long.parseLong(request.get("fkIdRole").toString()));
+//            user.setRole(role);
+//            this.userImp.update(user);
 
             response.put("status", "success");
             response.put("data", "Actualización exitosa");
