@@ -44,37 +44,13 @@ public class InventoryController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    /*
-    @PostMapping("create")
-    public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request) {
+    @GetMapping("inventoryProducts")
+    public ResponseEntity<Map<String, Object>> findInventoryProducts() {
         Map<String, Object> response = new HashMap<>();
         try {
-            // INSTANCIA OBJETO INVENTARIO
-            Inventory inventory = new Inventory();
-
-            // CAMPOS PROPIOS ENTIDAD INVENTARIO
-            inventory.setStock(Integer.parseInt(request.get("stock").toString()));
-            inventory.setState(Inventory.State.DISPONIBLE);
-            // Configurar fechas de creación y actualización
-            inventory.setDateRegister(new Timestamp(System.currentTimeMillis()));
-            inventory.setLastModification(new Timestamp(System.currentTimeMillis()));
-
-            // CAMPOS LLAVES FORANEAS
-            // Verificar si la clave "fkIdProduct" está presente en el mapa y no es null
-            if (request.containsKey("fkIdProduct") && request.get("fkIdProduct") != null) {
-                Product product = productImp.findById(Long.parseLong(request.get("fkIdProduct").toString()));
-                inventory.setProduct(product);
-                inventory.setTypeInv(Inventory.TypeInv.PRODUCTOS);
-            } else if (request.containsKey("fkIdBook") && request.get("fkIdBook") != null) {
-                // Verificar si la clave "fkIdBook" está presente en el mapa y no es null
-                Book book = bookImp.findById(Long.parseLong(request.get("fkIdBook").toString()));
-                inventory.setBook(book);
-                inventory.setTypeInv(Inventory.TypeInv.LIBROS);
-            }
-            this.inventoryImp.create(inventory);
-
+            List<Inventory> productsInventoryList = this.inventoryImp.findByTypeInv(Inventory.TypeInv.PRODUCTOS);
             response.put("status", "success");
-            response.put("data", "Registro Exitoso");
+            response.put("data", productsInventoryList);
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -82,7 +58,21 @@ public class InventoryController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    */
+
+    @GetMapping("inventoryBooks")
+    public ResponseEntity<Map<String, Object>> findInventoryBooks() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Inventory> booksInventoryList = this.inventoryImp.findByTypeInv(Inventory.TypeInv.LIBROS);
+            response.put("status", "success");
+            response.put("data", booksInventoryList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @PutMapping("update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {

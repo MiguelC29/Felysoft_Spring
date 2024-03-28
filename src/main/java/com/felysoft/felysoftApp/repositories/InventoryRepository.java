@@ -10,5 +10,7 @@ import java.util.List;
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
     List<Inventory> findInventoriesByEliminatedFalse();
+
+    List<Inventory> findInventoriesByTypeInv(Inventory.TypeInv typeInv);
     Inventory findInventoryByIdInventoryAndEliminatedFalse(Long id);
 }
