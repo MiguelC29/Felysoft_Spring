@@ -11,5 +11,5 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findUsersByEliminatedFalse();
 
-    User findUserByNumIdentificationAndEliminatedFalse(Long id);
+    User findUserByIdUserAndEliminatedFalse(Long id);
 }

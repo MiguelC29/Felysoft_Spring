@@ -1,6 +1,7 @@
 package com.felysoft.felysoftApp.controllers;
 
 import com.felysoft.felysoftApp.entities.Genre;
+import com.felysoft.felysoftApp.services.imp.AuthorImp;
 import com.felysoft.felysoftApp.services.imp.GenreImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -60,6 +61,25 @@ public class GenreController {
 
             response.put("status","success");
             response.put("data","Registro Exitoso");
+        }catch (Exception e){
+            response.put("status",HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @PostMapping("add-author")
+    public ResponseEntity<Map<String, Object>> addAuthorToGenre(@RequestBody Map<String,Object> request){
+        Map<String,Object> response= new HashMap<>();
+
+        try{
+            Long genreId = Long.parseLong(request.get("genreId").toString());
+            Long authorId = Long.parseLong(request.get("authorId").toString());
+
+            this.genreImp.addAuthorToGenre(genreId,authorId);
+
+            response.put("status","success");
+            response.put("data","Asociacion Exitosa");
         }catch (Exception e){
             response.put("status",HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());

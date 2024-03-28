@@ -1,9 +1,11 @@
 package com.felysoft.felysoftApp.controllers;
 
 import com.felysoft.felysoftApp.entities.Category;
+import com.felysoft.felysoftApp.entities.Inventory;
 import com.felysoft.felysoftApp.entities.Product;
 import com.felysoft.felysoftApp.entities.Provider;
 import com.felysoft.felysoftApp.services.imp.CategoryImp;
+import com.felysoft.felysoftApp.services.imp.InventoryImp;
 import com.felysoft.felysoftApp.services.imp.ProductImp;
 import com.felysoft.felysoftApp.services.imp.ProviderImp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/product/", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class ProductController {
 
     @Autowired
@@ -28,6 +31,8 @@ public class ProductController {
     private CategoryImp categoryImp;
     @Autowired
     private ProviderImp providerImp;
+    @Autowired
+    private InventoryImp inventoryImp;
 
     @GetMapping("all")
     public ResponseEntity<Map<String, Object>> findAll() {
@@ -67,8 +72,12 @@ public class ProductController {
             Product product = new Product();
 
             // CAMPOS PROPIOS ENTIDAD PRODUCTO
-            product.setImage(request.get("image").toString().getBytes());
-            product.setTypeImg(request.get("typeImg").toString());
+            if (request.containsKey("image") && request.get("image") != null) {
+                product.setImage(request.get("image").toString().getBytes());
+            }
+            if (request.containsKey("typeImg") && request.get("typeImg") != null) {
+                product.setTypeImg(request.get("typeImg").toString());
+            }
             product.setName(request.get("name").toString().toUpperCase());
             product.setBrand(request.get("brand").toString().toUpperCase());
             product.setSalePrice(new BigDecimal(request.get("salePrice").toString()));
@@ -81,6 +90,21 @@ public class ProductController {
             product.setProvider(provider);
 
             this.productImp.create(product);
+
+            // INSTANCIA OBJETO INVENTARIO
+            Inventory inventory = new Inventory();
+            // CAMPOS PROPIOS ENTIDAD INVENTARIO
+            inventory.setStock(Integer.parseInt(request.get("stockInicial").toString()));
+            inventory.setState(Inventory.State.DISPONIBLE);
+            inventory.setTypeInv(Inventory.TypeInv.PRODUCTOS);
+            // Configurar fechas de creación y actualización
+            inventory.setDateRegister(new Timestamp(System.currentTimeMillis()));
+            inventory.setLastModification(new Timestamp(System.currentTimeMillis()));
+
+            // CAMPOS LLAVES FORANEAS
+            inventory.setProduct(product);
+
+            this.inventoryImp.create(inventory);
 
             response.put("status", "success");
             response.put("data", "Registro Exitoso");
@@ -100,8 +124,13 @@ public class ProductController {
             Product product = this.productImp.findById(id);
 
             // CAMPOS PROPIOS ENTIDAD PRODUCTO
-            product.setImage(request.get("image").toString().getBytes());
-            product.setTypeImg(request.get("typeImg").toString());
+            if (request.containsKey("image") && request.get("image") != null) {
+                product.setImage(request.get("image").toString().getBytes());
+            }
+            if (request.containsKey("typeImg") && request.get("typeImg") != null) {
+                product.setTypeImg(request.get("typeImg").toString());
+            }
+
             product.setName(request.get("name").toString().toUpperCase());
             product.setBrand(request.get("brand").toString().toUpperCase());
             product.setSalePrice(new BigDecimal(request.get("salePrice").toString()));
@@ -132,6 +161,8 @@ public class ProductController {
             Product product = this.productImp.findById(id);
 
             product.setEliminated(true);
+
+            // TODO: FALTA CREAR UN METODO O ALGO PARA CUANDO YO MARQUE COMO ELIMINADO UN PRODUCTO TAMBIEN SE MARQUE COMO ELIMINADO EN EL INVENTARIO
 
             productImp.delete(product);
 

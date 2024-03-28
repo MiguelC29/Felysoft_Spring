@@ -1,7 +1,9 @@
 package com.felysoft.felysoftApp.services.imp;
 
 import com.felysoft.felysoftApp.entities.Charge;
+import com.felysoft.felysoftApp.entities.Employee;
 import com.felysoft.felysoftApp.repositories.ChargeRepository;
+import com.felysoft.felysoftApp.repositories.EmployeeRepository;
 import com.felysoft.felysoftApp.services.ChargeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

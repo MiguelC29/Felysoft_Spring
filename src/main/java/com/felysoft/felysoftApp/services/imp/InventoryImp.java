@@ -25,6 +25,11 @@ public class InventoryImp implements InventoryService {
     }
 
     @Override
+    public List<Inventory> findByTypeInv(Inventory.TypeInv typeInv) {
+        return this.inventoryRepository.findInventoriesByTypeInv(typeInv);
+    }
+
+    @Override
     public void create(Inventory inventory) {
         this.inventoryRepository.save(inventory);
     }

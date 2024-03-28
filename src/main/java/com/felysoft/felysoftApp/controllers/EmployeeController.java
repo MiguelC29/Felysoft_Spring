@@ -17,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/employee/", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class EmployeeController {
 
     @Autowired
@@ -68,13 +68,33 @@ public class EmployeeController {
             employee.setDateBirth(Date.valueOf(request.get("dateBirth").toString()));
             employee.setSalary(new BigDecimal(request.get("salary").toString()));
             // CAMPOS LLAVES FORANEAS
-            User user = userImp.findById(Long.parseLong(request.get("fkIdNumIdentification").toString()));
+            User user = userImp.findById(Long.parseLong(request.get("fkIdUser").toString()));
             employee.setUser(user);
 
             this.employeeImp.create(employee);
 
             response.put("status", "success");
             response.put("data", "Registro Exitoso");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("add-employee")
+    public ResponseEntity<Map<String, Object>> addEmployeeToCharge(@RequestBody Map<String, Object> request){
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Long employeeId = Long.parseLong(request.get("employeeId").toString());
+            Long chargeId = Long.parseLong(request.get("chargeId").toString());
+
+            this.employeeImp.addEmployeeToCharge(employeeId, chargeId);
+
+            response.put("status", "success");
+            response.put("data", "Asociación Exitosa");
+
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -95,9 +115,7 @@ public class EmployeeController {
             employee.setDateBirth(Date.valueOf(request.get("dateBirth").toString()));
             employee.setSalary(new BigDecimal(request.get("salary").toString()));
             // CAMPOS LLAVES FORANEAS
-            User user = userImp.findById(Long.parseLong(request.get("fkIdNumIdentification").toString()));
-            employee.setUser(user);
-
+            User user = userImp.findById(Long.parseLong(request.get("fkIdUser").toString()));            employee.setUser(user);
             this.employeeImp.update(employee);
 
             response.put("status", "success");
