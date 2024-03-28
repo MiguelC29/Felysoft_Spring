@@ -22,7 +22,11 @@ public class User implements Serializable {
     public enum TypeDoc {CC,TI,CE};
 
     @Id
-    @Column(unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
+    private Long idUser;
+
+    @Column(length = 15, unique = true)
     private Long numIdentification;
 
     @Enumerated(EnumType.STRING)
@@ -38,8 +42,8 @@ public class User implements Serializable {
     @Column(length = 45, nullable = false)
     private String address;
 
-    @Column(length = 20, nullable = false)
-    private int phoneNumber;
+    @Column(length = 10, nullable = false)
+    private Long phoneNumber;
 
     @Column(length = 320, nullable = false)
     private String email;
@@ -73,7 +77,6 @@ public class User implements Serializable {
 
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
     @JoinColumn(name = "fkIdRole", nullable = false)
     private Role role;
 

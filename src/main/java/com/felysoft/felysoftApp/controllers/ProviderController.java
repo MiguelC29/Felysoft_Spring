@@ -75,8 +75,8 @@ public class ProviderController {
             // CAMPOS PROPIOS ENTIDAD PROVEEDOR
             provider.setNit(request.get("nit").toString());
             provider.setName(request.get("name").toString().toUpperCase());
-            provider.setPhoneNumber(Integer.parseInt(request.get("phoneNumber").toString()));
             provider.setEmail(request.get("email").toString().toLowerCase());
+            provider.setPhoneNumber(Long.parseLong(request.get("phoneNumber").toString()));
 
             this.providerImp.create(provider);
 
@@ -98,7 +98,7 @@ public class ProviderController {
 
             provider.setNit(request.get("nit").toString());
             provider.setName(request.get("name").toString().toUpperCase());
-            provider.setPhoneNumber(Integer.parseInt(request.get("phoneNumber").toString()));
+            provider.setPhoneNumber(Long.parseLong(request.get("phoneNumber").toString()));
             provider.setEmail(request.get("email").toString().toLowerCase());
 
             this.providerImp.update(provider);

@@ -22,7 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/product/", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class ProductController {
 
     @Autowired

@@ -21,7 +21,7 @@ public class UserImp implements UserService {
 
     @Override
     public User findById(Long id) {
-        return this.userRepository.findUserByNumIdentificationAndEliminatedFalse(id);
+        return this.userRepository.findUserByIdUserAndEliminatedFalse(id);
     }
 
     @Override
@@ -36,6 +36,6 @@ public class UserImp implements UserService {
 
     @Override
     public void delete(User user) {
-        this.userRepository.delete(user);
+        this.userRepository.save(user);
     }
 }

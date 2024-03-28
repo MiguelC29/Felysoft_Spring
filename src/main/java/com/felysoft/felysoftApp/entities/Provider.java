@@ -28,7 +28,7 @@ public class Provider implements Serializable {
     private String name;
 
     @Column(length = 20, nullable = false)
-    private int phoneNumber;
+    private Long phoneNumber;
 
     @Column(length = 320, nullable = false)
     private String email;
