@@ -24,7 +24,7 @@ import static java.time.LocalDateTime.parse;
 
 @RestController
 @RequestMapping(path = "/api/reserve/", method = {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class ReserveController {
     @Autowired
     private ReserveImp reserveImp;

@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.controllers;
 
+import com.felysoft.felysoftApp.entities.Author;
 import com.felysoft.felysoftApp.entities.Genre;
 import com.felysoft.felysoftApp.services.imp.AuthorImp;
 import com.felysoft.felysoftApp.services.imp.GenreImp;
@@ -14,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/genre/", method = {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class GenreController {
     @Autowired
     private GenreImp genreImp;
@@ -40,6 +41,21 @@ public class GenreController {
             Genre genre = this.genreImp.findById(id);
             response.put("status", "success");
             response.put("data", genre);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("genresByAuthor/{id}")
+    public ResponseEntity<Map<String, Object>> findByIdAuthor(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Genre> genreList = this.genreImp.findByIdAuthor(id);
+            response.put("status", "success");
+            response.put("data", genreList);
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());

@@ -36,6 +36,6 @@ public class BookImp implements BookService {
 
     @Override
     public void delete(Book book) {
-        this.bookRepository.delete(book);
+        this.bookRepository.save(book);
     }
 }

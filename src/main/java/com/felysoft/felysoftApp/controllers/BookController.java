@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 @RestController
 @RequestMapping(path = "/api/book/", method = {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class BookController {
     @Autowired
     private BookImp bookImp;
