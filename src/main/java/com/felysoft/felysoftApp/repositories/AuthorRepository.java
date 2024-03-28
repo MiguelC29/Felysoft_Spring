@@ -16,4 +16,5 @@ public interface AuthorRepository extends JpaRepository<Author, Long>{
 
     @Query("SELECT a FROM Author a JOIN a.genres g WHERE g.idGenre = :genreId AND a.eliminated = false")
     List<Author> findByGenreId(@Param("genreId") Long idGenre);
+
 }
