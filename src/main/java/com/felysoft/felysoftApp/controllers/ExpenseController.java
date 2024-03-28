@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/expense/", method = {RequestMethod.GET, RequestMethod.POST,RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class ExpenseController {
     @Autowired
     private ExpenseImp expenseImp;

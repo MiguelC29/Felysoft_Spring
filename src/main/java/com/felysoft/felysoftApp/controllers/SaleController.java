@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/sale/", method = {RequestMethod.GET, RequestMethod.POST,RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class SaleController {
     @Autowired
     private SaleImp saleImp;
@@ -66,7 +67,8 @@ public class SaleController {
             //FECHA
             // Convertir la cadena de fecha a LocalDateTime con formato específico
             //OJO CHINOS, PONER LA FECHA DEL MOMENTO AL REGISTRO
-            sale.setDateSale(LocalDateTime.now());
+            //sale.setDateSale(LocalDateTime.now());
+            sale.setDateSale(new Timestamp(System.currentTimeMillis()));
 
             //TOTAL
             sale.setTotalSale(new BigDecimal(request.get("totalSale").toString()));
@@ -118,7 +120,8 @@ public class SaleController {
             //FECHA
             // Convertir la cadena de fecha a LocalDateTime con formato específico
             //OJO CHINOS, PONER LA FECHA DEL MOMENTO AL REGISTRO
-            sale.setDateSale(LocalDateTime.now());
+            //sale.setDateSale(LocalDateTime.now());
+            sale.setDateSale(new Timestamp(System.currentTimeMillis()));
 
             //TOTAL
             sale.setTotalSale(new BigDecimal(request.get("totalSale").toString()));

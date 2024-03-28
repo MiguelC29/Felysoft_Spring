@@ -19,7 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/detail/", method = {RequestMethod.GET, RequestMethod.POST,RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class DetailController {
     @Autowired
     private DetailImp detailImp;

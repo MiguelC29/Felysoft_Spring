@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/purchase/", method = {RequestMethod.GET, RequestMethod.POST,RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class PurchaseController {
     @Autowired
     private PurchaseImp purchaseImp;
@@ -68,7 +69,9 @@ public class PurchaseController {
 
             //FECHA
             //purchase.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            purchase.setDate(LocalDateTime.now());
+            //purchase.setDate(LocalDateTime.now());
+            purchase.setDate(new Timestamp(System.currentTimeMillis()));
+
 
             //TOTAL
             purchase.setTotal(new BigDecimal(request.get("total").toString()));
@@ -98,7 +101,8 @@ public class PurchaseController {
 
             //FECHA
             //purchase.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            purchase.setDate(LocalDateTime.now());
+            //purchase.setDate(LocalDateTime.now());
+            purchase.setDate(new Timestamp(System.currentTimeMillis()));
 
             //TOTAL
             purchase.setTotal(new BigDecimal(request.get("total").toString()));
