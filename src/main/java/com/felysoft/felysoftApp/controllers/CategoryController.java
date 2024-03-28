@@ -95,6 +95,12 @@ public class CategoryController {
             Long categoryId = Long.parseLong(request.get("categoryId").toString());
             Long providerId = Long.parseLong(request.get("providerId").toString());
 
+            // Verificar si la asociación ya existe
+            boolean associationExists = this.categoryImp.checkAssociationExists(categoryId, providerId);
+            if (associationExists) {
+                throw new RuntimeException("Asociación existente");
+            }
+
             this.categoryImp.addProviderToCategory(categoryId, providerId);
 
             response.put("status", "success");

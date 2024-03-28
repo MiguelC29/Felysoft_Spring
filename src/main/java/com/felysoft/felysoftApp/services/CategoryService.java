@@ -24,4 +24,6 @@ public interface CategoryService {
 
     @Transactional
     public void addProviderToCategory(Long categoryId, Long providerId);
+
+    public boolean checkAssociationExists(Long categoryId, Long providerId);
 }
