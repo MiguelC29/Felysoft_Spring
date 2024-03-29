@@ -89,6 +89,26 @@ public class SaleController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PostMapping("add-detail")
+    public ResponseEntity<Map<String, Object>> addDetailToSale(@RequestBody Map<String, Object> request){
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Long saleId = Long.parseLong(request.get("saleId").toString());
+                Long detailId = Long.parseLong(request.get("detailId").toString());
+
+            this.saleImp.addDetailToSale(saleId, detailId);
+
+            response.put("status", "success");
+            response.put("data", "Asociación Exitosa");
+
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PutMapping("update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();

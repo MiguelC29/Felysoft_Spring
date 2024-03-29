@@ -50,6 +50,21 @@ public class ProviderController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("providersByCategory/{id}")
+    public ResponseEntity<Map<String, Object>> findByIdCategory(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Provider> providerList = this.providerImp.findByIdCategory(id);
+            response.put("status", "success");
+            response.put("data", providerList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
@@ -60,8 +75,8 @@ public class ProviderController {
             // CAMPOS PROPIOS ENTIDAD PROVEEDOR
             provider.setNit(request.get("nit").toString());
             provider.setName(request.get("name").toString().toUpperCase());
-            provider.setPhoneNumber(Integer.parseInt(request.get("phoneNumber").toString()));
             provider.setEmail(request.get("email").toString().toLowerCase());
+            provider.setPhoneNumber(Long.parseLong(request.get("phoneNumber").toString()));
 
             this.providerImp.create(provider);
 
@@ -83,7 +98,7 @@ public class ProviderController {
 
             provider.setNit(request.get("nit").toString());
             provider.setName(request.get("name").toString().toUpperCase());
-            provider.setPhoneNumber(Integer.parseInt(request.get("phoneNumber").toString()));
+            provider.setPhoneNumber(Long.parseLong(request.get("phoneNumber").toString()));
             provider.setEmail(request.get("email").toString().toLowerCase());
 
             this.providerImp.update(provider);

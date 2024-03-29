@@ -25,6 +25,11 @@ public class ProviderImp implements ProviderService {
     }
 
     @Override
+    public List<Provider> findByIdCategory(Long id) {
+        return this.providerRepository.findByCategoryId(id);
+    }
+
+    @Override
     public void create(Provider provider) {
         this.providerRepository.save(provider);
     }

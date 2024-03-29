@@ -37,7 +37,8 @@ public class Category implements Serializable {
     @JoinTable(
             name = "categories_providers",
             joinColumns = @JoinColumn(name = "fkIdCategories", referencedColumnName = "idCategory"),
-            inverseJoinColumns = @JoinColumn(name = "fkIdProviders", referencedColumnName = "idProvider")
+            inverseJoinColumns = @JoinColumn(name = "fkIdProviders", referencedColumnName = "idProvider"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"fkIdCategories", "fkIdProviders"})
     )
     private List<Provider> providers;
 }

@@ -9,6 +9,7 @@ import java.util.List;
 public interface CategoryService {
     public List<Category> findAll() throws Exception;
     public Category findById(Long id);
+    public List<Category> findByIdProvider(Long id);
 
     @Transactional
     public void create(Category category);
@@ -20,4 +21,9 @@ public interface CategoryService {
     @Transactional
     @Modifying
     public void delete(Category category);
+
+    @Transactional
+    public void addProviderToCategory(Long categoryId, Long providerId);
+
+    public boolean checkAssociationExists(Long categoryId, Long providerId);
 }

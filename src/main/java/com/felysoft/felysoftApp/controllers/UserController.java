@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/user/", method = {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class UserController {
     @Autowired
     private UserImp userImp;
@@ -59,12 +59,12 @@ public class UserController {
             //INSTANCIA DEL OBJETO USER
             User user = new User();
             //CAMPOS PROPIOS DE LA TABLA USERS
-            user.setNumIdentification(Long.valueOf((Integer) request.get("numIdentification")));
+            user.setNumIdentification(Long.parseLong((request.get("numIdentification").toString())));
             user.setTypeDoc(User.TypeDoc.valueOf(request.get("typeDoc").toString().toUpperCase()));
             user.setNames(request.get("names").toString().toUpperCase());
             user.setLastNames(request.get("lastNames").toString().toUpperCase());
             user.setAddress(request.get("address").toString().toUpperCase());
-            user.setPhoneNumber(Integer.parseInt(request.get("phoneNumber").toString()));
+            user.setPhoneNumber(Long.parseLong((request.get("phoneNumber").toString())));
             user.setEmail(request.get("email").toString().toLowerCase());
             user.setGender(User.Gender.valueOf(request.get("gender").toString().toUpperCase()));
             user.setUsername(request.get("username").toString());
@@ -100,12 +100,12 @@ public class UserController {
         try {
             User user = this.userImp.findById(id);
 
-            user.setNumIdentification(Long.valueOf((Integer) request.get("numIdentification")));
+            user.setNumIdentification(Long.parseLong((request.get("numIdentification").toString())));
             user.setTypeDoc(User.TypeDoc.valueOf(request.get("typeDoc").toString().toUpperCase()));
             user.setNames(request.get("names").toString().toUpperCase());
             user.setLastNames(request.get("lastNames").toString().toUpperCase());
             user.setAddress(request.get("address").toString().toUpperCase());
-            user.setPhoneNumber(Integer.parseInt(request.get("phoneNumber").toString()));
+            user.setPhoneNumber(Long.parseLong((request.get("phoneNumber").toString())));
             user.setEmail(request.get("email").toString().toLowerCase());
             user.setGender(User.Gender.valueOf(request.get("gender").toString().toUpperCase()));
             user.setUsername(request.get("username").toString());
@@ -119,7 +119,6 @@ public class UserController {
                 user.setTypeImg(request.get("typeImg").toString());
             }
             // Configurar fechas de creación y actualización
-            user.setDateRegister(new Timestamp(System.currentTimeMillis()));
             user.setLastModification(new Timestamp(System.currentTimeMillis()));
             //CAMPOS DE LAS LLAVES FORANEAS
             Role role = roleImp.findById(Long.parseLong(request.get("fkIdRole").toString()));

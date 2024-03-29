@@ -17,4 +17,7 @@ public interface GenreService {
     @Transactional
     @Modifying
     public void delete(Genre genre);
+
+    @Transactional
+    public void addAuthorToGenre( Long genreId, Long authorId );
 }

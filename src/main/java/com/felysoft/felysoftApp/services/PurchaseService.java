@@ -20,4 +20,7 @@ public interface PurchaseService {
     @Transactional
     @Modifying
     public void delete(Purchase purchase);
+
+    @Transactional
+    public void addDetailToPurchase(Long purchaseId, Long detailId);
 }

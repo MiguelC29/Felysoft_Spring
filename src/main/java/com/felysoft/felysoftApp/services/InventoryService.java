@@ -10,6 +10,8 @@ public interface InventoryService {
     public List<Inventory> findAll() throws Exception;
     public Inventory findById(Long id);
 
+    public List<Inventory> findByTypeInv(Inventory.TypeInv typeInv);
+
     @Transactional
     public void create(Inventory inventory);
 

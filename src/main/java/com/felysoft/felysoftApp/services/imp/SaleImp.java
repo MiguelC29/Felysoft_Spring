@@ -1,6 +1,8 @@
 package com.felysoft.felysoftApp.services.imp;
 
+import com.felysoft.felysoftApp.entities.Detail;
 import com.felysoft.felysoftApp.entities.Sale;
+import com.felysoft.felysoftApp.repositories.DetailRepository;
 import com.felysoft.felysoftApp.repositories.SaleRepository;
 import com.felysoft.felysoftApp.services.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,9 @@ public class SaleImp implements SaleService{
 
     @Autowired
     private SaleRepository saleRepository;
+
+    @Autowired
+    private DetailRepository detailRepository;
 
     @Override
     public List<Sale> findAll() throws Exception {
@@ -35,6 +40,15 @@ public class SaleImp implements SaleService{
 
     @Override
     public void delete(Sale sale) {
+        this.saleRepository.save(sale);
+    }
+
+    @Override
+    public void addDetailToSale(Long saleId, Long detailId){
+        Sale sale = this.saleRepository.findById(saleId).orElse(null);
+        Detail detail = this.detailRepository.findById(detailId).orElse(null);
+
+        sale.getDetails().add(detail);
         this.saleRepository.save(sale);
     }
 }
