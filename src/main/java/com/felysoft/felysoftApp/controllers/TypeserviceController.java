@@ -14,7 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/typeservice/", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class TypeserviceController {
 
     @Autowired
