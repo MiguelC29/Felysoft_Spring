@@ -36,6 +36,6 @@ public class ReserveImp implements ReserveService {
 
     @Override
     public void delete(Reserve reserve) {
-        this.reserveRepository.delete(reserve);
+        this.reserveRepository.save(reserve);
     }
 }
