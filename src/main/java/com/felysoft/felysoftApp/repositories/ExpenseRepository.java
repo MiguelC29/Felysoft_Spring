@@ -1,6 +1,7 @@
 package com.felysoft.felysoftApp.repositories;
 
 import com.felysoft.felysoftApp.entities.Expense;
+import com.felysoft.felysoftApp.entities.Purchase;
 import com.felysoft.felysoftApp.entities.Sale;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,6 +12,7 @@ import java.util.List;
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     List<Expense> findExpenseByEliminatedFalse();
+    Expense findExpenseByPurchaseAndEliminatedFalse(Purchase purchase);
 
     Expense findExpenseByIdExpenseAndEliminatedFalse(Long id);
 }

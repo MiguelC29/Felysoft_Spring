@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,7 +30,7 @@ public class Expense implements Serializable {
     private Type type;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private Timestamp date;
 
     @Column(nullable = false)
     private BigDecimal total;
@@ -42,12 +43,10 @@ public class Expense implements Serializable {
 
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
     @JoinColumn(name = "fkIdPurchase", nullable = false)
     private Purchase purchase;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
     @JoinColumn(name = "fkIdPayment", nullable = false)
     private Payment payment;
 }
