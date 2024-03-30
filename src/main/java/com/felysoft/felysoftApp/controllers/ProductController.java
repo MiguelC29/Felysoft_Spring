@@ -159,11 +159,12 @@ public class ProductController {
         Map<String, Object> response = new HashMap<>();
         try {
             Product product = this.productImp.findById(id);
+            Inventory inventory = this.inventoryImp.findByProduct(product);
 
             product.setEliminated(true);
+            inventory.setEliminated(true);
 
-            // TODO: FALTA CREAR UN METODO O ALGO PARA CUANDO YO MARQUE COMO ELIMINADO UN PRODUCTO TAMBIEN SE MARQUE COMO ELIMINADO EN EL INVENTARIO
-
+            inventoryImp.delete(inventory);
             productImp.delete(product);
 
             response.put("status", "success");

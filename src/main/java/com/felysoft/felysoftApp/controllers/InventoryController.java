@@ -142,6 +142,7 @@ public class InventoryController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /*
     @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
@@ -160,5 +161,5 @@ public class InventoryController {
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+    }*/
 }
