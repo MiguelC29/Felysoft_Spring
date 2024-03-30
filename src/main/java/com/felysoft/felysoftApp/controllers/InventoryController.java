@@ -74,36 +74,28 @@ public class InventoryController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("update/{id}")
-    public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+    @PutMapping("updateStock/{id}")
+    public ResponseEntity<Map<String, Object>> updateStock(@PathVariable Long id, @RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
         try {
             // INSTANCIA OBJETO INVENTARIO
             Inventory inventory = this.inventoryImp.findById(id);
 
+            int newStock = inventory.getStock() + Integer.parseInt(request.get("stock").toString());
+
             // CAMPOS PROPIOS ENTIDAD INVENTARIO
-            inventory.setStock(Integer.parseInt(request.get("stock").toString()));
-            inventory.setTypeInv(Inventory.TypeInv.valueOf(request.get("typeInv").toString().toUpperCase()));
-            inventory.setState(Inventory.State.valueOf(request.get("state").toString().toUpperCase()));
+            inventory.setStock(newStock);
+
+            if(inventory.getStock() <= 1) {
+                inventory.setState(Inventory.State.AGOTADO);    
+            } else if (inventory.getStock() < 6) {
+                inventory.setState(Inventory.State.BAJO);
+            } else {
+                inventory.setState(Inventory.State.DISPONIBLE);
+            }
+
             // Configurar fechas de creación y actualización
             inventory.setLastModification(new Timestamp(System.currentTimeMillis()));
-
-            // CAMPOS LLAVES FORANEAS
-            // Verificar si la clave "fkIdProduct" está presente en el mapa y no es null
-            if (request.containsKey("fkIdProduct") && request.get("fkIdProduct") != null) {
-                Product product = productImp.findById(Long.parseLong(request.get("fkIdProduct").toString()));
-                inventory.setProduct(product);
-            } else if (request.containsKey("fkIdBook") && request.get("fkIdBook") != null) {
-                // Verificar si la clave "fkIdBook" está presente en el mapa y no es null
-                Book book = bookImp.findById(Long.parseLong(request.get("fkIdBook").toString()));
-                inventory.setBook(book);
-            }
-
-            // Verificar si la clave "fkIdNovelty" está presente en el mapa y no es null
-            if (request.containsKey("fkIdNovelty") && request.get("fkIdNovelty") != null) {
-                NoveltyInv noveltyInv = noveltyInvImp.findById(Long.parseLong(request.get("fkIdNovelty").toString()));
-                inventory.setNoveltyInv(noveltyInv);
-            }
 
             this.inventoryImp.update(inventory);
 
@@ -117,6 +109,40 @@ public class InventoryController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PutMapping("resetStock/{id}")
+    public ResponseEntity<Map<String, Object>> resetStock(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // INSTANCIA OBJETO INVENTARIO
+            Inventory inventory = this.inventoryImp.findById(id);
+
+            // CAMPOS PROPIOS ENTIDAD INVENTARIO
+            inventory.setStock(Integer.parseInt(request.get("stock").toString()));
+
+            if(inventory.getStock() <= 1) {
+                inventory.setState(Inventory.State.AGOTADO);
+            } else if (inventory.getStock() < 6) {
+                inventory.setState(Inventory.State.BAJO);
+            } else {
+                inventory.setState(Inventory.State.DISPONIBLE);
+            }
+
+            // Configurar fechas de creación y actualización
+            inventory.setLastModification(new Timestamp(System.currentTimeMillis()));
+
+            this.inventoryImp.update(inventory);
+
+            response.put("status", "success");
+            response.put("data", "Actualización exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /*
     @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
@@ -135,5 +161,5 @@ public class InventoryController {
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+    }*/
 }
