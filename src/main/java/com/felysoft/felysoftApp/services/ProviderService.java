@@ -9,6 +9,7 @@ import java.util.List;
 public interface ProviderService {
     public List<Provider> findAll() throws Exception;
     public Provider findById(Long id);
+    public List<Provider> findByIdCategory(Long id);
 
     @Transactional
     public void create(Provider provider);

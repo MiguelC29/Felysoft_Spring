@@ -30,6 +30,11 @@ public class CategoryImp implements CategoryService {
     }
 
     @Override
+    public List<Category> findByIdProvider(Long id) {
+        return this.categoryRepository.findByProviderId(id);
+    }
+
+    @Override
     public void create(Category category) {
         this.categoryRepository.save(category);
     }
@@ -51,5 +56,15 @@ public class CategoryImp implements CategoryService {
 
         category.getProviders().add(provider);
         this.categoryRepository.save(category);
+    }
+
+    // Método para verificar si la asociación entre la categoría y el proveedor ya existe
+    @Override
+    public boolean checkAssociationExists(Long categoryId, Long providerId) {
+        Category category = categoryRepository.findById(categoryId).orElse(null);
+        Provider provider = providerRepository.findById(providerId).orElse(null);
+
+        // Verificar si el proveedor ya está asociado a la categoría
+        return category != null && provider != null && category.getProviders().contains(provider);
     }
 }

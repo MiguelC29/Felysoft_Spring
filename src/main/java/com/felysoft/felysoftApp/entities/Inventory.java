@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class Inventory implements Serializable {
     public enum TypeInv {PRODUCTOS, LIBROS};
-    public enum State {DISPONIBLE, AGOTADO};
+    public enum State {DISPONIBLE, BAJO, AGOTADO, RESERVADO};
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

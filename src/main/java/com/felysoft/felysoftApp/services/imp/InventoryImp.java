@@ -1,6 +1,7 @@
 package com.felysoft.felysoftApp.services.imp;
 
 import com.felysoft.felysoftApp.entities.Inventory;
+import com.felysoft.felysoftApp.entities.Product;
 import com.felysoft.felysoftApp.repositories.InventoryRepository;
 import com.felysoft.felysoftApp.services.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,16 @@ public class InventoryImp implements InventoryService {
     @Override
     public Inventory findById(Long id) {
         return this.inventoryRepository.findInventoryByIdInventoryAndEliminatedFalse(id);
+    }
+
+    @Override
+    public List<Inventory> findByTypeInv(Inventory.TypeInv typeInv) {
+        return this.inventoryRepository.findInventoriesByTypeInvAndEliminatedFalse(typeInv);
+    }
+
+    @Override
+    public Inventory findByProduct(Product product) {
+        return this.inventoryRepository.findInventoryByProductAndEliminatedFalse(product);
     }
 
     @Override

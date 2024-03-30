@@ -17,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/employee/", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class EmployeeController {
 
     @Autowired
@@ -68,7 +68,7 @@ public class EmployeeController {
             employee.setDateBirth(Date.valueOf(request.get("dateBirth").toString()));
             employee.setSalary(new BigDecimal(request.get("salary").toString()));
             // CAMPOS LLAVES FORANEAS
-            User user = userImp.findById(Long.parseLong(request.get("fkIdNumIdentification").toString()));
+            User user = userImp.findById(Long.parseLong(request.get("fkIdUser").toString()));
             employee.setUser(user);
 
             this.employeeImp.create(employee);
@@ -115,9 +115,7 @@ public class EmployeeController {
             employee.setDateBirth(Date.valueOf(request.get("dateBirth").toString()));
             employee.setSalary(new BigDecimal(request.get("salary").toString()));
             // CAMPOS LLAVES FORANEAS
-            User user = userImp.findById(Long.parseLong(request.get("fkIdNumIdentification").toString()));
-            employee.setUser(user);
-
+            User user = userImp.findById(Long.parseLong(request.get("fkIdUser").toString()));            employee.setUser(user);
             this.employeeImp.update(employee);
 
             response.put("status", "success");
