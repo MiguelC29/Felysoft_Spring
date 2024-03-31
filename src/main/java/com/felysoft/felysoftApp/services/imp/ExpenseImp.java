@@ -27,7 +27,7 @@ public class ExpenseImp implements ExpenseService {
 
     @Override
     public Expense findByPurchase(Purchase purchase) {
-        return this.expenseRepository.findExpenseByPurchaseAndEliminatedFalse(purchase);
+        return this.expenseRepository.findExpenseByPurchase(purchase);
     }
 
     @Override

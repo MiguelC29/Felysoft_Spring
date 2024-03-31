@@ -12,7 +12,7 @@ import java.util.List;
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     List<Expense> findExpenseByEliminatedFalse();
-    Expense findExpenseByPurchaseAndEliminatedFalse(Purchase purchase);
+    Expense findExpenseByPurchase(Purchase purchase);
 
     Expense findExpenseByIdExpenseAndEliminatedFalse(Long id);
 }

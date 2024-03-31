@@ -40,7 +40,7 @@ public class Sale implements Serializable {
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JsonIgnore
     @JoinTable(
-            name = "sales_detail", joinColumns = @JoinColumn(name = "fkIdSale", referencedColumnName = "idSale"),
+            name = "details_sales", joinColumns = @JoinColumn(name = "fkIdSale", referencedColumnName = "idSale"),
             inverseJoinColumns = @JoinColumn(name = "fkIdDetail", referencedColumnName = "idDetail")
     )
     private List<Detail> details;

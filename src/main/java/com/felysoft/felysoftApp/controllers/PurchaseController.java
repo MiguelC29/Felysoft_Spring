@@ -66,6 +66,22 @@ public class PurchaseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("expensePurchase/{id}")
+    public ResponseEntity<Map<String, Object>> findByExpensePurchase(@PathVariable Purchase id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            //Purchase purchase = this.purchaseImp.findById();
+            Expense expense = this.expenseImp.findByPurchase(id);
+            response.put("status", "success");
+            response.put("data", expense);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request){
         Map<String, Object> response = new HashMap<>();
@@ -141,6 +157,7 @@ public class PurchaseController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
     @PutMapping("update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
