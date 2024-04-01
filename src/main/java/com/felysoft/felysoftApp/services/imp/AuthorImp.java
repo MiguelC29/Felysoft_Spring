@@ -25,6 +25,11 @@ public class AuthorImp implements AuthorService {
     }
 
     @Override
+    public List<Author> findByIdGenre(Long id) {
+        return this.authorRepository.findByGenreId(id);
+    }
+
+    @Override
     public void create(Author author) {
         this.authorRepository.save(author);
     }

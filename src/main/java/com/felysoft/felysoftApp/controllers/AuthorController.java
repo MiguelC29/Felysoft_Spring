@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/author/", method = {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class AuthorController {
     @Autowired
     private AuthorImp authorImp;
@@ -50,7 +50,20 @@ public class AuthorController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
+    @GetMapping("authorsByGenre/{id}")
+    public ResponseEntity<Map<String, Object>> findByIdGenre(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Author> authorList = this.authorImp.findByIdGenre(id);
+            response.put("status", "success");
+            response.put("data", authorList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String,Object> request){
         Map<String,Object> response= new HashMap<>();

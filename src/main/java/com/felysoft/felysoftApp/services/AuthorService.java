@@ -9,6 +9,8 @@ import java.util.List;
 public interface AuthorService {
     public List<Author> findAll() throws Exception;
     public Author findById(Long id);
+
+    public List<Author> findByIdGenre(Long id);
     @Transactional
     public void create(Author author);
     @Transactional

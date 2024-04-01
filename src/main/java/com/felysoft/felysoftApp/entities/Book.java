@@ -42,12 +42,10 @@ public class Book implements Serializable {
 
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
     @JoinColumn(name = "fkIdAuthor", nullable = false)
     private Author author;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
     @JoinColumn(name = "fkIdGenre", nullable = false)
     private Genre genre;
 

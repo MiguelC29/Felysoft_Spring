@@ -29,6 +29,11 @@ public class GenreImp implements GenreService {
     }
 
     @Override
+    public List<Genre> findByIdAuthor(Long id) {
+        return this.genreRepository.findByAuthorId(id);
+    }
+
+    @Override
     public void create(Genre genre) {
         this.genreRepository.save(genre);
     }

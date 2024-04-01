@@ -24,7 +24,7 @@ import static java.time.LocalDateTime.parse;
 
 @RestController
 @RequestMapping(path = "/api/reserve/", method = {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class ReserveController {
     @Autowired
     private ReserveImp reserveImp;
@@ -69,7 +69,7 @@ public class ReserveController {
             //INSTANCIA DEL OBJETO RESERVE
             Reserve reserve = new Reserve();
             //CAMPOS PROPIOS DE LA TABLA RESERVES
-            reserve.setDateReserve(LocalDate.from(parse((String) request.get("dateReserve"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
+            reserve.setDateReserve(LocalDate.parse((String) request.get("dateReserve")));
             reserve.setDescription(request.get("description").toString().toUpperCase());
             reserve.setDeposit(new BigDecimal(request.get("deposit").toString()));
             reserve.setTime(Time.valueOf(request.get("time").toString()));
@@ -96,7 +96,7 @@ public class ReserveController {
         try {
             Reserve reserve = this.reserveImp.findById(id);
 
-            reserve.setDateReserve(LocalDate.from(parse((String) request.get("dateReserve"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
+            reserve.setDateReserve(LocalDate.parse((String) request.get("dateReserve")));
             reserve.setDescription(request.get("description").toString().toUpperCase());
             reserve.setDeposit(new BigDecimal(request.get("deposit").toString()));
             reserve.setTime(Time.valueOf(request.get("time").toString()));
@@ -124,6 +124,7 @@ public class ReserveController {
         try {
             Reserve reserve = this.reserveImp.findById(id);
             reserve.setEliminated(true);
+
             this.reserveImp.delete(reserve);
 
             response.put("status", "success");
