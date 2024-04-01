@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -18,7 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/expense/", method = {RequestMethod.GET, RequestMethod.POST,RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class ExpenseController {
     @Autowired
     private ExpenseImp expenseImp;
@@ -71,7 +72,8 @@ public class ExpenseController {
 
             //FECHA
             //expense.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            expense.setDate(LocalDateTime.now());
+            //expense.setDate(LocalDateTime.now());
+            expense.setDate(new Timestamp(System.currentTimeMillis()));
 
             //TOTAL
             expense.setTotal(new BigDecimal(request.get("total").toString()));
@@ -111,7 +113,8 @@ public class ExpenseController {
 
             //FECHA
             //expense.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            expense.setDate(LocalDateTime.now());
+            //expense.setDate(LocalDateTime.now());
+            expense.setDate(new Timestamp(System.currentTimeMillis()));
 
             //TOTAL
             expense.setTotal(new BigDecimal(request.get("total").toString()));

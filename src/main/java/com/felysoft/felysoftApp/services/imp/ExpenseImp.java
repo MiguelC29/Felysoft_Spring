@@ -1,6 +1,7 @@
 package com.felysoft.felysoftApp.services.imp;
 
 import com.felysoft.felysoftApp.entities.Expense;
+import com.felysoft.felysoftApp.entities.Purchase;
 import com.felysoft.felysoftApp.repositories.ExpenseRepository;
 import com.felysoft.felysoftApp.services.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,11 @@ public class ExpenseImp implements ExpenseService {
     @Override
     public Expense findById(Long id) {
         return this.expenseRepository.findExpenseByIdExpenseAndEliminatedFalse(id);
+    }
+
+    @Override
+    public Expense findByPurchase(Purchase purchase) {
+        return this.expenseRepository.findExpenseByPurchase(purchase);
     }
 
     @Override

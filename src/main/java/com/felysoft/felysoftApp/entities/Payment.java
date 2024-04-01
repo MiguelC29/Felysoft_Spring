@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class Payment implements Serializable {
     private State state;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private Timestamp date;
 
     @Column(nullable = false)
     private BigDecimal total;

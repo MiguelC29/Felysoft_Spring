@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/payment/", method = {RequestMethod.GET, RequestMethod.POST,RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:3000")
 public class PaymentController {
     @Autowired
     private PaymentImp paymentImp;
@@ -68,7 +68,8 @@ public class PaymentController {
 
             //FECHA
             //payment.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            payment.setDate(LocalDateTime.now());
+            //payment.setDate(LocalDateTime.now());
+            payment.setDate(new Timestamp(System.currentTimeMillis()));
 
             //TOTAL
             payment.setTotal(new BigDecimal(request.get("total").toString()));
@@ -100,7 +101,8 @@ public class PaymentController {
 
             //FECHA
             //payment.setDate(LocalDateTime.parse((String) request.get("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            payment.setDate(LocalDateTime.now());
+            //payment.setDate(LocalDateTime.now());
+            payment.setDate(new Timestamp(System.currentTimeMillis()));
 
             //TOTAL
             payment.setTotal(new BigDecimal(request.get("total").toString()));
