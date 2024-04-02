@@ -164,8 +164,8 @@ public class ProductController {
             product.setEliminated(true);
             inventory.setEliminated(true);
 
-            inventoryImp.delete(inventory);
-            productImp.delete(product);
+            this.inventoryImp.delete(inventory);
+            this.productImp.delete(product);
 
             response.put("status", "success");
             response.put("data", "Eliminado Correctamente");

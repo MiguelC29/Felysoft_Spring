@@ -3,15 +3,18 @@ package com.felysoft.felysoftApp.controllers;
 import com.felysoft.felysoftApp.entities.Author;
 import com.felysoft.felysoftApp.entities.Book;
 import com.felysoft.felysoftApp.entities.Genre;
+import com.felysoft.felysoftApp.entities.Inventory;
 import com.felysoft.felysoftApp.services.imp.AuthorImp;
 import com.felysoft.felysoftApp.services.imp.BookImp;
 import com.felysoft.felysoftApp.services.imp.GenreImp;
+import com.felysoft.felysoftApp.services.imp.InventoryImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +28,8 @@ public class BookController {
     private GenreImp genreImp;
     @Autowired
     private AuthorImp authorImp;
+    @Autowired
+    private InventoryImp inventoryImp;
     @GetMapping("all")
     public ResponseEntity<Map<String, Object>> findAll(){
         Map<String,Object> response= new HashMap<>();
@@ -77,6 +82,22 @@ public class BookController {
 
             this.bookImp.create(book);
 
+            //INSTANCIA OBJETO INVENTARIO
+            Inventory inventory= new Inventory();
+
+            //CAMPOS PROPIOS ENTIDAD INVENTARIO
+            inventory.setStock(1);
+            inventory.setState(Inventory.State.DISPONIBLE);
+            inventory.setTypeInv(Inventory.TypeInv.LIBROS);
+
+            // Configurar fechas de creación y actualización
+            inventory.setDateRegister(new Timestamp(System.currentTimeMillis()));
+            inventory.setLastModification(new Timestamp(System.currentTimeMillis()));
+
+            //CAMPOS LLAVES FORANEAS
+            inventory.setBook(book);
+            this.inventoryImp.create(inventory);
+
             response.put("status","success");
             response.put("data","Registro Exitoso");
         }catch (Exception e){
@@ -121,8 +142,11 @@ public class BookController {
         Map<String, Object> response = new HashMap<>();
         try {
             Book book = this.bookImp.findById(id);
+            Inventory inventory= this.inventoryImp.findByBook(book);
             book.setEliminated(true);
+            inventory.setEliminated(true);
             this.bookImp.delete(book);
+            this.inventoryImp.delete(inventory);
 
             response.put("status", "success");
             response.put("data", "Eliminado Correctamente");

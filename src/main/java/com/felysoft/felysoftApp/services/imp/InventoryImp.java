@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.services.imp;
 
+import com.felysoft.felysoftApp.entities.Book;
 import com.felysoft.felysoftApp.entities.Inventory;
 import com.felysoft.felysoftApp.entities.Product;
 import com.felysoft.felysoftApp.repositories.InventoryRepository;
@@ -33,6 +34,11 @@ public class InventoryImp implements InventoryService {
     @Override
     public Inventory findByProduct(Product product) {
         return this.inventoryRepository.findInventoryByProductAndEliminatedFalse(product);
+    }
+
+    @Override
+    public Inventory findByBook(Book book) {
+        return this.inventoryRepository.findInventoryByBookAndEliminatedFalse(book);
     }
 
     @Override

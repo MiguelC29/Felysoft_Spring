@@ -86,14 +86,15 @@ public class InventoryController {
             // CAMPOS PROPIOS ENTIDAD INVENTARIO
             inventory.setStock(newStock);
 
-            if(inventory.getStock() <= 1) {
-                inventory.setState(Inventory.State.AGOTADO);    
-            } else if (inventory.getStock() < 6) {
-                inventory.setState(Inventory.State.BAJO);
+            if(inventory.getStock() < 1) {
+                inventory.setState(Inventory.State.AGOTADO);
             } else {
-                inventory.setState(Inventory.State.DISPONIBLE);
+                if(inventory.getStock() < 6) {
+                    inventory.setState(Inventory.State.BAJO);
+                } else {
+                    inventory.setState(Inventory.State.DISPONIBLE);
+                }
             }
-
             // Configurar fechas de creación y actualización
             inventory.setLastModification(new Timestamp(System.currentTimeMillis()));
 
@@ -119,12 +120,14 @@ public class InventoryController {
             // CAMPOS PROPIOS ENTIDAD INVENTARIO
             inventory.setStock(Integer.parseInt(request.get("stock").toString()));
 
-            if(inventory.getStock() <= 1) {
+            if(inventory.getStock() < 1) {
                 inventory.setState(Inventory.State.AGOTADO);
-            } else if (inventory.getStock() < 6) {
-                inventory.setState(Inventory.State.BAJO);
             } else {
-                inventory.setState(Inventory.State.DISPONIBLE);
+                if(inventory.getStock() < 6) {
+                    inventory.setState(Inventory.State.BAJO);
+                } else {
+                    inventory.setState(Inventory.State.DISPONIBLE);
+                }
             }
 
             // Configurar fechas de creación y actualización

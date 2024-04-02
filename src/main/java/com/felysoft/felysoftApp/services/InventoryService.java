@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.services;
 
+import com.felysoft.felysoftApp.entities.Book;
 import com.felysoft.felysoftApp.entities.Inventory;
 import com.felysoft.felysoftApp.entities.Product;
 import org.springframework.data.jpa.repository.Modifying;
@@ -12,6 +13,7 @@ public interface InventoryService {
     public Inventory findById(Long id);
     public List<Inventory> findByTypeInv(Inventory.TypeInv typeInv);
     public Inventory findByProduct(Product product);
+    public Inventory findByBook(Book book);
 
     @Transactional
     public void create(Inventory inventory);
