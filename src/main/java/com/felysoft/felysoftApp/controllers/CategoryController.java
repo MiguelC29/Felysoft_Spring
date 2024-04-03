@@ -70,13 +70,17 @@ public class CategoryController {
         try {
             // System.out.println("@@@@" + request);
             // INSTANCIA OBJETO CATEGORIA
-            Category category = new Category();
+            //Category category = new Category();
+            Category category = this.categoryImp.findCategoryByNameAndEliminated(request.get("name").toString().toUpperCase());
 
-            // CAMPOS PROPIOS ENTIDAD CATEGORIA
-            //category.setIdCategory(Long.parseLong(get("id").toString()));
-            category.setName(request.get("name").toString().toUpperCase());
-
-            this.categoryImp.create(category);
+            if(category != null) {
+                category.setEliminated(false);
+                this.categoryImp.update(category);
+            } else {
+                Category newcategory = new Category();
+                newcategory.setName(request.get("name").toString().toUpperCase());
+                this.categoryImp.create(newcategory);
+            }
 
             response.put("status", "success");
             response.put("data", "Registro Exitoso");

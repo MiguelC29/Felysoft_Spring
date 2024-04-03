@@ -35,6 +35,12 @@ public class CategoryImp implements CategoryService {
     }
 
     @Override
+    public Category findCategoryByNameAndEliminated(String name) {
+        return this.categoryRepository.findCategoryByNameAndEliminatedTrue(name);
+    }
+
+
+    @Override
     public void create(Category category) {
         this.categoryRepository.save(category);
     }
