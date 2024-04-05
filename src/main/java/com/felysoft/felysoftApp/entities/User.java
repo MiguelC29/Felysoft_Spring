@@ -3,21 +3,52 @@ package com.felysoft.felysoftApp.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements Serializable {
+public class User implements Serializable, UserDetails {
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.getName()));
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
     public enum Gender {FEMENINO, MASCULINO};
     public enum TypeDoc {CC,TI,CE};
 
@@ -55,7 +86,7 @@ public class User implements Serializable {
     @Column(length = 45, nullable = false)
     private String username;
 
-    @Column(length = 45, nullable = false)
+    @Column(length = 255, nullable = false)
     private String password;
 
     @Column
