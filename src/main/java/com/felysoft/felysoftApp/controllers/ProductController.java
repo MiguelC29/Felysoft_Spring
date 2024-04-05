@@ -9,11 +9,14 @@ import com.felysoft.felysoftApp.services.imp.InventoryImp;
 import com.felysoft.felysoftApp.services.imp.ProductImp;
 import com.felysoft.felysoftApp.services.imp.ProviderImp;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -65,28 +68,34 @@ public class ProductController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<Map<String, Object>> create(
+            @RequestParam("name") String name,
+            @RequestParam("brand") String brand,
+            @RequestParam("salePrice") BigDecimal salePrice,
+            @RequestParam("expiryDate") Date expiryDate,
+            @RequestParam("category") Long categoryId,
+            @RequestParam("provider") Long providerId,
+            @RequestParam("stockInicial") int stockInicial,
+            @RequestParam("image") MultipartFile image) {
         Map<String, Object> response = new HashMap<>();
         try {
             // INSTANCIA OBJETO PRODUCTO
             Product product = new Product();
 
             // CAMPOS PROPIOS ENTIDAD PRODUCTO
-            if (request.containsKey("image") && request.get("image") != null) {
-                product.setImage(request.get("image").toString().getBytes());
-            }
-            if (request.containsKey("typeImg") && request.get("typeImg") != null) {
-                product.setTypeImg(request.get("typeImg").toString());
-            }
-            product.setName(request.get("name").toString().toUpperCase());
-            product.setBrand(request.get("brand").toString().toUpperCase());
-            product.setSalePrice(new BigDecimal(request.get("salePrice").toString()));
-            product.setExpiryDate(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse((String) request.get("expiryDate")).getTime()));
+            product.setNameImg(image.getOriginalFilename());
+            product.setTypeImg(image.getContentType());
+            product.setImage(image.getBytes());
+
+            product.setName(name.toUpperCase());
+            product.setBrand(brand.toUpperCase());
+            product.setSalePrice(new BigDecimal(salePrice.toString()));
+            product.setExpiryDate(new java.sql.Date(expiryDate.getTime()));
 
             // CAMPOS LLAVES FORANEAS
-            Category category = categoryImp.findById(Long.parseLong(request.get("category").toString()));
+            Category category = categoryImp.findById(Long.parseLong(categoryId.toString()));
             product.setCategory(category);
-            Provider provider = providerImp.findById(Long.parseLong(request.get("provider").toString()));
+            Provider provider = providerImp.findById(Long.parseLong(providerId.toString()));
             product.setProvider(provider);
 
             this.productImp.create(product);
@@ -94,7 +103,7 @@ public class ProductController {
             // INSTANCIA OBJETO INVENTARIO
             Inventory inventory = new Inventory();
             // CAMPOS PROPIOS ENTIDAD INVENTARIO
-            inventory.setStock(Integer.parseInt(request.get("stockInicial").toString()));
+            inventory.setStock(Integer.parseInt(String.valueOf(stockInicial)));
             inventory.setState(Inventory.State.DISPONIBLE);
             inventory.setTypeInv(Inventory.TypeInv.PRODUCTOS);
             // Configurar fechas de creación y actualización
@@ -117,30 +126,65 @@ public class ProductController {
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+    public ResponseEntity<Map<String, Object>> update(@PathVariable Long id,
+    @RequestParam(value = "name", required = false) String name,
+    @RequestParam(value = "brand", required = false) String brand,
+    @RequestParam(value = "salePrice", required = false) BigDecimal salePrice,
+    @RequestParam(value = "expiryDate", required = false) Date expiryDate,
+    @RequestParam(value = "category", required = false) Long categoryId,
+    @RequestParam(value = "provider", required = false) Long providerId,
+    @RequestParam(value = "stockInicial", required = false) Integer stockInicial,
+    @RequestParam(value = "image", required = false) MultipartFile image) {
         Map<String, Object> response = new HashMap<>();
         try {
             // INSTANCIA OBJETO PRODUCTO
             Product product = this.productImp.findById(id);
 
             // CAMPOS PROPIOS ENTIDAD PRODUCTO
-            if (request.containsKey("image") && request.get("image") != null) {
-                product.setImage(request.get("image").toString().getBytes());
-            }
-            if (request.containsKey("typeImg") && request.get("typeImg") != null) {
-                product.setTypeImg(request.get("typeImg").toString());
+            if (product == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Producto no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
 
-            product.setName(request.get("name").toString().toUpperCase());
-            product.setBrand(request.get("brand").toString().toUpperCase());
-            product.setSalePrice(new BigDecimal(request.get("salePrice").toString()));
-            product.setExpiryDate(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse((String) request.get("expiryDate")).getTime()));
+            // Actualizar los campos del producto con los nuevos valores si se proporcionan
+            if (name != null) {
+                product.setName(name.toUpperCase());
+            }
+            if (brand != null) {
+                product.setBrand(brand.toUpperCase());
+            }
+            if (salePrice != null) {
+                product.setSalePrice(salePrice);
+            }
+            if (expiryDate != null) {
+                product.setExpiryDate(new java.sql.Date(expiryDate.getTime()));
+            }
+            if (categoryId != null) {
+                Category category = categoryImp.findById(categoryId);
+                if (category == null) {
+                    response.put("status", HttpStatus.NOT_FOUND);
+                    response.put("data", "Categoría no encontrada");
+                    return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+                }
+                product.setCategory(category);
+            }
+            if (providerId != null) {
+                Provider provider = providerImp.findById(providerId);
+                if (provider == null) {
+                    response.put("status", HttpStatus.NOT_FOUND);
+                    response.put("data", "Proveedor no encontrado");
+                    return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+                }
+                product.setProvider(provider);
+            }
 
-            // CAMPOS LLAVES FORANEAS
-            Category category = categoryImp.findById(Long.parseLong(request.get("category").toString()));
-            product.setCategory(category);
-            Provider provider = providerImp.findById(Long.parseLong(request.get("provider").toString()));
-            product.setProvider(provider);
+            // Si se proporciona una nueva imagen, actualizarla
+            if (image != null) {
+                product.setNameImg(image.getOriginalFilename());
+                product.setTypeImg(image.getContentType());
+                product.setImage(image.getBytes());
+            }
 
             this.productImp.update(product);
 

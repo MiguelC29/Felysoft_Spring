@@ -23,11 +23,14 @@ public class Product implements Serializable {
     @Column
     private Long idProduct;
 
-    @Column
-    private byte[] image;
+    private String nameImg;
 
     @Column(length = 50)
     private String typeImg;
+
+    @Column(length = 5000000)
+    @Lob
+    private byte[] image;
 
     @Column(length = 45, nullable = false)
     private String name;
