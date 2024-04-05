@@ -58,11 +58,14 @@ public class User implements Serializable {
     @Column(length = 45, nullable = false)
     private String password;
 
-    @Column
-    private byte[] image;
+    private String nameImg;
 
     @Column(length = 50)
     private String typeImg;
+
+    @Column(length = 5000000)
+    @Lob
+    private byte[] image;
 
     @Column(nullable = false)
     @CreationTimestamp

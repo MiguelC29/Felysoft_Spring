@@ -83,9 +83,11 @@ public class ProductController {
             Product product = new Product();
 
             // CAMPOS PROPIOS ENTIDAD PRODUCTO
-            product.setNameImg(image.getOriginalFilename());
-            product.setTypeImg(image.getContentType());
-            product.setImage(image.getBytes());
+            if (image != null) {
+                product.setNameImg(image.getOriginalFilename());
+                product.setTypeImg(image.getContentType());
+                product.setImage(image.getBytes());
+            }
 
             product.setName(name.toUpperCase());
             product.setBrand(brand.toUpperCase());
@@ -127,14 +129,14 @@ public class ProductController {
 
     @PutMapping("update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id,
-    @RequestParam(value = "name", required = false) String name,
-    @RequestParam(value = "brand", required = false) String brand,
-    @RequestParam(value = "salePrice", required = false) BigDecimal salePrice,
-    @RequestParam(value = "expiryDate", required = false) Date expiryDate,
-    @RequestParam(value = "category", required = false) Long categoryId,
-    @RequestParam(value = "provider", required = false) Long providerId,
-    @RequestParam(value = "stockInicial", required = false) Integer stockInicial,
-    @RequestParam(value = "image", required = false) MultipartFile image) {
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "brand", required = false) String brand,
+            @RequestParam(value = "salePrice", required = false) BigDecimal salePrice,
+            @RequestParam(value = "expiryDate", required = false) Date expiryDate,
+            @RequestParam(value = "category", required = false) Long categoryId,
+            @RequestParam(value = "provider", required = false) Long providerId,
+            @RequestParam(value = "stockInicial", required = false) Integer stockInicial,
+            @RequestParam(value = "image", required = false) MultipartFile image) {
         Map<String, Object> response = new HashMap<>();
         try {
             // INSTANCIA OBJETO PRODUCTO
