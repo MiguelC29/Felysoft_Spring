@@ -9,6 +9,7 @@ import java.util.List;
 public interface UserService {
     public List<User> findAll() throws Exception;
     public User findById(Long id);
+    public User validateUser(String email, String password);
     @Transactional
     public void create(User user);
     @Transactional

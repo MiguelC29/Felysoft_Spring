@@ -25,6 +25,11 @@ public class UserImp implements UserService {
     }
 
     @Override
+    public User validateUser(String email, String password) {
+        return this.userRepository.findUserByEmailAndPasswordAndEliminatedFalse(email, password);
+    }
+
+    @Override
     public void create(User user) {
         this.userRepository.save(user);
     }

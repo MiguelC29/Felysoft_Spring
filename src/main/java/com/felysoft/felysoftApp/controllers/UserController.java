@@ -53,6 +53,29 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PostMapping("validate")
+    public ResponseEntity<Map<String, Object>> findByEmail(@RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            User user = this.userImp.validateUser(
+                    request.get("email").toString().toLowerCase(),
+                    request.get("password").toString()
+            );
+
+            if(user == null) {
+                throw new RuntimeException("Usuario no encontrado");
+            }
+
+            response.put("status", "success");
+            response.put("data", user);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(
             @RequestParam("numIdentification") Long numIdentification,
