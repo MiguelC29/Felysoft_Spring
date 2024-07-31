@@ -11,10 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AuthenticationService {
@@ -84,7 +81,9 @@ public class AuthenticationService {
             response.setToken(jwtToken);
             response.setRole(user.getRole());
             // response.setRefreshToken(refreshToken);
-            response.setExpirationTime("3Hrs");
+            //response.setExpirationTime("15Hrs");
+            // Enviar la fecha de expiración en formato ISO 8601
+            response.setExpirationTime(new Date(System.currentTimeMillis() + (jwtService.getExpirationMillis())).toInstant().toString());
             response.setMessage("Successfully Logged In");
         } catch (Exception e) {
             response.setStatusCode(500);

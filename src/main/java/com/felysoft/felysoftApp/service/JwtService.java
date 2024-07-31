@@ -36,6 +36,10 @@ public class JwtService {
                 .compact();
     }
 
+    public long getExpirationMillis() {
+        return EXPIRATION_MINUTES * 60 * 1000;
+    }
+
     private SecretKey generateKey() {
         byte[] secretAsBytes = Decoders.BASE64.decode(SECRET_KEY);
 
