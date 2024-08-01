@@ -112,7 +112,7 @@ public class ProductController {
             // Construir el objeto Inventory usando el patrón Builder
             Inventory inventory = Inventory.builder()
                     .stock(stockInicial)
-                    .state(Inventory.State.DISPONIBLE)
+                    .state((stockInicial < 6 ? Inventory.State.BAJO : Inventory.State.DISPONIBLE))
                     .typeInv(Inventory.TypeInv.PRODUCTOS)
                     .dateRegister(new Timestamp(System.currentTimeMillis()))
                     .lastModification(new Timestamp(System.currentTimeMillis()))
