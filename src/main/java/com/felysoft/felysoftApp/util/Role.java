@@ -227,6 +227,9 @@ public enum Role {
             Permission.CREATE_ONE_RESERVE,
             Permission.UPDATE_ONE_RESERVE,
 
+            Permission.READ_ALL_USERS,
+            Permission.READ_ONE_USER,
+
             Permission.READ_MY_PROFILE
     )),
     CUSTOMER(Arrays.asList(
