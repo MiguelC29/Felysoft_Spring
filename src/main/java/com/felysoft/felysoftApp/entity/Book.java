@@ -24,6 +24,15 @@ public class Book implements Serializable {
     @Column
     private Long idBook;
 
+    private String nameImg;
+
+    @Column(length = 50)
+    private String typeImg;
+
+    @Column(length = 5000000)
+    @Lob
+    private byte[] image;
+
     @Column(length = 320, nullable = false, unique = true)
     private String title;
 
