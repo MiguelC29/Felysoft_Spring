@@ -203,6 +203,7 @@ public enum Role {
     )),
     SALESPERSON(Arrays.asList(
             Permission.READ_INVENTORY_PRODUCTS,
+            Permission.READ_INVENTORY_BOOKS,
 
             Permission.READ_ALL_SERVICES,
             Permission.READ_ALL_TYPE_SERVICES,
