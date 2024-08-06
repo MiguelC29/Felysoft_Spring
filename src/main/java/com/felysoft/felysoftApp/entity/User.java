@@ -88,10 +88,6 @@ public class User implements UserDetails {
     private Role role;
 
     // FOREIGN KEYS
-    /*@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fkIdRole", nullable = false)
-    private Role role;*/
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Reserve> reserves;
