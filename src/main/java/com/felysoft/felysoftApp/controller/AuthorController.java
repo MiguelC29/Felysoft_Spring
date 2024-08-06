@@ -77,15 +77,21 @@ public class AuthorController {
 
         try{
             //INSTANCIA DEL OBJETO AUTHOR
-            Author author = Author.builder()
-                    .name(request.get("name").toString().toUpperCase())
-                    .nationality(request.get("nationality").toString().toUpperCase())
-                    .dateBirth(Date.valueOf(request.get("dateBirth").toString()))
-                    .biography(request.get("biography").toString().toUpperCase())
-                    .build();
+         Author author = this.authorImp.findAuthorByNameAndEliminated(request.get("name").toString().toUpperCase());
 
-            this.authorImp.create(author);
+         if(author!= null){
+             author.setEliminated(false);
+             this.authorImp.update(author);
+         }else {
+             Author newauthor = Author.builder()
+                     .name(request.get("name").toString().toUpperCase())
+                     .nationality(request.get("nationality").toString().toUpperCase())
+                     .dateBirth(Date.valueOf(request.get("dateBirth").toString()))
+                     .biography(request.get("biography").toString().toUpperCase())
+                     .build();
 
+             this.authorImp.create(newauthor);
+         }
             response.put("status","success");
             response.put("data","Registro Exitoso");
         }catch (Exception e){

@@ -13,6 +13,8 @@ public interface GenreService {
 
     List<Genre> findByIdAuthor(Long id);
 
+    Genre findGenreByNameAndEliminated(String name);
+
     @Transactional
     void create(Genre genre);
 
@@ -26,4 +28,6 @@ public interface GenreService {
 
     @Transactional
     void addAuthorToGenre( Long genreId, Long authorId );
+
+    boolean checkAssociationExists(Long genreId, Long authorId);
 }

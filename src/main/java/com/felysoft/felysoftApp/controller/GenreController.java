@@ -60,13 +60,19 @@ public class GenreController {
 
         try{
             //INSTANCIA DEL OBJETO GENRE
-            Genre genre = Genre.builder()
-                    .name(request.get("name").toString().toUpperCase())
-                    .description(request.get("description").toString().toUpperCase())
-                    .build();
+            Genre genre = this.genreImp.findGenreByNameAndEliminated(request.get("name").toString().toUpperCase());
 
-            this.genreImp.create(genre);
+            if(genre!=null){
+                genre.setEliminated(false);
+                this.genreImp.update(genre);
+            }else {
+                Genre newgenre = Genre.builder()
+                        .name(request.get("name").toString().toUpperCase())
+                        .description(request.get("description").toString().toUpperCase())
+                        .build();
 
+                this.genreImp.create(newgenre);
+            }
             response.put("status","success");
             response.put("data","Registro Exitoso");
         }catch (Exception e){
@@ -117,7 +123,7 @@ public class GenreController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
+    //ASOCIATION GENRES - AUTHOR
     @PreAuthorize("hasAuthority('READ_GENRES_BY_AUTHOR')")
     @GetMapping("genresByAuthor/{id}")
     public ResponseEntity<Map<String, Object>> findByIdAuthor(@PathVariable Long id) {
@@ -143,6 +149,15 @@ public class GenreController {
         try{
             Long genreId = Long.parseLong(request.get("genreId").toString());
             Long authorId = Long.parseLong(request.get("authorId").toString());
+
+            //Si la Asociación es existente
+            boolean associationExists = this.genreImp.checkAssociationExists(genreId,authorId);
+            if(associationExists){
+                response.put("associationType", "genre-author");
+                response.put("entity1", "género");
+                response.put("entity2", "autor");
+                throw new RuntimeException("Asociación existente");
+            }
 
             this.genreImp.addAuthorToGenre(genreId,authorId);
 

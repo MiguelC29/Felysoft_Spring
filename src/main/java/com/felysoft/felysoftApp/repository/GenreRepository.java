@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.repository;
 
+import com.felysoft.felysoftApp.entity.Category;
 import com.felysoft.felysoftApp.entity.Genre;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +14,7 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
     List<Genre> findGenresByEliminatedFalse();
 
     Genre findGenreByIdGenreAndEliminatedFalse(Long id);
-
+    Genre findGenreByNameAndEliminatedTrue(String name);
     @Query("SELECT g FROM Genre g JOIN g.authors a WHERE a.idAuthor = :authorId AND g.eliminated = false")
     List<Genre> findByAuthorId(@Param("authorId") Long idAuthor);
 }

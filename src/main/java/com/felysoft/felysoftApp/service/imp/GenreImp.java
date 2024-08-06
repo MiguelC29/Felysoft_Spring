@@ -35,6 +35,10 @@ public class GenreImp implements GenreService {
     }
 
     @Override
+    public Genre findGenreByNameAndEliminated(String name){
+        return this.genreRepository.findGenreByNameAndEliminatedTrue(name);
+    }
+    @Override
     public void create(Genre genre) {
         this.genreRepository.save(genre);
     }
@@ -56,5 +60,15 @@ public class GenreImp implements GenreService {
 
         genre.getAuthors().add(author);
         this.genreRepository.save(genre);
+    }
+
+    //Para verificación de si la asociación entre genero y autor existe
+    @Override
+    public boolean checkAssociationExists(Long genreId, Long authorId) {
+        Genre genre = genreRepository.findById(genreId).orElse(null);
+        Author author = authorRepository.findById(authorId).orElse(null);
+
+        //Esto Verifica si el autor ya está asociado al género
+        return genre != null && author != null && genre.getAuthors().contains(author);
     }
 }

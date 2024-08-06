@@ -153,6 +153,9 @@ public class CategoryController {
             // Verificar si la asociación ya existe
             boolean associationExists = this.categoryImp.checkAssociationExists(categoryId, providerId);
             if (associationExists) {
+                response.put("associationType", "category-provider");
+                response.put("entity1", "categoría");
+                response.put("entity2", "proveedor");
                 throw new RuntimeException("Asociación existente");
             }
 

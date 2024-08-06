@@ -13,6 +13,8 @@ public interface AuthorService {
 
     List<Author> findByIdGenre(Long id);
 
+    Author findAuthorByNameAndEliminated(String name);
+
     @Transactional
     void create(Author author);
 
