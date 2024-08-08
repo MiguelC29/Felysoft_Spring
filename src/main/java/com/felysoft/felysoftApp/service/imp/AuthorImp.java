@@ -45,6 +45,6 @@ public class AuthorImp implements AuthorService {
 
     @Override
     public void delete(Author author) {
-        this.authorRepository.delete(author);
+        this.authorRepository.save(author);
     }
 }

@@ -25,4 +25,5 @@ public interface AuthorService {
     @Transactional
     @Modifying
     void delete(Author author);
+
 }

@@ -80,8 +80,12 @@ public class AuthorController {
          Author author = this.authorImp.findAuthorByNameAndEliminated(request.get("name").toString().toUpperCase());
 
          if(author!= null){
-             author.setEliminated(false);
-             this.authorImp.update(author);
+             response.put("status",HttpStatus.BAD_GATEWAY);
+             response.put("data","Datos Desahibilitados");
+
+             response.put("detail","Información ya registrada pero desahibilitada; Contacte al Administrador.");
+
+             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
          }else {
              Author newauthor = Author.builder()
                      .name(request.get("name").toString().toUpperCase())
