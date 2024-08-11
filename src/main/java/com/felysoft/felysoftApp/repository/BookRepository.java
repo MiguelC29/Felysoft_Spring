@@ -9,6 +9,9 @@ import java.util.List;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long>{
     List<Book> findBooksByEliminatedFalse();
+    List<Book> findBooksByEliminatedTrue();
 
     Book findBookByIdBookAndEliminatedFalse(Long id);
+    Book findBookByIdBookAndEliminatedTrue(Long id);
+    Book findBookByTitleAndEliminatedTrue(String title);
 }

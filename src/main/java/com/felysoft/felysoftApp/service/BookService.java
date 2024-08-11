@@ -8,9 +8,12 @@ import java.util.List;
 
 public interface BookService {
     List<Book> findAll() throws Exception;
+    List<Book> findAllDisabled() throws Exception;
 
     Book findById(Long id);
+    Book findByIdDisabled(Long id);
 
+    Book findBookByTitleAndEliminated(String title);
     @Transactional
     void create(Book book);
 

@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.controller;
 
+import com.felysoft.felysoftApp.dto.AuthenticationRequest;
 import com.felysoft.felysoftApp.entity.Author;
 import com.felysoft.felysoftApp.entity.Book;
 import com.felysoft.felysoftApp.entity.Genre;
@@ -53,6 +54,22 @@ public class BookController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @PreAuthorize("hasAuthority('READ_ALL_BOOKS_DISABLED')")
+    @GetMapping("disabled")
+    public ResponseEntity<Map<String, Object>> findAllDisabled(){
+        Map<String,Object> response= new HashMap<>();
+
+        try{
+            List<Book> bookList= this.bookImp.findAllDisabled();
+            response.put("status","success");
+            response.put("data", bookList);
+        }catch (Exception e){
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @PreAuthorize("hasAuthority('READ_ONE_BOOK')")
     @GetMapping("list/{id}")
@@ -85,6 +102,25 @@ public class BookController {
         Map<String, Object> response = new HashMap<>();
 
         try{
+            final boolean isAdmin = AuthenticationRequest.isAdmin();
+
+            Book bookByTitle = this.bookImp.findBookByTitleAndEliminated(title.toUpperCase());
+            if(bookByTitle != null){
+                response.put("status",HttpStatus.BAD_GATEWAY);
+                response.put("data","Datos Desahibilitados");
+
+                String message;
+                // Verifica si el rol es de administrador
+                if (isAdmin) {
+                    message = "Información ya registrada pero desahibilitada";
+                } else {
+                    message = "Información ya registrada pero desahibilitada; Contacte al Administrador";
+                }
+
+                response.put("detail", message);
+
+                return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+            }else{
             //INSTANCIA DEL OBJETO BOOK
             Book.BookBuilder bookBuilder = Book.builder()
                     .title(title.toUpperCase())
@@ -126,6 +162,7 @@ public class BookController {
 
             response.put("status","success");
             response.put("data","Registro Exitoso");
+            }
         }catch (Exception e){
             response.put("status",HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -202,6 +239,42 @@ public class BookController {
 
             response.put("status", "success");
             response.put("data", "Actualización exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_ONE_BOOK_DISABLED')")
+    @PutMapping("enable/{id}")
+    public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Book book = this.bookImp.findByIdDisabled(id);
+            if(book == null){
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Libro no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }else{
+                book.setEliminated(false);
+                this.bookImp.update(book);
+            }
+            Inventory inventory= this.inventoryImp.findByBook(book);
+            if(inventory == null){
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Inventario no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+            else {
+                book.setEliminated(false);
+
+                this.inventoryImp.update(inventory);
+
+                response.put("status", "success");
+                response.put("data", "Habilitado Correctamente");
+            }
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
