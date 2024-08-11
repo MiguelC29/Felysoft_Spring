@@ -259,18 +259,17 @@ public class ProductController {
                 response.put("status", HttpStatus.NOT_FOUND);
                 response.put("data", "Producto no encontrado");
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-            } else {
-                product.setEliminated(false);
-                this.productImp.update(product);
             }
-            Inventory inventory = this.inventoryImp.findByProduct(product);
+            Inventory inventory = this.inventoryImp.findByProductDisabled(product);
             if (inventory == null) {
                 response.put("status", HttpStatus.NOT_FOUND);
                 response.put("data", "El producto no se encuentra en el inventario");
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             } else {
+                product.setEliminated(false);
                 inventory.setEliminated(false);
 
+                this.productImp.update(product);
                 this.inventoryImp.update(inventory);
 
                 response.put("status", "success");

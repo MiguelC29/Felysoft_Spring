@@ -37,6 +37,11 @@ public class InventoryImp implements InventoryService {
     }
 
     @Override
+    public Inventory findByProductDisabled(Product product) {
+        return this.inventoryRepository.findInventoryByProductAndEliminatedTrue(product);
+    }
+
+    @Override
     public Inventory findByBook(Book book) {
         return this.inventoryRepository.findInventoryByBookAndEliminatedFalse(book);
     }

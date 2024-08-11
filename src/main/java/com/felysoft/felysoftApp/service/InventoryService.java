@@ -16,6 +16,7 @@ public interface InventoryService {
     List<Inventory> findByTypeInv(Inventory.TypeInv typeInv);
 
     Inventory findByProduct(Product product);
+    Inventory findByProductDisabled(Product product);
 
     Inventory findByBook(Book book);
 
