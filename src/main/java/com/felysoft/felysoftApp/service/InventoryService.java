@@ -19,6 +19,7 @@ public interface InventoryService {
     Inventory findByProductDisabled(Product product);
 
     Inventory findByBook(Book book);
+    Inventory findByBookDisable(Book book);
 
     @Transactional
     void create(Inventory inventory);

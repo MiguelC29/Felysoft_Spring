@@ -47,6 +47,11 @@ public class InventoryImp implements InventoryService {
     }
 
     @Override
+    public Inventory findByBookDisable(Book book) {
+        return this.inventoryRepository.findInventoryByBookAndEliminatedTrue(book);
+    }
+
+    @Override
     public void create(Inventory inventory) {
         this.inventoryRepository.save(inventory);
     }

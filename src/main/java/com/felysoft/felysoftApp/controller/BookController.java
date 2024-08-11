@@ -257,11 +257,8 @@ public class BookController {
                 response.put("status", HttpStatus.NOT_FOUND);
                 response.put("data", "Libro no encontrado");
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-            }else{
-                book.setEliminated(false);
-                this.bookImp.update(book);
             }
-            Inventory inventory= this.inventoryImp.findByBook(book);
+            Inventory inventory= this.inventoryImp.findByBookDisable(book);
             if(inventory == null){
                 response.put("status", HttpStatus.NOT_FOUND);
                 response.put("data", "Inventario no encontrado");
@@ -269,7 +266,9 @@ public class BookController {
             }
             else {
                 book.setEliminated(false);
+                book.setEliminated(false);
 
+                this.bookImp.update(book);
                 this.inventoryImp.update(inventory);
 
                 response.put("status", "success");
