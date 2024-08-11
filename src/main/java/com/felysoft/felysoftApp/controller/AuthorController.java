@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.controller;
 
+import com.felysoft.felysoftApp.dto.AuthenticationRequest;
 import com.felysoft.felysoftApp.entity.Author;
 import com.felysoft.felysoftApp.service.imp.AuthorImp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,23 @@ public class AuthorController {
 
         try{
             List<Author> authorList = this.authorImp.findAll();
+            response.put("status","success");
+            response.put("data", authorList);
+        }catch (Exception e){
+            response.put("status",HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('READ_ALL_AUTHORS_DISABLED')")
+    @GetMapping("disabled")
+    public ResponseEntity<Map<String, Object>> findAllDisabled(){
+        Map<String,Object> response= new HashMap<>();
+
+        try{
+            List<Author> authorList = this.authorImp.findAllDisabled();
             response.put("status","success");
             response.put("data", authorList);
         }catch (Exception e){
@@ -76,28 +94,37 @@ public class AuthorController {
         Map<String,Object> response= new HashMap<>();
 
         try{
+            final boolean isAdmin = AuthenticationRequest.isAdmin();
             //INSTANCIA DEL OBJETO AUTHOR
-         Author author = this.authorImp.findAuthorByNameAndEliminated(request.get("name").toString().toUpperCase());
+            Author author = this.authorImp.findAuthorByNameAndEliminated(request.get("name").toString().toUpperCase());
 
-         if(author!= null){
-             response.put("status",HttpStatus.BAD_GATEWAY);
-             response.put("data","Datos Desahibilitados");
+            if (author!= null){
+                response.put("status",HttpStatus.BAD_GATEWAY);
+                response.put("data","Datos Desahibilitados");
 
-             response.put("detail","Información ya registrada pero desahibilitada; Contacte al Administrador.");
+                String message;
+                // Verifica si el rol es de administrador
+                if (isAdmin) {
+                    message = "Información ya registrada pero desahibilitada";
+                } else {
+                    message = "Información ya registrada pero desahibilitada; Contacte al Administrador";
+                }
 
-             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
-         }else {
-             Author newauthor = Author.builder()
-                     .name(request.get("name").toString().toUpperCase())
-                     .nationality(request.get("nationality").toString().toUpperCase())
-                     .dateBirth(Date.valueOf(request.get("dateBirth").toString()))
-                     .biography(request.get("biography").toString().toUpperCase())
-                     .build();
+                 response.put("detail", message);
 
-             this.authorImp.create(newauthor);
-         }
-            response.put("status","success");
-            response.put("data","Registro Exitoso");
+                 return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+            } else {
+                 Author newauthor = Author.builder()
+                         .name(request.get("name").toString().toUpperCase())
+                         .nationality(request.get("nationality").toString().toUpperCase())
+                         .dateBirth(Date.valueOf(request.get("dateBirth").toString()))
+                         .biography(request.get("biography").toString().toUpperCase())
+                         .build();
+
+                 this.authorImp.create(newauthor);
+                response.put("status","success");
+                response.put("data","Registro Exitoso");
+            }
         }catch (Exception e){
             response.put("status",HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -122,6 +149,26 @@ public class AuthorController {
 
             response.put("status", "success");
             response.put("data", "Actualización exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_ONE_AUTHOR_DISABLED')")
+    @PutMapping(value = "enable/{id}")
+    public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Author author = this.authorImp.findByIdDisabled(id);
+            author.setEliminated(false);
+
+            authorImp.update(author);
+
+            response.put("status", "success");
+            response.put("data", "Habilitado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());

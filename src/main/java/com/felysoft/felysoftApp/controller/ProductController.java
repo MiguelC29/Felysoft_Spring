@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.controller;
 
+import com.felysoft.felysoftApp.dto.AuthenticationRequest;
 import com.felysoft.felysoftApp.entity.Category;
 import com.felysoft.felysoftApp.entity.Inventory;
 import com.felysoft.felysoftApp.entity.Product;
@@ -55,6 +56,23 @@ public class ProductController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('READ_ALL_PRODUCTS_DISABLED')")
+    @GetMapping("disabled")
+    public ResponseEntity<Map<String, Object>> findAllDisabled() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Product> productList = this.productImp.findAllDisabled();
+
+            response.put("status", "success");
+            response.put("data", productList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('READ_ONE_PRODUCT')")
     @GetMapping("list/{id}")
     public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
@@ -85,44 +103,65 @@ public class ProductController {
             @RequestParam("image") MultipartFile image) {
         Map<String, Object> response = new HashMap<>();
         try {
-            // Construir el objeto Product usando el patrón Builder
-            Product.ProductBuilder productBuilder = Product.builder()
-                    .name(name.toUpperCase())
-                    .brand(brand.toUpperCase())
-                    .salePrice(salePrice)
-                    .expiryDate(new Date(expiryDate.getTime()));
+            final boolean isAdmin = AuthenticationRequest.isAdmin();
 
-            if (image != null) {
-                productBuilder.nameImg(image.getOriginalFilename())
-                        .typeImg(image.getContentType())
-                        .image(image.getBytes());
+            Product productByName = this.productImp.findProductByNameAndEliminated(name.toUpperCase());
+
+            if (productByName != null) {
+                response.put("status",HttpStatus.BAD_GATEWAY);
+                response.put("data","Datos Desahibilitados");
+
+                String message;
+                // Verifica si el rol es de administrador
+                if (isAdmin) {
+                    message = "Información ya registrada pero desahibilitada";
+                } else {
+                    message = "Información ya registrada pero desahibilitada; Contacte al Administrador";
+                }
+
+                response.put("detail", message);
+
+                return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+            } else {
+                // Construir el objeto Product usando el patrón Builder
+                Product.ProductBuilder productBuilder = Product.builder()
+                        .name(name.toUpperCase())
+                        .brand(brand.toUpperCase())
+                        .salePrice(salePrice)
+                        .expiryDate(new Date(expiryDate.getTime()));
+
+                if (image != null) {
+                    productBuilder.nameImg(image.getOriginalFilename())
+                            .typeImg(image.getContentType())
+                            .image(image.getBytes());
+                }
+
+                // Obtener las llaves foráneas
+                Category category = categoryImp.findById(categoryId);
+                Provider provider = providerImp.findById(providerId);
+
+                Product product = productBuilder
+                        .category(category)
+                        .provider(provider)
+                        .build();
+
+                this.productImp.create(product);
+
+                // Construir el objeto Inventory usando el patrón Builder
+                Inventory inventory = Inventory.builder()
+                        .stock(stockInicial)
+                        .state((stockInicial < 6 ? Inventory.State.BAJO : Inventory.State.DISPONIBLE))
+                        .typeInv(Inventory.TypeInv.PRODUCTOS)
+                        .dateRegister(new Timestamp(System.currentTimeMillis()))
+                        .lastModification(new Timestamp(System.currentTimeMillis()))
+                        .product(product)
+                        .build();
+
+                this.inventoryImp.create(inventory);
+
+                response.put("status", "success");
+                response.put("data", "Registro Exitoso");
             }
-
-            // Obtener las llaves foráneas
-            Category category = categoryImp.findById(categoryId);
-            Provider provider = providerImp.findById(providerId);
-
-            Product product = productBuilder
-                    .category(category)
-                    .provider(provider)
-                    .build();
-
-            this.productImp.create(product);
-
-            // Construir el objeto Inventory usando el patrón Builder
-            Inventory inventory = Inventory.builder()
-                    .stock(stockInicial)
-                    .state((stockInicial < 6 ? Inventory.State.BAJO : Inventory.State.DISPONIBLE))
-                    .typeInv(Inventory.TypeInv.PRODUCTOS)
-                    .dateRegister(new Timestamp(System.currentTimeMillis()))
-                    .lastModification(new Timestamp(System.currentTimeMillis()))
-                    .product(product)
-                    .build();
-
-            this.inventoryImp.create(inventory);
-
-            response.put("status", "success");
-            response.put("data", "Registro Exitoso");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -206,6 +245,41 @@ public class ProductController {
             response.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
             response.put("data", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_ONE_PRODUCT_DISABLED')")
+    @PutMapping("enable/{id}")
+    public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Product product = this.productImp.findByIdDisabled(id);
+            if (product == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Producto no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            } else {
+                product.setEliminated(false);
+                this.productImp.update(product);
+            }
+            Inventory inventory = this.inventoryImp.findByProduct(product);
+            if (inventory == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "El producto no se encuentra en el inventario");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            } else {
+                inventory.setEliminated(false);
+
+                this.inventoryImp.update(inventory);
+
+                response.put("status", "success");
+                response.put("data", "Habilitado Correctamente");
+            }
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

@@ -20,8 +20,18 @@ public class AuthorImp implements AuthorService {
     }
 
     @Override
+    public List<Author> findAllDisabled() {
+        return this.authorRepository.findAuthorsByEliminatedTrue();
+    }
+
+    @Override
     public Author findById(Long id) {
         return this.authorRepository.findAuthorByIdAuthorAndEliminatedFalse(id);
+    }
+
+    @Override
+    public Author findByIdDisabled(Long id) {
+        return this.authorRepository.findAuthorByIdAuthorAndEliminatedTrue(id);
     }
 
     @Override

@@ -24,9 +24,24 @@ public class ProductImp implements ProductService {
     }
 
     @Override
+    public List<Product> findAllDisabled() {
+        return this.productRepository.findProductsByEliminatedTrue();
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Product findById(Long id) {
         return this.productRepository.findProductByIdProductAndEliminatedFalse(id);
+    }
+
+    @Override
+    public Product findByIdDisabled(Long id) {
+        return this.productRepository.findProductByIdProductAndEliminatedTrue(id);
+    }
+
+    @Override
+    public Product findProductByNameAndEliminated(String name) {
+        return this.productRepository.findProductByNameAndEliminatedTrue(name);
     }
 
     @Override

@@ -7,7 +7,13 @@ import java.util.List;
 public interface ProductService {
     List<Product> findAll() throws Exception;
 
+    List<Product> findAllDisabled() throws Exception;
+
     Product findById(Long id);
+
+    Product findByIdDisabled(Long id);
+
+    Product findProductByNameAndEliminated(String name);
 
     void create(Product product);
 
