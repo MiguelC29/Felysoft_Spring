@@ -266,7 +266,7 @@ public class BookController {
             }
             else {
                 book.setEliminated(false);
-                book.setEliminated(false);
+                inventory.setEliminated(false);
 
                 this.bookImp.update(book);
                 this.inventoryImp.update(inventory);
