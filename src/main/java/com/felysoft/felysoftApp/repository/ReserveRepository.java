@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface ReserveRepository extends JpaRepository<Reserve, Long>{
     List<Reserve> findReservesByEliminatedFalse();
-
+    List<Reserve> findReservesByEliminatedTrue();
     Reserve findReservesByIdReserveAndEliminatedFalse(Long id);
+    Reserve findReservesByIdReserveAndEliminatedTrue(Long id);
 }

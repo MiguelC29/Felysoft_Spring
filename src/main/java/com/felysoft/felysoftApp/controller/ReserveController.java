@@ -48,6 +48,22 @@ public class ReserveController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @PreAuthorize("hasAuthority('READ_ALL_RESERVES_DISABLED')")
+    @GetMapping("disabled")
+    public ResponseEntity<Map<String, Object>> findAllDisabled(){
+        Map<String,Object> response= new HashMap<>();
+        try{
+            List<Reserve> reserveList= this.reserveImp.findAllDisabled();
+
+            response.put("status","success");
+            response.put("data", reserveList);
+        }catch (Exception e){
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @PreAuthorize("hasAuthority('READ_ONE_RESERVE')")
     @GetMapping("list/{id}")
@@ -71,7 +87,7 @@ public class ReserveController {
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String,Object> request){
         Map<String,Object> response= new HashMap<>();
         try{
-            //INSTANCIA DEL OBJETO RESERVE
+            // Instancia del objeto Reserve con eliminated = false
             Reserve reserve = Reserve.builder()
                     .dateReserve(LocalDate.parse((String) request.get("dateReserve")))
                     .description(request.get("description").toString().toUpperCase())
@@ -79,6 +95,7 @@ public class ReserveController {
                     .time(Time.valueOf(request.get("time").toString()))
                     .book(bookImp.findById(Long.parseLong(request.get("fkIdBook").toString())))
                     .user(userImp.findById(Long.parseLong(request.get("fkIdUser").toString())))
+                    .eliminated(false)  // Asegura que el estado inicial sea activo (no eliminado)
                     .build();
 
             this.reserveImp.create(reserve);
@@ -92,6 +109,7 @@ public class ReserveController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
     @PreAuthorize("hasAuthority('UPDATE_ONE_RESERVE')")
     @PutMapping("update/{id}")
@@ -123,6 +141,33 @@ public class ReserveController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @PreAuthorize("hasAuthority('UPDATE_ONE_RESERVE_DISABLED')")
+    @PutMapping("enable/{id}")
+    public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Reserve reserve = this.reserveImp.findByIdDisabled(id);
+
+            if (reserve == null){
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Reserva no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            } else {
+                reserve.setEliminated(false);
+
+                this.reserveImp.update(reserve);
+
+                response.put("status", "success");
+                response.put("data", "Habilitado Correctamente");
+            }
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
     @PreAuthorize("hasAuthority('DISABLE_ONE_RESERVE')")
     @PutMapping("delete/{id}")

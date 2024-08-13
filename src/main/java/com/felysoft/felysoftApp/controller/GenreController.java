@@ -85,12 +85,8 @@ public class GenreController {
                 response.put("status",HttpStatus.BAD_GATEWAY);
                 response.put("data","Datos Desahibilitados");
 
-                String message;
-                if (isAdmin){
-                    message =" Información ya registrada pero desahibilitada";
-                }else {
-                    message ="Información ya registrada pero desahibilitada; Contacte al Administrador";
-                }
+                String message = (isAdmin) ? "Información ya registrada pero desahibilitada" : "Información ya registrada pero desahibilitada; Contacte al Administrador";
+
                 response.put("detail",message);
 
                 return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);

@@ -109,13 +109,8 @@ public class BookController {
                 response.put("status",HttpStatus.BAD_GATEWAY);
                 response.put("data","Datos Desahibilitados");
 
-                String message;
                 // Verifica si el rol es de administrador
-                if (isAdmin) {
-                    message = "Información ya registrada pero desahibilitada";
-                } else {
-                    message = "Información ya registrada pero desahibilitada; Contacte al Administrador";
-                }
+                String message = (isAdmin) ? "Información ya registrada pero desahibilitada" : "Información ya registrada pero desahibilitada; Contacte al Administrador";
 
                 response.put("detail", message);
 
