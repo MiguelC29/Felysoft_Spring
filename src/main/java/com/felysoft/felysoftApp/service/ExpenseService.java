@@ -9,8 +9,10 @@ import java.util.List;
 
 public interface ExpenseService {
     List<Expense> findAll() throws Exception;
+    List<Expense> findAllDisabled() throws Exception;
 
     Expense findById(Long id);
+    Expense findByIdDisable(Long id);
 
     Expense findByPurchase(Purchase purchase);
 

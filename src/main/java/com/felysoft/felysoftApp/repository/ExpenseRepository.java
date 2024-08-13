@@ -10,8 +10,10 @@ import java.util.List;
 @Repository
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     List<Expense> findExpenseByEliminatedFalse();
+    List<Expense> findExpenseByEliminatedTrue();
 
     Expense findExpenseByPurchase(Purchase purchase);
 
     Expense findExpenseByIdExpenseAndEliminatedFalse(Long id);
+    Expense findExpenseByIdExpenseAndEliminatedTrue(Long id);
 }
