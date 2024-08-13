@@ -158,11 +158,10 @@ public class SaleController {
         try {
             Sale sale = this.saleImp.findByIdDisabled(id);
             sale.setEliminated(false);
-
             saleImp.update(sale);
 
             response.put("status", "success");
-            response.put("data", "Habilitado Correctamente");
+            response.put("data", "Habilitada Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
