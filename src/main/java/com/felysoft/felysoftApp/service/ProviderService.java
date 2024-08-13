@@ -9,9 +9,15 @@ import java.util.List;
 public interface ProviderService {
     List<Provider> findAll() throws Exception;
 
+    List<Provider> findAllDisabled() throws Exception;
+
     Provider findById(Long id);
 
+    Provider findByIdDisabled(Long id);
+
     List<Provider> findByIdCategory(Long id);
+
+    Provider findProviderByNitAndEliminated(String nit);
 
     @Transactional
     void create(Provider provider);

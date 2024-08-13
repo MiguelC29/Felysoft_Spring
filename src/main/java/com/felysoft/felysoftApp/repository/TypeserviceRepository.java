@@ -11,5 +11,11 @@ public interface TypeserviceRepository extends JpaRepository<TypeService, Long> 
     //CONSULTA CON INVERSION DE CONTROL
     List<TypeService> findTypeServicesByEliminatedFalse();
 
+    List<TypeService> findTypeServicesByEliminatedTrue();
+
     TypeService findTypeServiceByIdTypeServiceAndEliminatedFalse(Long id);
+
+    TypeService findTypeServiceByIdTypeServiceAndEliminatedTrue(Long id);
+
+    TypeService findTypeServiceByNameAndEliminatedTrue(String name);
 }

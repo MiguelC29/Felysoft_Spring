@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.controller;
 
+import com.felysoft.felysoftApp.dto.AuthenticationRequest;
 import com.felysoft.felysoftApp.entity.Charge;
 import com.felysoft.felysoftApp.service.imp.ChargeImp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,23 @@ public class ChargeController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('READ_ALL_CHARGES_DISABLED')")
+    @GetMapping("disabled")
+    public ResponseEntity<Map<String, Object>> findAllDisabled() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Charge> chargeList = this.chargeImp.findAllDisabled();
+
+            response.put("status", "success");
+            response.put("data", chargeList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('READ_ONE_CHARGE')")
     @GetMapping("list/{id}")
     public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
@@ -58,15 +76,31 @@ public class ChargeController {
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request){
         Map<String, Object> response = new HashMap<>();
         try {
-            Charge charge = Charge.builder()
-                    .charge(request.get("charge").toString().toUpperCase())
-                    .description(request.get("description").toString().toUpperCase())
-                    .build();
+            final boolean isAdmin = AuthenticationRequest.isAdmin();
 
-            this.chargeImp.create(charge);
+            Charge chargeByCharge = this.chargeImp.findChargeByChargeAndEliminated(request.get("charge").toString().toUpperCase());
 
-            response.put("status", "success");
-            response.put("data", "Registro Exitoso");
+            if (chargeByCharge != null) {
+                response.put("status",HttpStatus.BAD_GATEWAY);
+                response.put("data","Datos Desahibilitados");
+
+                // Verifica si el rol es de administrador
+                String message = (isAdmin) ? "Información ya registrada pero desahibilitada" : "Información ya registrada pero desahibilitada; Contacte al Administrador";
+
+                response.put("detail", message);
+
+                return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+            } else {
+                Charge charge = Charge.builder()
+                        .charge(request.get("charge").toString().toUpperCase())
+                        .description(request.get("description").toString().toUpperCase())
+                        .build();
+
+                this.chargeImp.create(charge);
+
+                response.put("status", "success");
+                response.put("data", "Registro Exitoso");
+            }
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -82,14 +116,44 @@ public class ChargeController {
         try {
             Charge charge = this.chargeImp.findById(id);
 
-            charge.setCharge(request.get("charge").toString().toUpperCase()); //NOMBRE
+            if (charge == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Cargo no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
 
-            charge.setDescription(request.get("description").toString().toUpperCase()); //DESCRIPCION
+            charge.setCharge(request.get("charge").toString().toUpperCase());
+            charge.setDescription(request.get("description").toString().toUpperCase());
 
             this.chargeImp.update(charge);
 
             response.put("status", "success");
             response.put("data", "Actualización exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_ONE_CHARGE_DISABLED')")
+    @PutMapping("enable/{id}")
+    public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Charge charge = this.chargeImp.findByIdDisabled(id);
+            if (charge == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Cargo no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+            charge.setEliminated(false);
+
+            this.chargeImp.update(charge);
+
+            response.put("status", "success");
+            response.put("data", "Habilitado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());

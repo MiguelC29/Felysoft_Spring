@@ -22,7 +22,7 @@ public class Charge implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCharge;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 30, nullable = false, unique = true)
     private String charge;
 
     @Column(length = 320, nullable = false)
