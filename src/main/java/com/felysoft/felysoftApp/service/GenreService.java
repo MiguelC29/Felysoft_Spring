@@ -9,7 +9,12 @@ import java.util.List;
 public interface GenreService {
     List<Genre> findAll() throws Exception;
 
+    List<Genre> findAllDisabled() throws Exception;
+
     Genre findById(Long id);
+
+    Genre findByIdDisabled(Long id);
+
 
     List<Genre> findByIdAuthor(Long id);
 

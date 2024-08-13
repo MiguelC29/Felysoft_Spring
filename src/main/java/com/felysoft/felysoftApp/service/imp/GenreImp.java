@@ -25,8 +25,18 @@ public class GenreImp implements GenreService {
     }
 
     @Override
+    public List<Genre> findAllDisabled() throws Exception {
+        return this.genreRepository.findGenresByEliminatedTrue();
+    }
+
+    @Override
     public Genre findById(Long id) {
         return this.genreRepository.findGenreByIdGenreAndEliminatedFalse(id);
+    }
+
+    @Override
+    public Genre findByIdDisabled(Long id) {
+        return this.genreRepository.findGenreByIdGenreAndEliminatedTrue(id);
     }
 
     @Override

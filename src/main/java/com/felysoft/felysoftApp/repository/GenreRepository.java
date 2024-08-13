@@ -12,8 +12,11 @@ import java.util.List;
 @Repository
 public interface GenreRepository extends JpaRepository<Genre, Long> {
     List<Genre> findGenresByEliminatedFalse();
+    List<Genre> findGenresByEliminatedTrue();
+
 
     Genre findGenreByIdGenreAndEliminatedFalse(Long id);
+    Genre findGenreByIdGenreAndEliminatedTrue(Long id);
     Genre findGenreByNameAndEliminatedTrue(String name);
     @Query("SELECT g FROM Genre g JOIN g.authors a WHERE a.idAuthor = :authorId AND g.eliminated = false")
     List<Genre> findByAuthorId(@Param("authorId") Long idAuthor);

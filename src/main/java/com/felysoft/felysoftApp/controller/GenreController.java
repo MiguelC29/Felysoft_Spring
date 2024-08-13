@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.controller;
 
+import com.felysoft.felysoftApp.dto.AuthenticationRequest;
 import com.felysoft.felysoftApp.entity.Genre;
 import com.felysoft.felysoftApp.service.imp.GenreImp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,23 @@ public class GenreController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('READ_ALL_GENRES_DISABLED')")
+    @GetMapping("disabled")
+    public ResponseEntity<Map<String, Object>> findAllDisabled(){
+        Map<String,Object> response= new HashMap<>();
+        try{
+            List<Genre> genreList= this.genreImp.findAllDisabled();
+
+            response.put("status","success");
+            response.put("data", genreList);
+        }catch (Exception e){
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('READ_ONE_GENRE')")
     @GetMapping("list/{id}")
     public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
@@ -59,12 +77,24 @@ public class GenreController {
         Map<String,Object> response= new HashMap<>();
 
         try{
+            final boolean isAdmin = AuthenticationRequest.isAdmin();
             //INSTANCIA DEL OBJETO GENRE
             Genre genre = this.genreImp.findGenreByNameAndEliminated(request.get("name").toString().toUpperCase());
 
             if(genre!=null){
-                genre.setEliminated(false);
-                this.genreImp.update(genre);
+                response.put("status",HttpStatus.BAD_GATEWAY);
+                response.put("data","Datos Desahibilitados");
+
+                String message;
+                if (isAdmin){
+                    message =" Información ya registrada pero desahibilitada";
+                }else {
+                    message ="Información ya registrada pero desahibilitada; Contacte al Administrador";
+                }
+                response.put("detail",message);
+
+                return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+
             }else {
                 Genre newgenre = Genre.builder()
                         .name(request.get("name").toString().toUpperCase())
@@ -72,9 +102,10 @@ public class GenreController {
                         .build();
 
                 this.genreImp.create(newgenre);
+                response.put("status","success");
+                response.put("data","Registro Exitoso");
             }
-            response.put("status","success");
-            response.put("data","Registro Exitoso");
+
         }catch (Exception e){
             response.put("status",HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -96,6 +127,26 @@ public class GenreController {
 
             response.put("status", "success");
             response.put("data", "Actualización exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_ONE_GENRE_DISABLED')")
+    @PutMapping("enable/{id}")
+    public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Genre genre = this.genreImp.findByIdDisabled(id);
+            genre.setEliminated(false);
+
+            this.genreImp.update(genre);
+
+            response.put("status", "success");
+            response.put("data", "Habilitado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -140,6 +191,7 @@ public class GenreController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
     @PreAuthorize("hasAuthority('ASSOCIATE_GENRE_AUTHOR')")
     @PostMapping("add-author")
