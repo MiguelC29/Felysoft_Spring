@@ -8,8 +8,10 @@ import java.util.List;
 
 public interface ReserveService {
     List<Reserve> findAll() throws Exception;
+    List<Reserve> findAllDisabled() throws Exception;
 
     Reserve findById(Long id);
+    Reserve findByIdDisabled(Long id);
 
     @Transactional
     void create(Reserve reserve);

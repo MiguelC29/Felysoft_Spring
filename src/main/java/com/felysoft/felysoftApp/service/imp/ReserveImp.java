@@ -20,8 +20,18 @@ public class ReserveImp implements ReserveService {
     }
 
     @Override
+    public List<Reserve> findAllDisabled() throws Exception {
+        return this.reserveRepository.findReservesByEliminatedTrue();
+    }
+
+    @Override
     public Reserve findById(Long id) {
         return this.reserveRepository.findReservesByIdReserveAndEliminatedFalse(id);
+    }
+
+    @Override
+    public Reserve findByIdDisabled(Long id) {
+        return this.reserveRepository.findReservesByIdReserveAndEliminatedTrue(id);
     }
 
     @Override
