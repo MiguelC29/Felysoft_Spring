@@ -25,8 +25,18 @@ public class EmployeeImp implements EmployeeService {
     }
 
     @Override
+    public List<Employee> findAllDisabled() throws Exception {
+        return this.employeeRepository.findEmployeesByEliminatedTrue();
+    }
+
+    @Override
     public Employee findById(Long id) {
         return this.employeeRepository.findEmployeeByIdEmployeeAndEliminatedFalse(id);
+    }
+
+    @Override
+    public Employee findByIdDisabled(Long id) {
+        return this.employeeRepository.findEmployeeByIdEmployeeAndEliminatedTrue(id);
     }
 
     @Override

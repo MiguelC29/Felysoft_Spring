@@ -111,13 +111,8 @@ public class ProductController {
                 response.put("status",HttpStatus.BAD_GATEWAY);
                 response.put("data","Datos Desahibilitados");
 
-                String message;
                 // Verifica si el rol es de administrador
-                if (isAdmin) {
-                    message = "Información ya registrada pero desahibilitada";
-                } else {
-                    message = "Información ya registrada pero desahibilitada; Contacte al Administrador";
-                }
+                String message = (isAdmin) ? "Información ya registrada pero desahibilitada" : "Información ya registrada pero desahibilitada; Contacte al Administrador";
 
                 response.put("detail", message);
 
@@ -145,8 +140,6 @@ public class ProductController {
                         .provider(provider)
                         .build();
 
-                this.productImp.create(product);
-
                 // Construir el objeto Inventory usando el patrón Builder
                 Inventory inventory = Inventory.builder()
                         .stock(stockInicial)
@@ -157,6 +150,7 @@ public class ProductController {
                         .product(product)
                         .build();
 
+                this.productImp.create(product);
                 this.inventoryImp.create(inventory);
 
                 response.put("status", "success");
@@ -179,7 +173,6 @@ public class ProductController {
                                                       @RequestParam(value = "expiryDate", required = false) Date expiryDate,
                                                       @RequestParam(value = "category", required = false) Long categoryId,
                                                       @RequestParam(value = "provider", required = false) Long providerId,
-                                                      //@RequestParam(value = "stockInicial", required = false) Integer stockInicial,
                                                       @RequestParam(value = "image", required = false) MultipartFile image) {
         Map<String, Object> response = new HashMap<>();
         try {

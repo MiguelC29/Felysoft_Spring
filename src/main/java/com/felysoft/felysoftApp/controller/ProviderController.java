@@ -100,13 +100,8 @@ public class ProviderController {
                 response.put("status",HttpStatus.BAD_GATEWAY);
                 response.put("data","Datos Desahibilitados");
 
-                String message;
                 // Verifica si el rol es de administrador
-                if (isAdmin) {
-                    message = "Información ya registrada pero desahibilitada";
-                } else {
-                    message = "Información ya registrada pero desahibilitada; Contacte al Administrador";
-                }
+                String message = (isAdmin) ? "Información ya registrada pero desahibilitada" : "Información ya registrada pero desahibilitada; Contacte al Administrador";
 
                 response.put("detail", message);
 
@@ -140,6 +135,12 @@ public class ProviderController {
         Map<String, Object> response = new HashMap<>();
         try {
             Provider provider = this.providerImp.findById(id);
+
+            if (provider == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Proveedor no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
 
             provider.setNit(request.get("nit").toString());
             provider.setName(request.get("name").toString().toUpperCase());
@@ -189,6 +190,7 @@ public class ProviderController {
         Map<String, Object> response = new HashMap<>();
         try {
             Provider provider = this.providerImp.findById(id);
+
             if (provider == null) {
                 response.put("status", HttpStatus.NOT_FOUND);
                 response.put("data", "Proveedor no encontrado");

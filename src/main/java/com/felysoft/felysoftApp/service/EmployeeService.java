@@ -9,7 +9,11 @@ import java.util.List;
 public interface EmployeeService {
     List<Employee> findAll() throws Exception;
 
+    List<Employee> findAllDisabled() throws Exception;
+
     Employee findById(Long id);
+
+    Employee findByIdDisabled(Long id);
 
     @Transactional
     void create(Employee employee);

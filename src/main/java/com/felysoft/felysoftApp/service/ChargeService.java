@@ -9,7 +9,13 @@ import java.util.List;
 public interface ChargeService {
     List<Charge> findAll() throws Exception;
 
+    List<Charge> findAllDisabled() throws Exception;
+
     Charge findById(Long id);
+
+    Charge findByIdDisabled(Long id);
+
+    Charge findChargeByChargeAndEliminated(String charge);
 
     @Transactional
     void create(Charge charge);

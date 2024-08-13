@@ -20,8 +20,23 @@ public class ChargeImp implements ChargeService {
     }
 
     @Override
+    public List<Charge> findAllDisabled() throws Exception {
+        return this.chargeRepository.findChargeByEliminatedTrue();
+    }
+
+    @Override
     public Charge findById(Long id) {
         return this.chargeRepository.findChargeByIdChargeAndEliminatedFalse(id);
+    }
+
+    @Override
+    public Charge findByIdDisabled(Long id) {
+        return this.chargeRepository.findChargeByIdChargeAndEliminatedTrue(id);
+    }
+
+    @Override
+    public Charge findChargeByChargeAndEliminated(String charge) {
+        return this.chargeRepository.findChargeByChargeAndEliminatedTrue(charge);
     }
 
     @Override

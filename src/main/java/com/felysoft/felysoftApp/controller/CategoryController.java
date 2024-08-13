@@ -84,13 +84,8 @@ public class CategoryController {
                 response.put("status",HttpStatus.BAD_GATEWAY);
                 response.put("data","Datos Desahibilitados");
 
-                String message;
                 // Verifica si el rol es de administrador
-                if (isAdmin) {
-                    message = "Información ya registrada pero desahibilitada";
-                } else {
-                    message = "Información ya registrada pero desahibilitada; Contacte al Administrador";
-                }
+                String message = (isAdmin) ? "Información ya registrada pero desahibilitada" : "Información ya registrada pero desahibilitada; Contacte al Administrador";
 
                 response.put("detail", message);
 
@@ -119,6 +114,12 @@ public class CategoryController {
         Map<String, Object> response = new HashMap<>();
         try {
             Category category = this.categoryImp.findById(id);
+
+            if (category == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Categoría no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
 
             category.setName(request.get("name").toString().toUpperCase());
 
@@ -166,6 +167,12 @@ public class CategoryController {
         Map<String, Object> response = new HashMap<>();
         try {
             Category category = this.categoryImp.findById(id);
+
+            if (category == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Categoría no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
 
             category.setEliminated(true);
 
