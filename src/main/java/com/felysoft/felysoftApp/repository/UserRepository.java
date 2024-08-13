@@ -13,7 +13,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findUsersByEliminatedFalse();
 
+    List<User> findUsersByEliminatedTrue();
+
     User findUserByIdUserAndEliminatedFalse(Long id);
 
+    User findUserByIdUserAndEliminatedTrue(Long id);
+
     User findUserByEmailAndPasswordAndEliminatedFalse(String email, String password);
+
+    User findUserByNumIdentificationAndEliminatedTrue(Long numIdentification);
 }

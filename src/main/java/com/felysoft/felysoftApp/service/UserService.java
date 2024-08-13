@@ -9,9 +9,15 @@ import java.util.List;
 public interface UserService {
     List<User> findAll() throws Exception;
 
+    List<User> findAllDisabled() throws Exception;
+
     User findById(Long id);
 
+    User findByIdDisabled(Long id);
+
     User validateUser(String email, String password);
+
+    User findByNumIdentification(Long numIdentification);
 
     @Transactional
     void create(User user);

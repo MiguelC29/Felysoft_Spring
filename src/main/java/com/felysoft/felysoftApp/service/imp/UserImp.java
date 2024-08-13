@@ -23,13 +23,28 @@ public class UserImp implements UserService, UserDetailsService {
     }
 
     @Override
+    public List<User> findAllDisabled() throws Exception {
+        return this.userRepository.findUsersByEliminatedTrue();
+    }
+
+    @Override
     public User findById(Long id) {
         return this.userRepository.findUserByIdUserAndEliminatedFalse(id);
     }
 
     @Override
+    public User findByIdDisabled(Long id) {
+        return this.userRepository.findUserByIdUserAndEliminatedTrue(id);
+    }
+
+    @Override
     public User validateUser(String email, String password) {
         return this.userRepository.findUserByEmailAndPasswordAndEliminatedFalse(email, password);
+    }
+
+    @Override
+    public User findByNumIdentification(Long numIdentification) {
+        return this.userRepository.findUserByNumIdentificationAndEliminatedTrue(numIdentification);
     }
 
     @Override
