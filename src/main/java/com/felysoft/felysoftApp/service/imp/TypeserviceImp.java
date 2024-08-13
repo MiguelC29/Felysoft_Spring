@@ -20,8 +20,23 @@ public class TypeserviceImp implements TypeserviceService {
     }
 
     @Override
+    public List<TypeService> findAllDisabled() throws Exception {
+        return this.typeserviceRepository.findTypeServicesByEliminatedTrue();
+    }
+
+    @Override
     public TypeService findById(Long id) {
         return this.typeserviceRepository.findTypeServiceByIdTypeServiceAndEliminatedFalse(id);
+    }
+
+    @Override
+    public TypeService findByIdDisabled(Long id) {
+        return this.typeserviceRepository.findTypeServiceByIdTypeServiceAndEliminatedTrue(id);
+    }
+
+    @Override
+    public TypeService findByNameAndEliminated(String name) {
+        return this.typeserviceRepository.findTypeServiceByNameAndEliminatedTrue(name);
     }
 
     @Override

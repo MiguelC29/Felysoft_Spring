@@ -19,8 +19,18 @@ public class ServiceImp implements ServiceService {
     }
 
     @Override
+    public List<Service> findAllDisabled() throws Exception {
+        return this.serviceRepository.findServicesByEliminatedTrue();
+    }
+
+    @Override
     public Service findById(Long id) {
         return this.serviceRepository.findServicesByIdServiceAndEliminatedFalse(id);
+    }
+
+    @Override
+    public Service findByIdDisabled(Long id) {
+        return this.serviceRepository.findServicesByIdServiceAndEliminatedTrue(id);
     }
 
     @Override

@@ -43,6 +43,23 @@ public class ServiceController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('READ_ALL_SERVICES_DISABLED')")
+    @GetMapping("disabled")
+    public ResponseEntity<Map<String, Object>> findAllDisabled() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Service> serviceList = this.serviceImp.findAllDisabled();
+
+            response.put("status", "success");
+            response.put("data", serviceList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage().toUpperCase());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('READ_ONE_SERVICE')")
     @GetMapping("list/{id}")
     public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
@@ -95,6 +112,12 @@ public class ServiceController {
         try {
             Service service = this.serviceImp.findById(id);
 
+            if (service == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Servicio no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
             service.setState(Service.State.valueOf(request.get("state").toString().toUpperCase()));
             service.setPriceAdditional(new BigDecimal(request.get("priceAdditional").toString()));
             service.setTotal(new BigDecimal(request.get("total").toString()));
@@ -115,12 +138,46 @@ public class ServiceController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_ONE_SERVICE_DISABLED')")
+    @PutMapping(value = "enable/{id}")
+    public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Service service = this.serviceImp.findByIdDisabled(id);
+
+            if (service == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Servicio no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            service.setEliminated(false);
+
+            this.serviceImp.update(service);
+
+            response.put("status", "success");
+            response.put("data", "Eliminado Correctamente");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage().toUpperCase());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('DISABLE_ONE_SERVICE')")
     @PutMapping(value = "delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Service service = this.serviceImp.findById(id);
+
+            if (service == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Servicio no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
             service.setEliminated(true);
 
             this.serviceImp.delete(service);
