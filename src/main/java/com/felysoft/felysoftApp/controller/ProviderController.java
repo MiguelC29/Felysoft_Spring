@@ -189,6 +189,12 @@ public class ProviderController {
         Map<String, Object> response = new HashMap<>();
         try {
             Provider provider = this.providerImp.findById(id);
+            if (provider == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Proveedor no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
             provider.setEliminated(true);
 
             providerImp.delete(provider);

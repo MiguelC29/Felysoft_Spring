@@ -163,6 +163,11 @@ public class AuthorController {
         Map<String, Object> response = new HashMap<>();
         try {
             Author author = this.authorImp.findByIdDisabled(id);
+            if (author == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Autor no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
             author.setEliminated(false);
 
             authorImp.update(author);
@@ -183,6 +188,11 @@ public class AuthorController {
         Map<String, Object> response = new HashMap<>();
         try {
             Author author = this.authorImp.findById(id);
+            if (author == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Autor no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
             author.setEliminated(true);
 
             authorImp.delete(author);
