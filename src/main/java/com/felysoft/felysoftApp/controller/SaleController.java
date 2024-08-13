@@ -28,10 +28,27 @@ public class SaleController {
 
     @PreAuthorize("hasAuthority('READ_ALL_SALES')")
     @GetMapping("all")
-    public ResponseEntity<Map<String, Object>> findAll(){
+    public ResponseEntity<Map<String, Object>> findAll() {
         Map<String, Object> response = new HashMap<>();
         try {
             List<Sale> saleList = this.saleImp.findAll();
+
+            response.put("status", "success");
+            response.put("data", saleList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('READ_ALL_SALES_DISABLED')")
+    @GetMapping("disabled")
+    public ResponseEntity<Map<String, Object>> findAllDisabled() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Sale> saleList = this.saleImp.findAllDisabled();
 
             response.put("status", "success");
             response.put("data", saleList);
@@ -62,7 +79,7 @@ public class SaleController {
 
     @PreAuthorize("hasAuthority('CREATE_ONE_SALE')")
     @PostMapping("create")
-    public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request){
+    public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
         try {
             Sale sale = Sale.builder()
@@ -85,7 +102,7 @@ public class SaleController {
     }
 
     @PostMapping("add-detail")
-    public ResponseEntity<Map<String, Object>> addDetailToSale(@RequestBody Map<String, Object> request){
+    public ResponseEntity<Map<String, Object>> addDetailToSale(@RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
         try {
             Long saleId = Long.parseLong(request.get("saleId").toString());
@@ -134,6 +151,26 @@ public class SaleController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_ONE_SALE_DISABLED')")
+    @PutMapping("enable/{id}")
+    public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Sale sale = this.saleImp.findByIdDisabled(id);
+            sale.setEliminated(false);
+
+            saleImp.update(sale);
+
+            response.put("status", "success");
+            response.put("data", "Habilitado Correctamente");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('DISABLE_ONE_SALE')")
     @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
@@ -153,4 +190,5 @@ public class SaleController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 }

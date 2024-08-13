@@ -25,9 +25,20 @@ public class SaleImp implements SaleService {
     }
 
     @Override
+    public List<Sale> findAllDisabled() throws Exception {
+        return this.saleRepository.findSaleByEliminatedTrue();
+    }
+
+    @Override
     public Sale findById(Long id){
         return this.saleRepository.findSaleByIdSaleAndEliminatedFalse(id);
     }
+
+    @Override
+    public Sale findByIdDisabled(Long id) {
+        return this.saleRepository.findSaleByIdSaleAndEliminatedTrue(id);
+    }
+
     @Override
     public void create(Sale sale) {
         this.saleRepository.save(sale);

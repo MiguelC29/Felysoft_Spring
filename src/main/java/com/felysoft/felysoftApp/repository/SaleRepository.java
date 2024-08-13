@@ -12,6 +12,8 @@ public interface SaleRepository extends JpaRepository <Sale, Long> {
     List<Sale>findAll(); */
 
     List<Sale> findSaleByEliminatedFalse();
+    List<Sale> findSaleByEliminatedTrue();
 
     Sale findSaleByIdSaleAndEliminatedFalse(Long id);
+    Sale findSaleByIdSaleAndEliminatedTrue(Long id);
 }
