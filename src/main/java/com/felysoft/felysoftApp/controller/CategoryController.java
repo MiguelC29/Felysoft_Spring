@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.controller;
 
+import com.felysoft.felysoftApp.dto.AuthenticationRequest;
 import com.felysoft.felysoftApp.entity.Category;
 import com.felysoft.felysoftApp.service.imp.CategoryImp;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,22 @@ public class CategoryController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('READ_ALL_CATEGORIES_DISABLED')")
+    @GetMapping("disabled")
+    public ResponseEntity<Map<String, Object>> findAllDisabled() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Category> categoryList = this.categoryImp.findAllDisabled();
+            response.put("status", "success");
+            response.put("data", categoryList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('READ_ONE_CATEGORY')")
     @GetMapping("list/{id}")
     public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
@@ -59,22 +76,35 @@ public class CategoryController {
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
         try {
-            // System.out.println("@@@@" + request);
-            // INSTANCIA OBJETO CATEGORIA
-            Category category = this.categoryImp.findCategoryByNameAndEliminated(request.get("name").toString().toUpperCase());
+            final boolean isAdmin = AuthenticationRequest.isAdmin();
 
-            if(category != null) {
-                category.setEliminated(false);
-                this.categoryImp.update(category);
+            Category categoryByName = this.categoryImp.findCategoryByNameAndEliminated(request.get("name").toString().toUpperCase());
+
+            if (categoryByName != null) {
+                response.put("status",HttpStatus.BAD_GATEWAY);
+                response.put("data","Datos Desahibilitados");
+
+                String message;
+                // Verifica si el rol es de administrador
+                if (isAdmin) {
+                    message = "Información ya registrada pero desahibilitada";
+                } else {
+                    message = "Información ya registrada pero desahibilitada; Contacte al Administrador";
+                }
+
+                response.put("detail", message);
+
+                return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
             } else {
+                // INSTANCIA OBJETO CATEGORIA
                 Category newcategory = Category.builder()
                         .name(request.get("name").toString().toUpperCase())
                         .build();
                 this.categoryImp.create(newcategory);
-            }
 
-            response.put("status", "success");
-            response.put("data", "Registro Exitoso");
+                response.put("status", "success");
+                response.put("data", "Registro Exitoso");
+            }
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -96,6 +126,32 @@ public class CategoryController {
 
             response.put("status", "success");
             response.put("data", "Actualización exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_ONE_CATEGORY_DISABLED')")
+    @PutMapping("enable/{id}")
+    public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Category category = this.categoryImp.findByIdDisabled(id);
+            if (category == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Categoría no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            category.setEliminated(false);
+
+            this.categoryImp.update(category);
+
+            response.put("status", "success");
+            response.put("data", "Habilitado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
