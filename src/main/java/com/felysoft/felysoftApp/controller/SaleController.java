@@ -49,7 +49,6 @@ public class SaleController {
         Map<String, Object> response = new HashMap<>();
         try {
             List<Sale> saleList = this.saleImp.findAllDisabled();
-
             response.put("status", "success");
             response.put("data", saleList);
         } catch (Exception e) {
