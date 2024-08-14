@@ -49,7 +49,6 @@ public class SaleController {
         Map<String, Object> response = new HashMap<>();
         try {
             List<Sale> saleList = this.saleImp.findAllDisabled();
-
             response.put("status", "success");
             response.put("data", saleList);
         } catch (Exception e) {
@@ -152,11 +151,17 @@ public class SaleController {
     }
 
     @PreAuthorize("hasAuthority('UPDATE_ONE_SALE_DISABLED')")
-    @PutMapping("enable/{id}")
+    @PutMapping(value = "enable/{id}")
     public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Sale sale = this.saleImp.findByIdDisabled(id);
+            if (sale == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Venta no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
             sale.setEliminated(false);
             saleImp.update(sale);
 
@@ -171,7 +176,7 @@ public class SaleController {
     }
 
     @PreAuthorize("hasAuthority('DISABLE_ONE_SALE')")
-    @PutMapping("delete/{id}")
+    @PutMapping(value = "delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {

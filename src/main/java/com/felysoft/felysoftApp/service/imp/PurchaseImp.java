@@ -25,8 +25,18 @@ public class PurchaseImp implements PurchaseService {
     }
 
     @Override
+    public List<Purchase> findAllDisabled() throws Exception {
+        return this.purchaseRepository.findPurchaseByEliminatedTrue();
+    }
+
+    @Override
     public Purchase findById(Long id) {
         return this.purchaseRepository.findPurchaseByIdPurchaseAndEliminatedFalse(id);
+    }
+
+    @Override
+    public Purchase findByIdDisabled(Long id) {
+        return this.purchaseRepository.findPurchaseByIdPurchaseAndEliminatedTrue(id);
     }
 
     @Override

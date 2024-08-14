@@ -20,8 +20,18 @@ public class PaymentImp implements PaymentService {
     }
 
     @Override
+    public List<Payment> findAllDisabled() throws Exception {
+        return this.paymentRepository.findPaymentByEliminatedTrue();
+    }
+
+    @Override
     public Payment findById(Long id) {
         return this.paymentRepository.findPaymentByIdPaymentAndEliminatedFalse(id);
+    }
+
+    @Override
+    public Payment findByIdDisabled(Long id) {
+        return this.paymentRepository.findPaymentByIdPaymentAndEliminatedTrue(id);
     }
 
     @Override
