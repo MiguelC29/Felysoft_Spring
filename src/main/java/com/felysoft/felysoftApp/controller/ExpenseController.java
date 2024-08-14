@@ -162,7 +162,7 @@ public class ExpenseController {
     public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
-            Expense expense = this.expenseImp.findByIdDisable(id);
+            Expense expense = this.expenseImp.findByIdDisabled(id);
             expense.setEliminated(false);
             expenseImp.update(expense);
 

@@ -9,6 +9,8 @@ import java.util.List;
 @Repository
 public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
     List<Purchase> findPurchaseByEliminatedFalse();
+    List<Purchase> findPurchaseByEliminatedTrue();
 
     Purchase findPurchaseByIdPurchaseAndEliminatedFalse(Long id);
+    Purchase findPurchaseByIdPurchaseAndEliminatedTrue(Long id);
 }

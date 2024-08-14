@@ -12,7 +12,7 @@ public interface ExpenseService {
     List<Expense> findAllDisabled() throws Exception;
 
     Expense findById(Long id);
-    Expense findByIdDisable(Long id);
+    Expense findByIdDisabled(Long id);
 
     Expense findByPurchase(Purchase purchase);
 

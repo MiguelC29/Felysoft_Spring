@@ -22,7 +22,7 @@ public class ExpenseImp implements ExpenseService {
 
     @Override
     public List<Expense> findAllDisabled() throws Exception {
-        return List.of();
+        return this.expenseRepository.findExpenseByEliminatedTrue();
     }
 
     @Override
@@ -31,8 +31,8 @@ public class ExpenseImp implements ExpenseService {
     }
 
     @Override
-    public Expense findByIdDisable(Long id) {
-        return null;
+    public Expense findByIdDisabled(Long id) {
+        return this.expenseRepository.findExpenseByIdExpenseAndEliminatedTrue(id);
     }
 
     @Override

@@ -8,8 +8,10 @@ import java.util.List;
 
 public interface PaymentService {
     public List<Payment> findAll() throws Exception;
+    public List<Payment> findAllDisabled() throws Exception;
 
     public Payment findById(Long id);
+    public Payment findByIdDisabled(Long id);
 
     @Transactional
     public void create(Payment payment);
