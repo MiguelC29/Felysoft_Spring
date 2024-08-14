@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController //-> proyecto desacoplado  @Controller -> proyecto monolitico
-@RequestMapping(path = "/api/provider/", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("http://localhost:3000")
+@RequestMapping("/api/provider/")
 public class ProviderController {
     @Autowired
     private ProviderImp providerImp;

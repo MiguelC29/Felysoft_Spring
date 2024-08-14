@@ -1,10 +1,7 @@
 package com.felysoft.felysoftApp.controller;
 
 import com.felysoft.felysoftApp.entity.Inventory;
-//import com.felysoft.felysoftApp.service.imp.BookImp;
 import com.felysoft.felysoftApp.service.imp.InventoryImp;
-//import com.felysoft.felysoftApp.service.imp.NoveltyInvImp;
-//import com.felysoft.felysoftApp.service.imp.ProductImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "/api/inventory/", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("http://localhost:3000")
+@RequestMapping("/api/inventory/")
 public class InventoryController {
 
     @Autowired
