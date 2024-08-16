@@ -6,13 +6,12 @@ import lombok.Data;
 
 @Data
 @Builder
-public class LoginRequest {
-    @NotNull
+public class EmailRequest {
     private String emailUser;
 
-    @NotNull
-    private String body;
+    private String subject;
 
-    private String code;
+    private String text;
+
 }
 

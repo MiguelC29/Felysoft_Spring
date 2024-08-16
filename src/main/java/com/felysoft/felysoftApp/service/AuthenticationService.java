@@ -4,12 +4,9 @@ import com.felysoft.felysoftApp.dto.AuthenticationRequest;
 import com.felysoft.felysoftApp.dto.RegisterRequest;
 import com.felysoft.felysoftApp.dto.ReqRes;
 import com.felysoft.felysoftApp.entity.User;
-import com.felysoft.felysoftApp.infra.MailManager;
 import com.felysoft.felysoftApp.repository.UserRepository;
 import com.felysoft.felysoftApp.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,7 +16,7 @@ import java.util.*;
 
 @Service
 public class AuthenticationService {
-    MailManager mailManager;
+
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -154,18 +151,5 @@ public class AuthenticationService {
 
         return extraClaims;
     }
-
-    //CORREOS
-    //CONSTRUCTOR DEL MAILMANAGER
-    public AuthenticationService(MailManager mailManager) {
-        this.mailManager = mailManager;
-    }
-
-    public void sendMessageUser(String email, String message) {
-        System.out.println("Email: " + email);
-        System.out.println("Message: " + message);
-        mailManager.sendMessage(email, message);
-    }
-
 
 }
