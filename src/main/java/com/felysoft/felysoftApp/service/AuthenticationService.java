@@ -5,7 +5,10 @@ import com.felysoft.felysoftApp.dto.RegisterRequest;
 import com.felysoft.felysoftApp.dto.ReqRes;
 import com.felysoft.felysoftApp.entity.User;
 import com.felysoft.felysoftApp.repository.UserRepository;
+import com.felysoft.felysoftApp.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,27 +34,36 @@ public class AuthenticationService {
     public ReqRes register(RegisterRequest authRequest) {
         ReqRes resp = new ReqRes();
         try {
-            var user = User.builder()
-                    .numIdentification(authRequest.getNumIdentification())
-                    .typeDoc(authRequest.getTypeDoc())
-                    .names(authRequest.getNames())
-                    .lastNames(authRequest.getLastNames())
-                    .address(authRequest.getAddress())
-                    .phoneNumber(authRequest.getPhoneNumber())
-                    .gender(authRequest.getGender())
-                    .user_name(authRequest.getUser_name())
-                    .email(authRequest.getEmail())
-                    .password(passwordEncoder.encode(authRequest.getPassword()))
-                    .role(authRequest.getRole())
-                    .build();
+            Optional<User> userByNumIdentification = this.userRepository.findByEmailAndEliminatedFalse(authRequest.getEmail().toLowerCase());
 
-            User userResult = userRepository.save(user);
-            if (userResult.getIdUser() > 0) {
-                resp.setUser((userResult));
-                resp.setMessage("User Saved Successfully");
-                resp.setStatusCode(200);
+            if (userByNumIdentification.isPresent()) {
+                resp.setError("Usuario Existente");
+                resp.setMessage("El usuario ya existe. Por favor inicie sesión");
+                resp.setStatusCode(502);
+
+                return resp;
+            } else {
+                var user = User.builder()
+                        .numIdentification(authRequest.getNumIdentification())
+                        .typeDoc(authRequest.getTypeDoc())
+                        .names(authRequest.getNames().toUpperCase())
+                        .lastNames(authRequest.getLastNames().toUpperCase())
+                        .address(authRequest.getAddress().toUpperCase())
+                        .phoneNumber(authRequest.getPhoneNumber())
+                        .gender(authRequest.getGender())
+                        .user_name(authRequest.getUser_name())
+                        .email(authRequest.getEmail().toLowerCase())
+                        .password(passwordEncoder.encode(authRequest.getPassword()))
+                        .role(Role.CUSTOMER)
+                        .build();
+
+                User userResult = userRepository.save(user);
+                if (userResult.getIdUser() > 0) {
+                    resp.setUser((userResult));
+                    resp.setMessage("User Saved Successfully");
+                    resp.setStatusCode(200);
+                }
             }
-
             /*
             var jwtToken = jwtService.generateToken(user, generateExtraClaims(user));
             return new AuthenticationResponse(jwtToken);
