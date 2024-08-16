@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmailAndEliminatedFalse(String email);
 
+    Optional<User> findByNumIdentificationAndEliminatedFalse(Long numIdentification);
+
     List<User> findUsersByEliminatedFalse();
 
     List<User> findUsersByEliminatedTrue();
