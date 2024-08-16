@@ -9,7 +9,11 @@ import java.util.List;
 public interface ServiceService {
     List<Service> findAll() throws Exception;
 
+    List<Service> findAllDisabled() throws Exception;
+
     Service findById(Long id);
+
+    Service findByIdDisabled(Long id);
 
     @Transactional
     void create(Service service);

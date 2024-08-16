@@ -8,8 +8,10 @@ import java.util.List;
 
 public interface PurchaseService {
     List<Purchase> findAll() throws Exception;
+    List<Purchase> findAllDisabled() throws Exception;
 
     Purchase findById(Long id);
+    Purchase findByIdDisabled(Long id);
 
     @Transactional
     void create(Purchase purchase);

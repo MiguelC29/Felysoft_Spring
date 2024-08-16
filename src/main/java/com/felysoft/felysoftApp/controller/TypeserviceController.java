@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.controller;
 
+import com.felysoft.felysoftApp.dto.AuthenticationRequest;
 import com.felysoft.felysoftApp.entity.TypeService;
 import com.felysoft.felysoftApp.service.imp.TypeserviceImp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "/api/typeservice/", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("http://localhost:3000")
+@RequestMapping("/api/typeservice/")
 public class TypeserviceController {
     @Autowired
     private TypeserviceImp typeServiceImp;
@@ -26,6 +26,23 @@ public class TypeserviceController {
         Map<String, Object> response = new HashMap<>();
         try {
             List<TypeService> typeServiceList = this.typeServiceImp.findAll();
+
+            response.put("status", "success");
+            response.put("data", typeServiceList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage().toUpperCase());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('READ_ALL_TYPE_SERVICES_DISABLED')")
+    @GetMapping("disabled")
+    public ResponseEntity<Map<String, Object>> findAllDisabled(){
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<TypeService> typeServiceList = this.typeServiceImp.findAllDisabled();
 
             response.put("status", "success");
             response.put("data", typeServiceList);
@@ -59,16 +76,32 @@ public class TypeserviceController {
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
         try {
-            TypeService typeService = TypeService.builder()
-                    .name(request.get("name").toString().toUpperCase())
-                    .description(request.get("description").toString().toUpperCase())
-                    .price(new BigDecimal(request.get("price").toString()))
-                    .build();
+            final boolean isAdmin = AuthenticationRequest.isAdmin();
 
-            this.typeServiceImp.create(typeService);
+            TypeService typeServiceByName = this.typeServiceImp.findByNameAndEliminated(request.get("name").toString().toUpperCase());
 
-            response.put("status", "success");
-            response.put("data", "Registro Exitoso");
+            if (typeServiceByName != null) {
+                response.put("status",HttpStatus.BAD_GATEWAY);
+                response.put("data","Datos Desahibilitados");
+
+                // Verifica si el rol es de administrador
+                String message = (isAdmin) ? "Información ya registrada pero desahibilitada" : "Información ya registrada pero desahibilitada; Contacte al Administrador";
+
+                response.put("detail", message);
+
+                return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+            } else {
+                TypeService typeService = TypeService.builder()
+                        .name(request.get("name").toString().toUpperCase())
+                        .description(request.get("description").toString().toUpperCase())
+                        .price(new BigDecimal(request.get("price").toString()))
+                        .build();
+
+                this.typeServiceImp.create(typeService);
+
+                response.put("status", "success");
+                response.put("data", "Registro Exitoso");
+            }
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage().toUpperCase());
@@ -108,12 +141,46 @@ public class TypeserviceController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_ONE_TYPE_SERVICE_DISABLED')")
+    @PutMapping(value = "enable/{id}")
+    public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            TypeService typeService = this.typeServiceImp.findByIdDisabled(id);
+
+            if (typeService == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Tipo de Servicio no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            typeService.setEliminated(false);
+
+            this.typeServiceImp.update(typeService);
+
+            response.put("status", "success");
+            response.put("data", "Habilitado Correctamente");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage().toUpperCase());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('DISABLE_ONE_TYPE_SERVICE')")
     @PutMapping(value = "delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             TypeService typeService = this.typeServiceImp.findById(id);
+
+            if (typeService == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Tipo de Servicio no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
             typeService.setEliminated(true);
 
             this.typeServiceImp.delete(typeService);

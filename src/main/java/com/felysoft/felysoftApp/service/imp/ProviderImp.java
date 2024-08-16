@@ -20,13 +20,28 @@ public class ProviderImp implements ProviderService {
     }
 
     @Override
+    public List<Provider> findAllDisabled() throws Exception {
+        return this.providerRepository.findProvidersByEliminatedTrue();
+    }
+
+    @Override
     public Provider findById(Long id) {
         return this.providerRepository.findProviderByIdProviderAndEliminatedFalse(id);
     }
 
     @Override
+    public Provider findByIdDisabled(Long id) {
+        return this.providerRepository.findProviderByIdProviderAndEliminatedTrue(id);
+    }
+
+    @Override
     public List<Provider> findByIdCategory(Long id) {
         return this.providerRepository.findByCategoryId(id);
+    }
+
+    @Override
+    public Provider findProviderByNitAndEliminated(String nit) {
+        return this.providerRepository.findProviderByNitAndEliminatedTrue(nit);
     }
 
     @Override

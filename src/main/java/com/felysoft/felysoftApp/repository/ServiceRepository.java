@@ -10,5 +10,9 @@ import java.util.List;
 public interface ServiceRepository extends JpaRepository<Service, Long> {
     List<Service> findServicesByEliminatedFalse();
 
+    List<Service> findServicesByEliminatedTrue();
+
     Service findServicesByIdServiceAndEliminatedFalse(Long id);
+
+    Service findServicesByIdServiceAndEliminatedTrue(Long id);
 }

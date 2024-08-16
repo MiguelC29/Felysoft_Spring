@@ -21,8 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "/api/purchase/", method = {RequestMethod.GET, RequestMethod.POST,RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("http://localhost:3000")
+@RequestMapping("/api/purchase/")
 public class PurchaseController {
     @Autowired
     private PurchaseImp purchaseImp;
@@ -42,6 +41,23 @@ public class PurchaseController {
         Map<String, Object> response = new HashMap<>();
         try {
             List<Purchase> purchaseList = this.purchaseImp.findAll();
+
+            response.put("status", "success");
+            response.put("data", purchaseList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('READ_ALL_PURCHASES_DISABLED')")
+    @GetMapping("disabled")
+    public ResponseEntity<Map<String, Object>> findAllDisabled() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Purchase> purchaseList = this.purchaseImp.findAllDisabled();
 
             response.put("status", "success");
             response.put("data", purchaseList);
@@ -190,6 +206,25 @@ public class PurchaseController {
 
             response.put("status", "success");
             response.put("data", "Actualización exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_ONE_PURCHASE_DISABLED')")
+    @PutMapping("enable/{id}")
+    public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Purchase purchase = this.purchaseImp.findByIdDisabled(id);
+            purchase.setEliminated(false);
+            purchaseImp.update(purchase);
+
+            response.put("status", "success");
+            response.put("data", "Habilitado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());

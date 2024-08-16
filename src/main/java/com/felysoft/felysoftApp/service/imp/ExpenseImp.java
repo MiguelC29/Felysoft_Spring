@@ -21,8 +21,18 @@ public class ExpenseImp implements ExpenseService {
     }
 
     @Override
+    public List<Expense> findAllDisabled() throws Exception {
+        return this.expenseRepository.findExpenseByEliminatedTrue();
+    }
+
+    @Override
     public Expense findById(Long id) {
         return this.expenseRepository.findExpenseByIdExpenseAndEliminatedFalse(id);
+    }
+
+    @Override
+    public Expense findByIdDisabled(Long id) {
+        return this.expenseRepository.findExpenseByIdExpenseAndEliminatedTrue(id);
     }
 
     @Override

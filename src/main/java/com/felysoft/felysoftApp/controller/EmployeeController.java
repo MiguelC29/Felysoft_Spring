@@ -17,8 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "/api/employee/", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("http://localhost:3000")
+@RequestMapping("/api/employee/")
 public class EmployeeController {
 
     @Autowired
@@ -33,6 +32,23 @@ public class EmployeeController {
         Map<String, Object> response = new HashMap<>();
         try {
             List<Employee> employeeList = this.employeeImp.findAll();
+
+            response.put("status", "success");
+            response.put("data", employeeList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('READ_ALL_EMPLOYEES_DISABLED')")
+    @GetMapping("disabled")
+    public ResponseEntity<Map<String, Object>> findAllDisabled() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Employee> employeeList = this.employeeImp.findAllDisabled();
 
             response.put("status", "success");
             response.put("data", employeeList);
@@ -118,6 +134,12 @@ public class EmployeeController {
             // INSTANCIA OBJETO PROVEEDOR
             Employee employee = this.employeeImp.findById(id);
 
+            if (employee == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Empleado no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
             // CAMPOS PROPIOS ENTIDAD PROVEEDOR
             employee.setSpecialty(request.get("specialty").toString().toUpperCase());
             employee.setDateBirth(Date.valueOf(request.get("dateBirth").toString()));
@@ -138,12 +160,46 @@ public class EmployeeController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_ONE_EMPLOYEE')")
+    @PutMapping("enable/{id}")
+    public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Employee employee = this.employeeImp.findByIdDisabled(id);
+
+            if (employee == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Empleado no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            employee.setEliminated(false);
+
+            employeeImp.update(employee);
+
+            response.put("status", "success");
+            response.put("data", "Habilitado Correctamente");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('DISABLE_ONE_EMPLOYEE')")
     @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Employee employee = this.employeeImp.findById(id);
+
+            if (employee == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Empleado no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
             employee.setEliminated(true);
 
             employeeImp.delete(employee);

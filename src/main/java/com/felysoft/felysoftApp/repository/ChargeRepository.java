@@ -10,5 +10,11 @@ import java.util.List;
 public interface ChargeRepository extends JpaRepository<Charge, Long> {
     List<Charge> findChargeByEliminatedFalse();
 
+    List<Charge> findChargeByEliminatedTrue();
+
     Charge findChargeByIdChargeAndEliminatedFalse(Long id);
+
+    Charge findChargeByIdChargeAndEliminatedTrue(Long id);
+
+    Charge findChargeByChargeAndEliminatedTrue(String charge);
 }

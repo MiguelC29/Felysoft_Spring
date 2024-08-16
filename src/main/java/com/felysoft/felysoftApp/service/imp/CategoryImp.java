@@ -25,6 +25,11 @@ public class CategoryImp implements CategoryService {
     }
 
     @Override
+    public List<Category> findAllDisabled() throws Exception {
+        return this.categoryRepository.findCategoriesByEliminatedTrue();
+    }
+
+    @Override
     public Category findById(Long id) {
         return this.categoryRepository.findCategoryByIdCategoryAndEliminatedFalse(id);
     }
@@ -32,6 +37,11 @@ public class CategoryImp implements CategoryService {
     @Override
     public List<Category> findByIdProvider(Long id) {
         return this.categoryRepository.findByProviderId(id);
+    }
+
+    @Override
+    public Category findByIdDisabled(Long id) {
+        return this.categoryRepository.findCategoryByIdCategoryAndEliminatedTrue(id);
     }
 
     @Override

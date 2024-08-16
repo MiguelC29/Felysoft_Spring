@@ -1,9 +1,7 @@
 package com.felysoft.felysoftApp.controller;
 
-//import com.felysoft.felysoftApp.entity.Role;
-//import com.felysoft.felysoftApp.dto.ReqRes;
+import com.felysoft.felysoftApp.dto.AuthenticationRequest;
 import com.felysoft.felysoftApp.entity.User;
-//import com.felysoft.felysoftApp.service.imp.RoleImp;
 import com.felysoft.felysoftApp.service.imp.UserImp;
 import com.felysoft.felysoftApp.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +18,13 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "/api/user/", method = {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.HEAD})
-@CrossOrigin("http://localhost:3000")
+@RequestMapping("/api/user/")
 public class UserController {
     @Autowired
     private UserImp userImp;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    /*@Autowired
-    private RoleImp roleImp;*/
 
     @PreAuthorize("hasAuthority('READ_ALL_USERS')")
     @GetMapping("all")
@@ -37,13 +32,26 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
         try {
             List<User> userList = this.userImp.findAll();
-            if (!userList.isEmpty()) {
-                response.put("status","success");
-                response.put("data", userList);
-            } else {
-                response.put("status", HttpStatus.NOT_FOUND);
-                response.put("data", "User Not Found");
-            }
+
+            response.put("status","success");
+            response.put("data", userList);
+        } catch (Exception e){
+            response.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('READ_ALL_USERS_DISABLED')")
+    @GetMapping("disabled")
+    public ResponseEntity<Map<String, Object>> findAllDisabled(){
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<User> userList = this.userImp.findAllDisabled();
+
+            response.put("status","success");
+            response.put("data", userList);
         } catch (Exception e){
             response.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
             response.put("data", e.getMessage());
@@ -107,45 +115,60 @@ public class UserController {
             @RequestParam("username") String username,
             @RequestParam("password") String password,
             @RequestParam(name = "image", required = false) MultipartFile image,
-            //@RequestParam("fkIdRole") Long fkIdRole
             @RequestParam("role") Role role) {
 
         Map<String, Object> response = new HashMap<>();
         try {
-            // Construir el objeto User usando el patrón Builder
-            User.UserBuilder userBuilder = User.builder()
-                    .numIdentification(numIdentification)
-                    .typeDoc(typeDoc)
-                    .names(names.toUpperCase())
-                    .lastNames(lastNames.toUpperCase())
-                    .address(address.toUpperCase())
-                    .phoneNumber(phoneNumber)
-                    .email(email.toLowerCase())
-                    .gender(gender)
-                    .user_name(username)
-                    .password(passwordEncoder.encode(password))
-                    .dateRegister(new Timestamp(System.currentTimeMillis()))
-                    .lastModification(new Timestamp(System.currentTimeMillis()));
+            final boolean isAdmin = AuthenticationRequest.isAdmin();
 
-            // Guardar información de la imagen si se proporciona
-            if (image != null) {
-                userBuilder.nameImg(image.getOriginalFilename())
-                        .typeImg(image.getContentType())
-                        .image(image.getBytes());
+            User userByNumIdentification = this.userImp.findByNumIdentification(numIdentification);
+
+            if (userByNumIdentification != null) {
+                response.put("status",HttpStatus.BAD_GATEWAY);
+                response.put("data","Datos Desahibilitados");
+
+                // Verifica si el rol es de administrador
+                String message = (isAdmin) ? "Información ya registrada pero desahibilitada" : "Información ya registrada pero desahibilitada; Contacte al Administrador";
+
+                response.put("detail", message);
+
+                return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+            } else {
+                // Construir el objeto User usando el patrón Builder
+                User.UserBuilder userBuilder = User.builder()
+                        .numIdentification(numIdentification)
+                        .typeDoc(typeDoc)
+                        .names(names.toUpperCase())
+                        .lastNames(lastNames.toUpperCase())
+                        .address(address.toUpperCase())
+                        .phoneNumber(phoneNumber)
+                        .email(email.toLowerCase())
+                        .gender(gender)
+                        .user_name(username)
+                        .password(passwordEncoder.encode(password))
+                        .dateRegister(new Timestamp(System.currentTimeMillis()))
+                        .lastModification(new Timestamp(System.currentTimeMillis()));
+
+                // Guardar información de la imagen si se proporciona
+                if (image != null) {
+                    userBuilder.nameImg(image.getOriginalFilename())
+                            .typeImg(image.getContentType())
+                            .image(image.getBytes());
+                }
+
+                // Obtener y asignar el rol
+                //Role role = roleImp.findById(fkIdRole);
+
+                User user = userBuilder
+                        .role(role)
+                        .build();
+
+                // Crear el usuario
+                this.userImp.create(user);
+
+                response.put("status", "success");
+                response.put("data", "Registro Exitoso");
             }
-
-            // Obtener y asignar el rol
-            //Role role = roleImp.findById(fkIdRole);
-
-            User user = userBuilder
-                    .role(role)
-                    .build();
-
-            // Crear el usuario
-            this.userImp.create(user);
-
-            response.put("status", "success");
-            response.put("data", "Registro Exitoso");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -168,7 +191,6 @@ public class UserController {
           @RequestParam(value = "username", required = false) String username,
           @RequestParam(value = "password", required = false) String password,
           @RequestParam(value = "image", required = false) MultipartFile image,
-          //@RequestParam(value = "fkIdRole", required = false) Long fkIdRole
           @RequestParam(name = "role", required = false) Role role) {
 
         Map<String, Object> response = new HashMap<>();
@@ -225,12 +247,9 @@ public class UserController {
                 user.setTypeImg(image.getContentType());
             }
 
-//            if (role != null) {
-                //Role role = roleImp.findById(fkIdRole);
             if (role != null) {
                 user.setRole(role);
             }
-//            }
 
             //Check if password is present in the request
             if (password != null && !password.isEmpty()) {
@@ -245,6 +264,33 @@ public class UserController {
 
             response.put("status", "success");
             response.put("data", "Datos del Usuario actualizados correctamente");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_ONE_USER_DISABLED')")
+    @PutMapping("enable/{id}")
+    public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            User user = this.userImp.findByIdDisabled(id);
+
+            if (user == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Usuario no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            user.setEliminated(false);
+
+            this.userImp.delete(user);
+
+            response.put("status", "success");
+            response.put("data", "Habilitado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
             response.put("data", e.getMessage());

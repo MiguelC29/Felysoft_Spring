@@ -20,8 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "/api/detail/", method = {RequestMethod.GET, RequestMethod.POST,RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("http://localhost:3000")
+@RequestMapping("/api/detail/")
 public class DetailController {
     @Autowired
     private DetailImp detailImp;

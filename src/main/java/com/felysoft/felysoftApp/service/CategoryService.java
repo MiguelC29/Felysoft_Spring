@@ -9,7 +9,11 @@ import java.util.List;
 public interface CategoryService {
     List<Category> findAll() throws Exception;
 
+    List<Category> findAllDisabled() throws Exception;
+
     Category findById(Long id);
+
+    Category findByIdDisabled(Long id);
 
     List<Category> findByIdProvider(Long id);
 

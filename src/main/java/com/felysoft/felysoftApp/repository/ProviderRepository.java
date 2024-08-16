@@ -12,7 +12,13 @@ import java.util.List;
 public interface ProviderRepository extends JpaRepository<Provider, Long> {
     List<Provider> findProvidersByEliminatedFalse();
 
+    List<Provider> findProvidersByEliminatedTrue();
+
     Provider findProviderByIdProviderAndEliminatedFalse(Long id);
+
+    Provider findProviderByIdProviderAndEliminatedTrue(Long id);
+
+    Provider findProviderByNitAndEliminatedTrue(String nit);
 
     @Query("SELECT p FROM Provider p JOIN p.categories c WHERE c.idCategory = :categoryId AND p.eliminated = false")
     List<Provider> findByCategoryId(@Param("categoryId") Long idCategory);

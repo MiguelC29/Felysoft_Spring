@@ -19,8 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "/api/expense/", method = {RequestMethod.GET, RequestMethod.POST,RequestMethod.PUT, RequestMethod.HEAD})
-@CrossOrigin("http://localhost:3000")
+@RequestMapping("/api/expense/")
 public class ExpenseController {
     @Autowired
     private ExpenseImp expenseImp;
@@ -37,6 +36,24 @@ public class ExpenseController {
         Map<String, Object> response = new HashMap<>();
         try {
             List<Expense> expenseList = this.expenseImp.findAll();
+
+            response.put("status", "success");
+            response.put("data", expenseList);
+
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('READ_ALL_EXPENSES_DISABLED')")
+    @GetMapping("disabled")
+    public ResponseEntity<Map<String, Object>> findAllDisabled() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Expense> expenseList = this.expenseImp.findAllDisabled();
 
             response.put("status", "success");
             response.put("data", expenseList);
@@ -131,6 +148,25 @@ public class ExpenseController {
 
             response.put("status", "success");
             response.put("data", "Actualización exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_ONE_EXPENSE_DISABLED')")
+    @PutMapping("enable/{id}")
+    public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Expense expense = this.expenseImp.findByIdDisabled(id);
+            expense.setEliminated(false);
+            expenseImp.update(expense);
+
+            response.put("status", "success");
+            response.put("data", "Habilitado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
