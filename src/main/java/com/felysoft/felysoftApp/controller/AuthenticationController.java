@@ -3,7 +3,7 @@ package com.felysoft.felysoftApp.controller;
 import com.felysoft.felysoftApp.dto.AuthenticationRequest;
 import com.felysoft.felysoftApp.dto.RegisterRequest;
 import com.felysoft.felysoftApp.dto.ReqRes;
-import com.felysoft.felysoftApp.entity.User;
+import com.felysoft.felysoftApp.entity.LoginRequest;
 import com.felysoft.felysoftApp.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -48,5 +48,14 @@ public class AuthenticationController {
         String email = authentication.getName();
         ReqRes response = authenticationService.getMyInfo(email);
         return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    //CORREOS
+    @PostMapping("/authenticate")
+    public ResponseEntity<Object> authenticate(@RequestBody LoginRequest loginRequest){
+        authenticationService.sendMessageUser(loginRequest.getEmailUser(),loginRequest.getBody());
+
+        return ResponseEntity.ok()
+                .body("HOLA...");
     }
 }
