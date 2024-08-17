@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 public class EmailRequest {
-    private String emailUser;
+    private String to;
 
     private String subject;
 

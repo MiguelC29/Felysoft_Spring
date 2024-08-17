@@ -12,16 +12,12 @@ public class EmailService {
     @Autowired
     JavaMailSender javaMailSender;
 
-    @Value("${spring.mail.username}")
-    private String sender;
-
-    public void sendEmail(String email, String subject, String messageEmail){
+    public void sendEmail(String to, String subject, String text){
         SimpleMailMessage message = new SimpleMailMessage();
 
-        message.setTo(email);
+        message.setTo(to);
         message.setSubject(subject);
-        message.setText(messageEmail);
-        message.setFrom(sender);
+        message.setText(text);
         javaMailSender.send(message);
     }
 }
