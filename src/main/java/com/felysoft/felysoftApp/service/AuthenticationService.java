@@ -32,9 +32,10 @@ public class AuthenticationService {
     public ReqRes register(RegisterRequest authRequest) {
         ReqRes resp = new ReqRes();
         try {
-            Optional<User> userByNumIdentification = this.userRepository.findByEmailAndEliminatedFalse(authRequest.getEmail().toLowerCase());
+            Optional<User> userByNumIdentification = this.userRepository.findByNumIdentificationAndEliminatedFalse(authRequest.getNumIdentification());
+            Optional<User> userByEmail = this.userRepository.findByEmailAndEliminatedFalse(authRequest.getEmail().toLowerCase());
 
-            if (userByNumIdentification.isPresent()) {
+            if (userByNumIdentification.isPresent() || userByEmail.isPresent()) {
                 resp.setError("Usuario Existente");
                 resp.setMessage("El usuario ya existe. Por favor inicie sesión");
                 resp.setStatusCode(502);
