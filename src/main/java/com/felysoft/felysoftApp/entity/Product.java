@@ -27,12 +27,13 @@ public class Product implements Serializable {
     @Column
     private Long idProduct;
 
+    @Column(nullable = false)
     private String nameImg;
 
-    @Column(length = 50)
+    @Column(length = 50, nullable = false)
     private String typeImg;
 
-    @Column(length = 5000000)
+    @Column(length = 5000000, nullable = false)
     @Lob
     private byte[] image;
 

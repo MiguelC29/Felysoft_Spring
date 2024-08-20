@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "typeServices")
+@Table(name = "type_services")
 @Entity
 public class TypeService implements Serializable {
 

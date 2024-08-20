@@ -24,12 +24,13 @@ public class Book implements Serializable {
     @Column
     private Long idBook;
 
+    @Column(nullable = false)
     private String nameImg;
 
-    @Column(length = 50)
+    @Column(length = 50, nullable = false)
     private String typeImg;
 
-    @Column(length = 5000000)
+    @Column(length = 5000000, nullable = false)
     @Lob
     private byte[] image;
 
@@ -42,8 +43,8 @@ public class Book implements Serializable {
     @Column(length = 320, nullable = false)
     private String description;
 
-    @Column(length = 4, nullable = false)
-    private int yearPublication;
+    @Column(length = 6, nullable = false)
+    private short yearPublication;
 
     @Column(nullable = false)
     private BigDecimal priceTime;
