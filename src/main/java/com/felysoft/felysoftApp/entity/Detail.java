@@ -33,26 +33,22 @@ public class Detail implements Serializable {
     private boolean eliminated;
 
     // FOREIGN KEYS
+
+    // Relación con Product, Book o Service
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
-    @JoinColumn(name = "fkIdProduct")
+    @JoinColumn(name = "fkIdProduct", nullable = true)
     private Product product;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
-    @JoinColumn(name = "fkIdBook")
+    @JoinColumn(name = "fkIdBook", nullable = true)
     private Book book;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
-    @JoinColumn(name = "fkIdService")
+    @JoinColumn(name = "fkIdService", nullable = true)
     private Service service;
 
-    @ManyToMany(mappedBy = "details")
-    @JsonIgnore
-    private List<Sale> sales;
-
-    @ManyToMany(mappedBy = "details")
-    @JsonIgnore
-    private List<Purchase> purchases;
+    // Relación con Purchase
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdPurchase", nullable = false)
+    private Purchase purchase;
 }

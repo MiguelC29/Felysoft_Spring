@@ -12,6 +12,10 @@ import java.util.List;
 
 @Service
 public class PurchaseImp implements PurchaseService {
+    @Override
+    public void addDetailToPurchase(Long purchaseId, Long detailId) {
+
+    }
 
     @Autowired
     private PurchaseRepository purchaseRepository;
@@ -54,12 +58,12 @@ public class PurchaseImp implements PurchaseService {
         this.purchaseRepository.save(purchase);
     }
 
-    @Override
+    /*@Override
     public void addDetailToPurchase(Long purchaseId, Long detailId) {
         Purchase purchase = this.purchaseRepository.findById(purchaseId).orElse(null);
         Detail detail = this.detailRepository.findById(detailId).orElse(null);
 
         purchase.getDetails().add(detail);
-        this.purchaseRepository.save(purchase);
-    }
+        this.purchaseRepository.save(purchase);*/
+
 }

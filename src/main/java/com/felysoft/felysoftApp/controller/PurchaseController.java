@@ -2,12 +2,13 @@ package com.felysoft.felysoftApp.controller;
 
 import com.felysoft.felysoftApp.entity.Expense;
 import com.felysoft.felysoftApp.entity.Payment;
+import com.felysoft.felysoftApp.entity.Product;
+import com.felysoft.felysoftApp.entity.Service;
+import com.felysoft.felysoftApp.entity.Book;
+import com.felysoft.felysoftApp.entity.Detail;
 import com.felysoft.felysoftApp.entity.Provider;
 import com.felysoft.felysoftApp.entity.Purchase;
-import com.felysoft.felysoftApp.service.imp.ExpenseImp;
-import com.felysoft.felysoftApp.service.imp.PaymentImp;
-import com.felysoft.felysoftApp.service.imp.ProviderImp;
-import com.felysoft.felysoftApp.service.imp.PurchaseImp;
+import com.felysoft.felysoftApp.service.imp.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,18 @@ public class PurchaseController {
 
     @Autowired
     private ExpenseImp expenseImp;
+
+    @Autowired
+    private DetailImp detailImp;
+
+    @Autowired
+    private ProductImp productImp;
+
+    @Autowired
+    private ServiceImp serviceImp;
+
+    @Autowired
+    private BookImp bookImp;
 
     @Autowired
     private PaymentImp paymentImp;
@@ -116,6 +129,42 @@ public class PurchaseController {
                     .build();
 
             this.purchaseImp.create(purchase);
+
+            // INSTANCIAR EL OBJETO DETALLE
+            Detail detail = Detail.builder()
+                    .quantity(Integer.parseInt(request.get("quantity").toString()))
+                    .unitPrice(new BigDecimal(request.get("unitPrice").toString()))
+                    .eliminated(false)
+                    .purchase(purchase) // Asociar el detalle con la compra
+                    .build();
+
+            // Verificar si el ID del producto está presente y asignar el objeto Product
+            if (request.containsKey("fkIdProduct") && request.get("fkIdProduct") != null) {
+                Long productId = Long.parseLong(request.get("fkIdProduct").toString());
+                Product product = productImp.findById(productId);
+                detail.setProduct(product);
+            }
+
+            // Verificar si el ID del libro está presente y asignar el objeto Book
+            if (request.containsKey("fkIdBook") && request.get("fkIdBook") != null) {
+                Long bookId = Long.parseLong(request.get("fkIdBook").toString());
+                Book book = bookImp.findById(bookId);
+                detail.setBook(book);
+            }
+
+            // Verificar si el ID del servicio está presente y asignar el objeto Service
+            if (request.containsKey("fkIdService") && request.get("fkIdService") != null) {
+                Long serviceId = Long.parseLong(request.get("fkIdService").toString());
+                Service service = serviceImp.findById(serviceId);
+                detail.setService(service);
+            }
+
+            // Crear el detalle en la base de datos
+            this.detailImp.create(detail);
+
+            // Asociar el detalle con la compra
+            purchase.getDetails().add(detail);
+            this.purchaseImp.update(purchase); // Actualizar la compra con el detalle asociado
 
             // INSTANCIA OBJETO PAGO
             Payment payment = Payment.builder()

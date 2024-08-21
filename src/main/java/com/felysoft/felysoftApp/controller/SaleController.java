@@ -67,6 +67,7 @@ public class SaleController {
 
             response.put("status", "success");
             response.put("data", sale);
+            response.put("paymentMethod", sale.getPayment());  // Añadir el método de pago
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());

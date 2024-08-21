@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -58,6 +59,8 @@ public class Service implements Serializable {
     @JoinColumn(name = "fkIdReserve")
     private Reserve reserve;
 
+    // Relación con Detail
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Detail> details;
 }

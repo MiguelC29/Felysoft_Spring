@@ -33,21 +33,16 @@ public class Purchase implements Serializable {
     @Column(nullable = false)
     private boolean eliminated;
 
+
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdProvider", nullable = false)
     private Provider provider;
 
+    @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Detail> details;
+
     @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Expense> expenses;
-
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JsonIgnore
-    @JoinTable(
-            name = "details_purchases",
-            joinColumns = @JoinColumn(name = "fkIdPurchase", referencedColumnName = "idPurchase"),
-            inverseJoinColumns = @JoinColumn(name = "fkIdDetail", referencedColumnName = "idDetail")
-    )
-    private List<Detail> details;
 }
