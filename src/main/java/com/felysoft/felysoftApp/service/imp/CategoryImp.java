@@ -50,6 +50,11 @@ public class CategoryImp implements CategoryService {
     }
 
     @Override
+    public List<Object[]> findCategoryProviderNames() {
+        return this.categoryRepository.findCategoryProviderNames();
+    }
+
+    @Override
     public void create(Category category) {
         this.categoryRepository.save(category);
     }

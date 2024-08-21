@@ -28,6 +28,7 @@ public enum Role {
             Permission.DISABLE_ONE_CATEGORY,
             Permission.READ_CATEGORIES_BY_PROVIDER,
             Permission.ASSOCIATE_CATEGORY_PROVIDER,
+            Permission.READ_ALL_CATEGORY_PROVIDER_ASSOCIATIONS,
 
             Permission.READ_ALL_PROVIDERS,
             Permission.READ_ALL_PROVIDERS_DISABLED,
@@ -168,6 +169,7 @@ public enum Role {
             Permission.UPDATE_ONE_CATEGORY,
             Permission.READ_CATEGORIES_BY_PROVIDER,
             Permission.ASSOCIATE_CATEGORY_PROVIDER,
+            Permission.READ_ALL_CATEGORY_PROVIDER_ASSOCIATIONS,
 
             Permission.READ_ALL_PROVIDERS,
             Permission.READ_ONE_PROVIDER,

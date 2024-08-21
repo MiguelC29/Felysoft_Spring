@@ -188,6 +188,23 @@ public class CategoryController {
     }
 
     // ASOCIATION CATEGORY - PROVIDER
+    @PreAuthorize("hasAuthority('READ_ALL_CATEGORY_PROVIDER_ASSOCIATIONS')")
+    @GetMapping("categoryProviderAssociations")
+    public ResponseEntity<Map<String, Object>> findCategoryProviderAssociations() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Object[]> categoryList = this.categoryImp.findCategoryProviderNames();
+            response.put("status", "success");
+            response.put("data", categoryList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
     @PreAuthorize("hasAuthority('READ_CATEGORIES_BY_PROVIDER')")
     @GetMapping("categoriesByProvider/{id}")
     public ResponseEntity<Map<String, Object>> findByIdProvider(@PathVariable Long id) {
