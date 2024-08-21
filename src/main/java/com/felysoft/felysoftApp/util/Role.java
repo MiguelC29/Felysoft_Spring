@@ -268,7 +268,7 @@ public enum Role {
     CUSTOMER(Arrays.asList(
             Permission.READ_ONE_RESERVE,
             Permission.CREATE_ONE_RESERVE,
-
+            Permission.READ_INVENTORY_BOOKS,
             Permission.READ_ALL_GENRES,
             Permission.READ_ALL_AUTHORS,
             Permission.READ_ALL_BOOKS,
