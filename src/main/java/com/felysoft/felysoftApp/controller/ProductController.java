@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,9 +126,19 @@ public class ProductController {
                         .expiryDate(new Date(expiryDate.getTime()));
 
                 if (image != null) {
-                    productBuilder.nameImg(image.getOriginalFilename())
-                            .typeImg(image.getContentType())
-                            .image(image.getBytes());
+                    String contentType = image.getContentType();
+
+                    // Lista de tipos MIME permitidos
+                    List<String> allowedContentTypes = Arrays.asList("image/jpeg", "image/png", "image/jpg", "image/webp");
+
+                    if (allowedContentTypes.contains(contentType)) {
+                        productBuilder.nameImg(image.getOriginalFilename())
+                                .typeImg(contentType)
+                                .image(image.getBytes());
+                    } else {
+                        response.put("error_message", "Tipo Imagen Incorrecto");
+                        throw new IllegalArgumentException("Tipo de archivo no permitido. Solo se permiten imágenes JPEG, JPG, PNG, WEBP.");
+                    }
                 }
 
                 // Obtener las llaves foráneas
@@ -224,9 +235,19 @@ public class ProductController {
 
             // Si se proporciona una nueva imagen, actualizarla
             if (image != null) {
-                product.setNameImg(image.getOriginalFilename());
-                product.setTypeImg(image.getContentType());
-                product.setImage(image.getBytes());
+                String contentType = image.getContentType();
+
+                // Lista de tipos MIME permitidos
+                List<String> allowedContentTypes = Arrays.asList("image/jpeg", "image/png", "image/jpg", "image/webp");
+
+                if (allowedContentTypes.contains(contentType)) {
+                    product.setNameImg(image.getOriginalFilename());
+                    product.setTypeImg(contentType);
+                    product.setImage(image.getBytes());
+                } else {
+                    response.put("error_message", "Tipo Imagen Incorrecto");
+                    throw new IllegalArgumentException("Tipo de archivo no permitido. Solo se permiten imágenes JPEG, JPG, PNG, WEBP.");
+                }
             }
 
             this.productImp.update(product);
