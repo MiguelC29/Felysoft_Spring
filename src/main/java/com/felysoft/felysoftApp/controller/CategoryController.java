@@ -209,7 +209,6 @@ public class CategoryController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
     @PreAuthorize("hasAuthority('READ_CATEGORIES_BY_PROVIDER')")
     @GetMapping("categoriesByProvider/{id}")
     public ResponseEntity<Map<String, Object>> findByIdProvider(@PathVariable Long id) {
@@ -255,7 +254,7 @@ public class CategoryController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('DISABLE_ONE_CATEGORY')")
+    @PreAuthorize("hasAuthority('DELETE_ONE_ASSOCIATION')")
     @PutMapping("deleteAssociation")
     public ResponseEntity<Map<String, Object>> deleteAssociation(@RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();

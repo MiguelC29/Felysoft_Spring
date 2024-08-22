@@ -48,6 +48,17 @@ public class GenreImp implements GenreService {
     public Genre findGenreByNameAndEliminated(String name){
         return this.genreRepository.findGenreByNameAndEliminatedTrue(name);
     }
+
+    @Override
+    public Genre findGenreByName(String name) {
+        return this.genreRepository.findGenreByNameAndEliminatedFalse(name);
+    }
+
+    @Override
+    public List<Object[]> findGenreAuthorNames() {
+        return this.genreRepository.findGenreAuthorNames();
+    }
+
     @Override
     public void create(Genre genre) {
         this.genreRepository.save(genre);

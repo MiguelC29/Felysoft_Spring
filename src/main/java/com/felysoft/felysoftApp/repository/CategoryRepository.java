@@ -23,10 +23,9 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     // CONSULTA CON INVERSIÓN DE CONTROL
     List<Category> findCategoriesByEliminatedFalse();
     List<Category> findCategoriesByEliminatedTrue();
+
     Category findCategoryByIdCategoryAndEliminatedFalse(Long id);
     Category findCategoryByIdCategoryAndEliminatedTrue(Long id);
-
     Category findCategoryByNameAndEliminatedTrue(String name);
-
     Category findCategoryByNameAndEliminatedFalse(String name);
 }
