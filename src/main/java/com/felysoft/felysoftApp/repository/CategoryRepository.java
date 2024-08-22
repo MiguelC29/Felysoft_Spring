@@ -27,4 +27,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     Category findCategoryByIdCategoryAndEliminatedTrue(Long id);
 
     Category findCategoryByNameAndEliminatedTrue(String name);
+
+    Category findCategoryByNameAndEliminatedFalse(String name);
 }

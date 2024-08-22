@@ -50,6 +50,11 @@ public class CategoryImp implements CategoryService {
     }
 
     @Override
+    public Category findCategoryByName(String name) {
+        return this.categoryRepository.findCategoryByNameAndEliminatedFalse(name);
+    }
+
+    @Override
     public List<Object[]> findCategoryProviderNames() {
         return this.categoryRepository.findCategoryProviderNames();
     }

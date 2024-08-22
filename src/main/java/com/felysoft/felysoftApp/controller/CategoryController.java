@@ -2,7 +2,9 @@ package com.felysoft.felysoftApp.controller;
 
 import com.felysoft.felysoftApp.dto.AuthenticationRequest;
 import com.felysoft.felysoftApp.entity.Category;
+import com.felysoft.felysoftApp.entity.Provider;
 import com.felysoft.felysoftApp.service.imp.CategoryImp;
+import com.felysoft.felysoftApp.service.imp.ProviderImp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,9 @@ public class CategoryController {
 
     @Autowired
     private CategoryImp categoryImp;
+
+    @Autowired
+    private ProviderImp providerImp;
 
     @PreAuthorize("hasAuthority('READ_ALL_CATEGORIES')")
     @GetMapping("all")
@@ -242,6 +247,39 @@ public class CategoryController {
 
             response.put("status", "success");
             response.put("data", "Asociación Exitosa");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('DISABLE_ONE_CATEGORY')")
+    @PutMapping("deleteAssociation")
+    public ResponseEntity<Map<String, Object>> deleteAssociation(@RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Category category = this.categoryImp.findCategoryByName(request.get("categoryName").toString());
+            Provider provider = this.providerImp.findProviderByName(request.get("providerName").toString());
+
+            if (category == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Categoría no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            if (provider == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Proveedor no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            category.getProviders().remove(provider);
+            this.categoryImp.delete(category);
+
+            response.put("status", "success");
+            response.put("data", "Eliminado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
