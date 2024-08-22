@@ -51,7 +51,7 @@ public class User implements UserDetails {
     @Column(length = 10, nullable = false)
     private Long phoneNumber;
 
-    @Column(length = 320, nullable = false)
+    @Column(length = 320, unique = true, nullable = false)
     private String email;
 
     @Enumerated(EnumType.STRING)
