@@ -30,6 +30,8 @@ public enum Role {
             Permission.ASSOCIATE_CATEGORY_PROVIDER,
             Permission.READ_ALL_CATEGORY_PROVIDER_ASSOCIATIONS,
 
+            Permission.DELETE_ONE_ASSOCIATION,
+
             Permission.READ_ALL_PROVIDERS,
             Permission.READ_ALL_PROVIDERS_DISABLED,
             Permission.READ_ONE_PROVIDER,
@@ -64,6 +66,7 @@ public enum Role {
             Permission.DISABLE_ONE_GENRE,
             Permission.READ_GENRES_BY_AUTHOR,
             Permission.ASSOCIATE_GENRE_AUTHOR,
+            Permission.READ_ALL_GENRE_AUTHOR_ASSOCIATIONS,
 
             Permission.READ_ALL_AUTHORS,
             Permission.READ_ALL_AUTHORS_DISABLED,
@@ -193,6 +196,7 @@ public enum Role {
             Permission.UPDATE_ONE_GENRE,
             Permission.READ_GENRES_BY_AUTHOR,
             Permission.ASSOCIATE_GENRE_AUTHOR,
+            Permission.READ_ALL_GENRE_AUTHOR_ASSOCIATIONS,
 
             Permission.READ_ALL_AUTHORS,
             Permission.READ_ONE_AUTHOR,
