@@ -40,7 +40,7 @@ public class AuthenticationController {
     }
 
     @PreAuthorize("hasAuthority('READ_MY_PROFILE')")
-    @GetMapping("adminuser/get-profile")
+    @GetMapping("get-profile")
     public ResponseEntity<ReqRes> getProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
