@@ -19,6 +19,6 @@ INSERT INTO categories (eliminated, name) VALUES (0, 'DULCES');
 
 INSERT INTO providers (eliminated, phoneNumber, email, name, nit) VALUES (0, 22323231, 'oreo@gmail.com', 'OREO', '1212121212');
 INSERT INTO providers (eliminated, phoneNumber, email, name, nit) VALUES (0, 3212121323, 'correo@gmail.com', 'EMPRESA', '213432-21');
-INSERT INTO providers (eliminated, phoneNumber, email, name, nit) VALUES (0, 3216549874, 'prueba.1@gmail.com', 'PRUEBARECICLARR', '1234567-890');
+INSERT INTO providers (eliminated, phoneNumber, email, name, nit) VALUES (0, 3216549874, 'prueba.1@gmail.com', 'PRUEBARECICLARR', '1234789-20');
 
 INSERT INTO products (eliminated, expiryDate, salePrice, fkIdCategory, fkIdProvider, brand, name, typeImg, nameImg, image) VALUES (0, '2024-04-04', 2000.00, 1, 1, 'OREO', 'GALLETAS OREO', '', '', '');

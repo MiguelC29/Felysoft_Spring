@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth/")
 @RequiredArgsConstructor
@@ -46,5 +48,15 @@ public class AuthenticationController {
         String email = authentication.getName();
         ReqRes response = authenticationService.getMyInfo(email);
         return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @PreAuthorize("hasAuthority('CHANGE_PASSWORD_USER')")
+    @PutMapping("changePassword")
+    public ResponseEntity<ReqRes> changePassword(@RequestBody Map<String, Object> request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        String oldPassword = request.get("oldPassword").toString();
+        String newPassword = request.get("newPassword").toString();
+        return ResponseEntity.ok(this.authenticationService.changePassword(email, oldPassword, newPassword));
     }
 }
