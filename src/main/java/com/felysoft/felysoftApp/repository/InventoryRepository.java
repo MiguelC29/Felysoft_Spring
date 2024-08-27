@@ -13,6 +13,7 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     List<Inventory> findInventoriesByEliminatedFalse();
 
     List<Inventory> findInventoriesByTypeInvAndEliminatedFalse(Inventory.TypeInv typeInv);
+    List<Inventory> findInventoriesByTypeInvAndEliminatedFalseAndState(Inventory.TypeInv typeInv, Inventory.State state);
 
     Inventory findInventoryByProductAndEliminatedFalse(Product product);
     Inventory findInventoryByProductAndEliminatedTrue(Product product);

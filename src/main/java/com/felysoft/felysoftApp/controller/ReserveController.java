@@ -1,9 +1,11 @@
 package com.felysoft.felysoftApp.controller;
 
 import com.felysoft.felysoftApp.entity.Book;
+import com.felysoft.felysoftApp.entity.Inventory;
 import com.felysoft.felysoftApp.entity.Reserve;
 import com.felysoft.felysoftApp.entity.User;
 import com.felysoft.felysoftApp.service.imp.BookImp;
+import com.felysoft.felysoftApp.service.imp.InventoryImp;
 import com.felysoft.felysoftApp.service.imp.ReserveImp;
 import com.felysoft.felysoftApp.service.imp.UserImp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -22,9 +23,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/reserve/")
 public class ReserveController {
+
     @Autowired
     private ReserveImp reserveImp;
 
+    @Autowired
+    private InventoryImp inventoryImp;
     @Autowired
     private BookImp bookImp;
 
@@ -33,46 +37,12 @@ public class ReserveController {
 
     @PreAuthorize("hasAuthority('READ_ALL_RESERVES')")
     @GetMapping("all")
-    public ResponseEntity<Map<String, Object>> findAll(){
-        Map<String,Object> response= new HashMap<>();
-        try{
-            List<Reserve> reserveList= this.reserveImp.findAll();
-
-            response.put("status","success");
-            response.put("data", reserveList);
-        }catch (Exception e){
-            response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    @PreAuthorize("hasAuthority('READ_ALL_RESERVES_DISABLED')")
-    @GetMapping("disabled")
-    public ResponseEntity<Map<String, Object>> findAllDisabled(){
-        Map<String,Object> response= new HashMap<>();
-        try{
-            List<Reserve> reserveList= this.reserveImp.findAllDisabled();
-
-            response.put("status","success");
-            response.put("data", reserveList);
-        }catch (Exception e){
-            response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @PreAuthorize("hasAuthority('READ_ONE_RESERVE')")
-    @GetMapping("list/{id}")
-    public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> findAll() {
         Map<String, Object> response = new HashMap<>();
         try {
-            Reserve reserve = this.reserveImp.findById(id);
-
+            List<Reserve> reserveList = reserveImp.findAll();
             response.put("status", "success");
-            response.put("data", reserve);
+            response.put("data", reserveList);
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -83,26 +53,36 @@ public class ReserveController {
 
     @PreAuthorize("hasAuthority('CREATE_ONE_RESERVE')")
     @PostMapping("create")
-    public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String,Object> request){
-        Map<String,Object> response= new HashMap<>();
-        try{
-            // Instancia del objeto Reserve con eliminated = false
+    public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
             Reserve reserve = Reserve.builder()
-                    .dateReserve(LocalDate.parse((String) request.get("dateReserve")))
+                    .dateReserve(LocalDate.parse(request.get("dateReserve").toString()))
                     .description(request.get("description").toString().toUpperCase())
                     .deposit(new BigDecimal(request.get("deposit").toString()))
-                    .time(Time.valueOf(request.get("time").toString()))
+                    .time(Integer.parseInt(request.get("time").toString()))
                     .book(bookImp.findById(Long.parseLong(request.get("fkIdBook").toString())))
                     .user(userImp.findById(Long.parseLong(request.get("fkIdUser").toString())))
-                    .eliminated(false)  // Asegura que el estado inicial sea activo (no eliminado)
+                    .eliminated(false)
                     .build();
 
-            this.reserveImp.create(reserve);
+            reserveImp.create(reserve);
 
-            response.put("status","success");
-            response.put("data","Registro Exitoso");
-        }catch (Exception e){
-            response.put("status",HttpStatus.BAD_GATEWAY);
+            Inventory inventory= this.inventoryImp.findByBook(reserve.getBook());
+            if(inventory == null){
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Inventario no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }else{
+                inventory.setState(Inventory.State.RESERVADO);
+                this.inventoryImp.update(inventory);
+
+            }
+
+            response.put("status", "success");
+            response.put("data", "Registro Exitoso");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
@@ -120,7 +100,7 @@ public class ReserveController {
             reserve.setDateReserve(LocalDate.parse((String) request.get("dateReserve")));
             reserve.setDescription(request.get("description").toString().toUpperCase());
             reserve.setDeposit(new BigDecimal(request.get("deposit").toString()));
-            reserve.setTime(Time.valueOf(request.get("time").toString()));
+            reserve.setTime(Integer.parseInt(request.get("time").toString()));
 
             //CAMPOS DE LAS LLAVES FORANEAS
             Book book = bookImp.findById(Long.parseLong(request.get("fkIdBook").toString()));

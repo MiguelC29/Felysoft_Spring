@@ -32,6 +32,11 @@ public class InventoryImp implements InventoryService {
     }
 
     @Override
+    public List<Inventory> findByTypeInvAndState(Inventory.TypeInv typeInv, Inventory.State state) {
+        return this.inventoryRepository.findInventoriesByTypeInvAndEliminatedFalseAndState(typeInv,state);
+    }
+
+    @Override
     public Inventory findByProduct(Product product) {
         return this.inventoryRepository.findInventoryByProductAndEliminatedFalse(product);
     }

@@ -80,6 +80,23 @@ public class InventoryController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('READ_INVENTORY_BOOKS')")
+    @GetMapping("invBooksNoReserved")
+    public ResponseEntity<Map<String, Object>> findInvBooksNoReserved() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Inventory> booksInventoryList = this.inventoryImp.findByTypeInvAndState(Inventory.TypeInv.LIBROS, Inventory.State.DISPONIBLE);
+
+            response.put("status", "success");
+            response.put("data", booksInventoryList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PutMapping("updateStock/{id}")
     public ResponseEntity<Map<String, Object>> updateStock(@PathVariable Long id, @RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
