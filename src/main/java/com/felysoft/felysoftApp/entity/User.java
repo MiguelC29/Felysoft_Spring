@@ -45,7 +45,7 @@ public class User implements UserDetails {
     @Column(length = 60, nullable = false)
     private String lastNames;
 
-    @Column(length = 50, nullable = false)
+    @Column(length = 50)
     private String address;
 
     @Column(length = 10, nullable = false)
@@ -55,7 +55,7 @@ public class User implements UserDetails {
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    // @Column(nullable = false)
     private Gender gender;
 
     @Column(length = 50, nullable = false)

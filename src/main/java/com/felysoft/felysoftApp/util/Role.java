@@ -155,9 +155,11 @@ public enum Role {
             Permission.UPDATE_ONE_PURCHASE,
             Permission.UPDATE_ONE_PURCHASE_DISABLED,
             Permission.DISABLE_ONE_PURCHASE,
-            Permission.READ_EXPENSE_BY_PURCHASE, //
+            Permission.READ_EXPENSE_BY_PURCHASE,
 
-            Permission.READ_MY_PROFILE
+            Permission.READ_MY_PROFILE,
+            Permission.UPDATE_PROFILE_ONE_USER,
+            Permission.CHANGE_PASSWORD_USER
     )),
     INVENTORY_MANAGER(Arrays.asList(
             Permission.READ_ALL_PRODUCTS,
@@ -221,7 +223,9 @@ public enum Role {
             Permission.UPDATE_ONE_PURCHASE,
             Permission.READ_EXPENSE_BY_PURCHASE,
 
-            Permission.READ_MY_PROFILE
+            Permission.READ_MY_PROFILE,
+            Permission.UPDATE_PROFILE_ONE_USER,
+            Permission.CHANGE_PASSWORD_USER
     )),
     FINANCIAL_MANAGER(Arrays.asList(
             Permission.READ_ALL_PAYMENTS,
@@ -237,7 +241,9 @@ public enum Role {
 
             Permission.READ_ALL_PURCHASES,
 
-            Permission.READ_MY_PROFILE
+            Permission.READ_MY_PROFILE,
+            Permission.UPDATE_PROFILE_ONE_USER,
+            Permission.CHANGE_PASSWORD_USER
     )),
     SALESPERSON(Arrays.asList(
             Permission.READ_INVENTORY_PRODUCTS,
@@ -269,7 +275,9 @@ public enum Role {
             Permission.READ_ALL_USERS,
             Permission.READ_ONE_USER,
 
-            Permission.READ_MY_PROFILE
+            Permission.READ_MY_PROFILE,
+            Permission.UPDATE_PROFILE_ONE_USER,
+            Permission.CHANGE_PASSWORD_USER
     )),
     CUSTOMER(Arrays.asList(
             Permission.READ_ONE_RESERVE,
@@ -279,7 +287,9 @@ public enum Role {
             Permission.READ_ALL_AUTHORS,
             Permission.READ_ALL_BOOKS,
 
-            Permission.READ_MY_PROFILE
+            Permission.READ_MY_PROFILE,
+            Permission.UPDATE_PROFILE_ONE_USER,
+            Permission.CHANGE_PASSWORD_USER
     ));
 
     private final List<Permission> permissions;
