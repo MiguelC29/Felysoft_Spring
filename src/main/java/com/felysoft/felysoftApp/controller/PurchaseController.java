@@ -130,42 +130,6 @@ public class PurchaseController {
 
             this.purchaseImp.create(purchase);
 
-            // INSTANCIAR EL OBJETO DETALLE
-            Detail detail = Detail.builder()
-                    .quantity(Integer.parseInt(request.get("quantity").toString()))
-                    .unitPrice(new BigDecimal(request.get("unitPrice").toString()))
-                    .eliminated(false)
-                    .purchase(purchase) // Asociar el detalle con la compra
-                    .build();
-
-            // Verificar si el ID del producto está presente y asignar el objeto Product
-            if (request.containsKey("fkIdProduct") && request.get("fkIdProduct") != null) {
-                Long productId = Long.parseLong(request.get("fkIdProduct").toString());
-                Product product = productImp.findById(productId);
-                detail.setProduct(product);
-            }
-
-            // Verificar si el ID del libro está presente y asignar el objeto Book
-            if (request.containsKey("fkIdBook") && request.get("fkIdBook") != null) {
-                Long bookId = Long.parseLong(request.get("fkIdBook").toString());
-                Book book = bookImp.findById(bookId);
-                detail.setBook(book);
-            }
-
-            // Verificar si el ID del servicio está presente y asignar el objeto Service
-            if (request.containsKey("fkIdService") && request.get("fkIdService") != null) {
-                Long serviceId = Long.parseLong(request.get("fkIdService").toString());
-                Service service = serviceImp.findById(serviceId);
-                detail.setService(service);
-            }
-
-            // Crear el detalle en la base de datos
-            this.detailImp.create(detail);
-
-            // Asociar el detalle con la compra
-            purchase.getDetails().add(detail);
-            this.purchaseImp.update(purchase); // Actualizar la compra con el detalle asociado
-
             // INSTANCIA OBJETO PAGO
             Payment payment = Payment.builder()
                     .methodPayment(Payment.MethodPayment.valueOf(request.get("methodPayment").toString().toUpperCase()))
@@ -187,6 +151,30 @@ public class PurchaseController {
                     .build();
 
             this.expenseImp.create(expense);
+
+            // Registrar los detalles de la compra
+            List<Map<String, Object>> detailsRequest = (List<Map<String, Object>>) request.get("details");
+
+            for (Map<String, Object> detailRequest : detailsRequest) {
+                Detail detail = new Detail();
+
+                if (detailRequest.get("productId") != null) {
+                    // Si es un producto, necesitamos cantidad y precio unitario
+                    detail.setProduct(productImp.findById(Long.parseLong(detailRequest.get("idProduct").toString())));
+                    detail.setQuantity(Integer.parseInt(detailRequest.get("quantity").toString()));
+                    detail.setUnitPrice(new BigDecimal(detailRequest.get("unitPrice").toString()));
+                } else if (detailRequest.get("bookId") != null) {
+                    // Si es un libro, solo el precio unitario es requerido
+                    detail.setBook(bookImp.findById(Long.parseLong(detailRequest.get("idBook").toString())));
+                    detail.setUnitPrice(new BigDecimal(detailRequest.get("unitPrice").toString()));
+                    detail.setQuantity(1);  // Establecemos una cantidad predeterminada para los libros
+                }
+
+                detail.setEliminated(false);
+                detail.setPurchase(purchase);
+
+                this.detailImp.create(detail);  // Registrar cada detalle en la base de datos
+            }
 
             response.put("status", "success");
             response.put("data", "Registro Exitoso");
