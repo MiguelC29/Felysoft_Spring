@@ -1,13 +1,6 @@
 package com.felysoft.felysoftApp.controller;
 
-import com.felysoft.felysoftApp.entity.Expense;
-import com.felysoft.felysoftApp.entity.Payment;
-import com.felysoft.felysoftApp.entity.Product;
-import com.felysoft.felysoftApp.entity.Service;
-import com.felysoft.felysoftApp.entity.Book;
-import com.felysoft.felysoftApp.entity.Detail;
-import com.felysoft.felysoftApp.entity.Provider;
-import com.felysoft.felysoftApp.entity.Purchase;
+import com.felysoft.felysoftApp.entity.*;
 import com.felysoft.felysoftApp.service.imp.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +25,9 @@ public class PurchaseController {
 
     @Autowired
     private DetailImp detailImp;
+
+    @Autowired
+    private InventoryImp inventoryImp;
 
     @Autowired
     private ProductImp productImp;
@@ -141,6 +137,7 @@ public class PurchaseController {
             this.paymentImp.create(payment);
 
             // INSTANCIA OBJETO GASTO
+
             Expense expense = Expense.builder()
                     .type(Expense.Type.PROVEEDORES)
                     .total(purchase.getTotal())
@@ -152,21 +149,52 @@ public class PurchaseController {
 
             this.expenseImp.create(expense);
 
+
             // Registrar los detalles de la compra
             List<Map<String, Object>> detailsRequest = (List<Map<String, Object>>) request.get("details");
 
             for (Map<String, Object> detailRequest : detailsRequest) {
                 Detail detail = new Detail();
 
-                if (detailRequest.get("productId") != null) {
+                if (detailRequest.get("idProduct") != null) {
                     // Si es un producto, necesitamos cantidad y precio unitario
-                    detail.setProduct(productImp.findById(Long.parseLong(detailRequest.get("idProduct").toString())));
-                    detail.setQuantity(Integer.parseInt(detailRequest.get("quantity").toString()));
-                    detail.setUnitPrice(new BigDecimal(detailRequest.get("unitPrice").toString()));
-                } else if (detailRequest.get("bookId") != null) {
+
+                    Product product = productImp.findById(Long.parseLong(detailRequest.get("idProduct").toString()));
+                    if (product == null) {
+                        response.put("status", HttpStatus.NOT_FOUND);
+                        response.put("data", "Producto no encontrado");
+                        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+                    }
+                    var cantidad = Integer.parseInt(detailRequest.get("quantity").toString());
+                    detail.setProduct(product);
+                    detail.setQuantity(cantidad);
+                    //detail.setUnitPrice(new BigDecimal(detailRequest.get("unitPrice").toString()));
+                    detail.setUnitPrice(product.getSalePrice());
+
+                    Inventory inventory = inventoryImp.findByProduct(product);
+                    inventory.setStock(inventory.getStock() + cantidad);
+                    if(inventory.getStock() < 1) {
+                        inventory.setState(Inventory.State.AGOTADO);
+                    } else {
+                        if(inventory.getStock() < 6) {
+                            inventory.setState(Inventory.State.BAJO);
+                        } else {
+                            inventory.setState(Inventory.State.DISPONIBLE);
+                        }
+                    }
+                    inventoryImp.update(inventory);
+                }
+                else if (detailRequest.get("idBook") != null) {
+                    Book book = bookImp.findById(Long.parseLong(detailRequest.get("idBook").toString()));
+                    if (book == null) {
+                        response.put("status", HttpStatus.NOT_FOUND);
+                        response.put("data", "Libro no encontrado");
+                        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+                    }
                     // Si es un libro, solo el precio unitario es requerido
-                    detail.setBook(bookImp.findById(Long.parseLong(detailRequest.get("idBook").toString())));
-                    detail.setUnitPrice(new BigDecimal(detailRequest.get("unitPrice").toString()));
+                    detail.setBook(book);
+                    //detail.setUnitPrice(new BigDecimal(detailRequest.get("unitPrice").toString()));
+                    detail.setUnitPrice(book.getPriceTime());
                     detail.setQuantity(1);  // Establecemos una cantidad predeterminada para los libros
                 }
 
@@ -240,6 +268,11 @@ public class PurchaseController {
             payment.setTotal(purchase.getTotal());
 
             this.paymentImp.update(payment);
+
+
+
+
+
 
             response.put("status", "success");
             response.put("data", "Actualización exitosa");
