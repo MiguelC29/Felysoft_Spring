@@ -82,6 +82,14 @@ public enum Role {
             Permission.DISABLE_ONE_BOOK,
             Permission.READ_INVENTORY_BOOKS,
 
+            Permission.READ_ALL_EDITORIALS,
+            Permission.READ_ALL_EDITORIALS_DISABLED,
+            Permission.READ_ONE_EDITORIAL,
+            Permission.CREATE_ONE_EDITORIAL,
+            Permission.UPDATE_ONE_EDITORIAL,
+            Permission.UPDATE_ONE_EDITORIAL_DISABLED,
+            Permission.DISABLE_ONE_EDITORIAL,
+
             Permission.READ_ALL_CHARGES,
             Permission.READ_ALL_CHARGES_DISABLED,
             Permission.READ_ONE_CHARGE,
@@ -204,6 +212,11 @@ public enum Role {
             Permission.UPDATE_ONE_BOOK,
             Permission.READ_INVENTORY_BOOKS,
 
+            Permission.READ_ALL_EDITORIALS,
+            Permission.READ_ONE_EDITORIAL,
+            Permission.CREATE_ONE_EDITORIAL,
+            Permission.UPDATE_ONE_EDITORIAL,
+
             Permission.READ_ALL_DETAILS,
             Permission.READ_ONE_DETAIL,
             Permission.CREATE_ONE_DETAIL,
@@ -243,6 +256,7 @@ public enum Role {
             Permission.READ_ALL_GENRES,
             Permission.READ_ALL_AUTHORS,
             Permission.READ_ALL_BOOKS,
+            Permission.READ_ALL_EDITORIALS,
 
             Permission.READ_ALL_PAYMENTS,
             Permission.CREATE_ONE_PAYMENT,
@@ -272,6 +286,7 @@ public enum Role {
             Permission.READ_ALL_GENRES,
             Permission.READ_ALL_AUTHORS,
             Permission.READ_ALL_BOOKS,
+            Permission.READ_ALL_EDITORIALS,
 
             Permission.READ_MY_PROFILE
     ));

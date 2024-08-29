@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Year;
 import java.util.List;
 
 @Data
@@ -36,14 +37,11 @@ public class Book implements Serializable {
     @Column(length = 320, nullable = false, unique = true)
     private String title;
 
-    @Column(length = 320, nullable = false)
-    private String editorial;
-
-    @Column(length = 320, nullable = false)
+    @Column(length = 320, nullable = false,columnDefinition = "TEXT")
     private String description;
 
-    @Column(length = 4, nullable = false)
-    private int yearPublication;
+    @Column(nullable = false)
+    private Year yearPublication;
 
     @Column(nullable = false)
     private BigDecimal priceTime;
@@ -59,6 +57,10 @@ public class Book implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdGenre", nullable = false)
     private Genre genre;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdEditorial", nullable = false)
+    private Editorial editorial;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     @JsonIgnore
