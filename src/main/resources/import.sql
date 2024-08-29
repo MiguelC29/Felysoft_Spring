@@ -13,6 +13,7 @@ INSERT INTO users (user_name, numIdentification, typeDoc, names, lastNames, addr
 -- Insert para un usuario con rol SALESPERSON
 INSERT INTO users (user_name, numIdentification, typeDoc, names, lastNames, address, phoneNumber, email, gender, password, dateRegister, lastModification, eliminated, role) VALUES ('rLopez', 1047987456, 'CC', 'Roberto', 'Lopez', 'Carrera 15 #45-06', 312465876, 'vendedor@mail.com', 'MASCULINO', '$2a$10$N7uH4BW51DAPzOeK/Ju/Fu1BW68dV59QpLZ7jWwwA2uKhmyIQD3TS', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, 'SALESPERSON');
 
+/*
 INSERT INTO categories (eliminated, name) VALUES (0, 'GALLETAS');
 INSERT INTO categories (eliminated, name) VALUES (0, 'DETERGENTES');
 INSERT INTO categories (eliminated, name) VALUES (0, 'DULCES');
@@ -22,3 +23,4 @@ INSERT INTO providers (eliminated, phoneNumber, email, name, nit) VALUES (0, 321
 INSERT INTO providers (eliminated, phoneNumber, email, name, nit) VALUES (0, 3216549874, 'prueba.1@gmail.com', 'PRUEBARECICLARR', '1234789-20');
 
 INSERT INTO products (eliminated, expiryDate, salePrice, fkIdCategory, fkIdProvider, brand, name, typeImg, nameImg, image) VALUES (0, '2024-04-04', 2000.00, 1, 1, 'OREO', 'GALLETAS OREO', '', '', '');
+ */

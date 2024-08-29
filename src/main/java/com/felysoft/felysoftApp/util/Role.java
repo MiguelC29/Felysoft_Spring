@@ -41,6 +41,14 @@ public enum Role {
             Permission.DISABLE_ONE_PROVIDER,
             Permission.READ_PROVIDERS_BY_CATEGORY,
 
+            Permission.READ_ALL_BRANDS,
+            Permission.READ_ALL_BRANDS_DISABLED,
+            Permission.READ_ONE_BRAND,
+            Permission.CREATE_ONE_BRAND,
+            Permission.UPDATE_ONE_BRAND,
+            Permission.UPDATE_ONE_BRAND_DISABLED,
+            Permission.DISABLE_ONE_BRAND,
+
             Permission.READ_ALL_SERVICES,
             Permission.READ_ALL_SERVICES_DISABLED,
             Permission.READ_ONE_SERVICE,
@@ -181,6 +189,14 @@ public enum Role {
             Permission.CREATE_ONE_PROVIDER,
             Permission.UPDATE_ONE_PROVIDER,
             Permission.READ_PROVIDERS_BY_CATEGORY,
+
+            Permission.READ_ALL_BRANDS,
+            Permission.READ_ALL_BRANDS_DISABLED,
+            Permission.READ_ONE_BRAND,
+            Permission.CREATE_ONE_BRAND,
+            Permission.UPDATE_ONE_BRAND,
+            Permission.UPDATE_ONE_BRAND_DISABLED,
+            Permission.DISABLE_ONE_BRAND,
 
             Permission.READ_ALL_SERVICES,
             Permission.READ_ONE_SERVICE,
