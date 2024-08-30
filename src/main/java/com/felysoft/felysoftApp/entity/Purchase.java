@@ -39,10 +39,12 @@ public class Purchase implements Serializable {
     @JoinColumn(name = "fkIdProvider", nullable = false)
     private Provider provider;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdPayment", nullable = false)
+    private Payment payment;
+
     @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Detail> details;
 
-    @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Expense> expenses;
+
 }

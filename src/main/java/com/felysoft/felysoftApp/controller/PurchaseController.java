@@ -21,9 +21,6 @@ public class PurchaseController {
     private PurchaseImp purchaseImp;
 
     @Autowired
-    private ExpenseImp expenseImp;
-
-    @Autowired
     private DetailImp detailImp;
 
     @Autowired
@@ -95,6 +92,7 @@ public class PurchaseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /*
     @PreAuthorize("hasAuthority('READ_EXPENSE_BY_PURCHASE')")
     @GetMapping("expensePurchase/{id}")
     public ResponseEntity<Map<String, Object>> findByExpensePurchase(@PathVariable Purchase id) {
@@ -110,45 +108,32 @@ public class PurchaseController {
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+    }*/
 
     @PreAuthorize("hasAuthority('CREATE_ONE_PURCHASE')")
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request){
         Map<String, Object> response = new HashMap<>();
         try {
-            // Construir el objeto Purchase usando el patrón Builder
-            Purchase purchase = Purchase.builder()
-                    .date(new Timestamp(System.currentTimeMillis()))
-                    .total(new BigDecimal(request.get("total").toString()))
-                    .provider(providerImp.findById(Long.parseLong(request.get("fkIdProvider").toString())))
-                    .build();
-
-            this.purchaseImp.create(purchase);
-
             // INSTANCIA OBJETO PAGO
             Payment payment = Payment.builder()
                     .methodPayment(Payment.MethodPayment.valueOf(request.get("methodPayment").toString().toUpperCase()))
                     .state(Payment.State.valueOf(request.get("state").toString().toUpperCase()))
-                    .total(purchase.getTotal())
-                    .date(purchase.getDate())
+                    .total(new BigDecimal(request.get("total").toString()))
+                    .date(new Timestamp(System.currentTimeMillis()))
                     .build();
 
             this.paymentImp.create(payment);
 
-            // INSTANCIA OBJETO GASTO
-
-            Expense expense = Expense.builder()
-                    .type(Expense.Type.PROVEEDORES)
-                    .total(purchase.getTotal())
-                    .date(purchase.getDate())
-                    .description(request.get("description").toString().toUpperCase())
+            // Construir el objeto Purchase usando el patrón Builder
+            Purchase purchase = Purchase.builder()
+                    .date(payment.getDate())
+                    .total(payment.getTotal())
+                    .provider(providerImp.findById(Long.parseLong(request.get("fkIdProvider").toString())))
                     .payment(payment)
-                    .purchase(purchase)
                     .build();
 
-            this.expenseImp.create(expense);
-
+            this.purchaseImp.create(purchase);
 
             // Registrar los detalles de la compra
             List<Map<String, Object>> detailsRequest = (List<Map<String, Object>>) request.get("details");
@@ -168,8 +153,6 @@ public class PurchaseController {
                     var cantidad = Integer.parseInt(detailRequest.get("quantity").toString());
                     detail.setProduct(product);
                     detail.setQuantity(cantidad);
-                    //detail.setUnitPrice(new BigDecimal(detailRequest.get("unitPrice").toString()));
-                    detail.setUnitPrice(product.getSalePrice());
 
                     Inventory inventory = inventoryImp.findByProduct(product);
                     inventory.setStock(inventory.getStock() + cantidad);
@@ -193,11 +176,10 @@ public class PurchaseController {
                     }
                     // Si es un libro, solo el precio unitario es requerido
                     detail.setBook(book);
-                    //detail.setUnitPrice(new BigDecimal(detailRequest.get("unitPrice").toString()));
-                    detail.setUnitPrice(book.getPriceTime());
                     detail.setQuantity(1);  // Establecemos una cantidad predeterminada para los libros
                 }
 
+                detail.setUnitPrice(new BigDecimal(detailRequest.get("unitPrice").toString()));
                 detail.setEliminated(false);
                 detail.setPurchase(purchase);
 
@@ -250,28 +232,15 @@ public class PurchaseController {
 
             this.purchaseImp.update(purchase);
 
-            /// INSTANCIA OBJETO GASTO
-            Expense expense = this.expenseImp.findByPurchase(purchase);
-
-            expense.setDate(purchase.getDate());
-            expense.setTotal(purchase.getTotal());
-            expense.setDescription(request.get("description").toString().toUpperCase());
-
-            this.expenseImp.update(expense);
-
             // INSTANCIA OBJETO PAGO
-            Payment payment = this.paymentImp.findById(expense.getPayment().getIdPayment());
+            Payment payment = Payment.builder()
+                    .methodPayment(Payment.MethodPayment.valueOf(request.get("methodPayment").toString().toUpperCase()))
+                    .state(Payment.State.valueOf(request.get("state").toString().toUpperCase()))
+                    .total(purchase.getTotal())
+                    .date(purchase.getDate())
+                    .build();
 
-            payment.setMethodPayment(Payment.MethodPayment.valueOf(request.get("methodPayment").toString().toUpperCase()));
-            payment.setState(Payment.State.valueOf(request.get("state").toString().toUpperCase()));
-            payment.setDate(purchase.getDate());
-            payment.setTotal(purchase.getTotal());
-
-            this.paymentImp.update(payment);
-
-
-
-
+            this.paymentImp.create(payment);
 
 
             response.put("status", "success");

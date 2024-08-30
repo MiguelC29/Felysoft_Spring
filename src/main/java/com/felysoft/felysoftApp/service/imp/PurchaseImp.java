@@ -12,9 +12,9 @@ import java.util.List;
 
 @Service
 public class PurchaseImp implements PurchaseService {
+
     @Override
     public void addDetailToPurchase(Long purchaseId, Long detailId) {
-
     }
 
     @Autowired
