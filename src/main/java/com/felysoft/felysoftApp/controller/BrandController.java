@@ -1,8 +1,9 @@
 package com.felysoft.felysoftApp.controller;
 
 import com.felysoft.felysoftApp.dto.AuthenticationRequest;
-import com.felysoft.felysoftApp.entity.Editorial;
-import com.felysoft.felysoftApp.service.imp.EditorialImp;
+import com.felysoft.felysoftApp.entity.Brand;
+import com.felysoft.felysoftApp.service.imp.BrandImp;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,54 +14,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
-@RequestMapping("/api/editorial/")
-public class EditorialController {
+@RestController // API REST
+@RequestMapping("/api/brand/")
+@RequiredArgsConstructor
+public class BrandController {
+
     @Autowired
-    private EditorialImp editorialImp;
+    private BrandImp brandImp;
 
-    @PreAuthorize("hasAuthority('READ_ALL_EDITORIALS')")
+    @PreAuthorize("hasAuthority('READ_ALL_BRANDS')")
     @GetMapping("all")
-    public ResponseEntity<Map<String, Object>> findAll(){
-        Map<String,Object> response= new HashMap<>();
-        try{
-            List<Editorial> editorialList= this.editorialImp.findAll();
-
-            response.put("status","success");
-            response.put("data", editorialList);
-        }catch (Exception e){
-            response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    @PreAuthorize("hasAuthority('READ_ALL_EDITORIALS_DISABLED')")
-    @GetMapping("disabled")
-    public ResponseEntity<Map<String, Object>> findAllDisabled(){
-        Map<String,Object> response= new HashMap<>();
-        try{
-            List<Editorial> editorialList= this.editorialImp.findAllDisabled();
-
-            response.put("status","success");
-            response.put("data", editorialList);
-        }catch (Exception e){
-            response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @PreAuthorize("hasAuthority('READ_ONE_EDITORIAL')")
-    @GetMapping("list/{id}")
-    public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> findAll() {
         Map<String, Object> response = new HashMap<>();
         try {
-            Editorial editorial = this.editorialImp.findById(id);
-
+            List<Brand> brandList = this.brandImp.findAll();
             response.put("status", "success");
-            response.put("data", editorial);
+            response.put("data", brandList);
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -68,54 +37,92 @@ public class EditorialController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @PreAuthorize("hasAuthority('CREATE_ONE_EDITORIAL')")
-    @PostMapping("create")
-    public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String,Object> request){
-        Map<String,Object> response= new HashMap<>();
 
-        try{
-            final boolean isAdmin = AuthenticationRequest.isAdmin();
-            //INSTANCIA DEL OBJETO EDITORIAL
-            Editorial editorial = this.editorialImp.findGenreByNameAndEliminated(request.get("name").toString().toUpperCase());
-
-            if(editorial!=null){
-                response.put("status",HttpStatus.BAD_GATEWAY);
-                response.put("data","Datos Desahibilitados");
-
-                String message = (isAdmin) ? "Información ya registrada pero desahibilitada" : "Información ya registrada pero desahibilitada; Contacte al Administrador";
-
-                response.put("detail",message);
-
-                return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
-
-            }else {
-                Editorial neweditorial = Editorial.builder()
-                        .name(request.get("name").toString().toUpperCase())
-                        .description(request.get("description").toString().toUpperCase())
-                        .build();
-
-                this.editorialImp.create(neweditorial);
-                response.put("status","success");
-                response.put("data","Registro Exitoso");
-            }
-
-        }catch (Exception e){
-            response.put("status",HttpStatus.BAD_GATEWAY);
+    @PreAuthorize("hasAuthority('READ_ALL_BRANDS_DISABLED')")
+    @GetMapping("disabled")
+    public ResponseEntity<Map<String, Object>> findAllDisabled() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Brand> brandList = this.brandImp.findAllDisabled();
+            response.put("status", "success");
+            response.put("data", brandList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @PreAuthorize("hasAuthority('UPDATE_ONE_EDITORIAL')")
+
+    @PreAuthorize("hasAuthority('READ_ONE_BRAND')")
+    @GetMapping("list/{id}")
+    public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Brand brand = this.brandImp.findById(id);
+            response.put("status", "success");
+            response.put("data", brand);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('CREATE_ONE_BRAND')")
+    @PostMapping("create")
+    public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            final boolean isAdmin = AuthenticationRequest.isAdmin();
+
+            Brand brandByName = this.brandImp.findBrandByNameAndEliminated(request.get("name").toString().toUpperCase());
+
+            if (brandByName != null) {
+                response.put("status",HttpStatus.BAD_GATEWAY);
+                response.put("data","Datos Desahibilitados");
+
+                // Verifica si el rol es de administrador
+                String message = (isAdmin) ? "Información ya registrada pero desahibilitada" : "Información ya registrada pero desahibilitada; Contacte al Administrador";
+
+                response.put("detail", message);
+
+                return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+            } else {
+                // INSTANCIA OBJETO CATEGORIA
+                Brand newbrand = Brand.builder()
+                        .name(request.get("name").toString().toUpperCase())
+                        .build();
+                this.brandImp.create(newbrand);
+
+                response.put("status", "success");
+                response.put("data", "Registro Exitoso");
+            }
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_ONE_BRAND')")
     @PutMapping("update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
         try {
-            Editorial editorial = this.editorialImp.findById(id);
-            editorial.setName(request.get("name").toString().toUpperCase());
-            editorial.setDescription(request.get("description").toString().toUpperCase());
+            Brand brand = this.brandImp.findById(id);
 
-            this.editorialImp.update(editorial);
+            if (brand == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Marca no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            brand.setName(request.get("name").toString().toUpperCase());
+
+            this.brandImp.update(brand);
 
             response.put("status", "success");
             response.put("data", "Actualización exitosa");
@@ -126,15 +133,22 @@ public class EditorialController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @PreAuthorize("hasAuthority('UPDATE_ONE_EDITORIAL_DISABLED')")
+
+    @PreAuthorize("hasAuthority('UPDATE_ONE_BRAND_DISABLED')")
     @PutMapping("enable/{id}")
     public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
-            Editorial editorial = this.editorialImp.findByIdDisabled(id);
-            editorial.setEliminated(false);
+            Brand brand = this.brandImp.findByIdDisabled(id);
+            if (brand == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Marca no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
 
-            this.editorialImp.update(editorial);
+            brand.setEliminated(false);
+
+            this.brandImp.update(brand);
 
             response.put("status", "success");
             response.put("data", "Habilitado Correctamente");
@@ -145,15 +159,23 @@ public class EditorialController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @PreAuthorize("hasAuthority('DISABLE_ONE_EDITORIAL')")
+
+    @PreAuthorize("hasAuthority('DISABLE_ONE_BRAND')")
     @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
-            Editorial editorial = this.editorialImp.findById(id);
-            editorial.setEliminated(true);
+            Brand brand = this.brandImp.findById(id);
 
-            this.editorialImp.delete(editorial);
+            if (brand == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Marca no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            brand.setEliminated(true);
+
+            this.brandImp.delete(brand);
 
             response.put("status", "success");
             response.put("data", "Eliminado Correctamente");
