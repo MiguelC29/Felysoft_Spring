@@ -1,6 +1,5 @@
 package com.felysoft.felysoftApp.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @Builder
@@ -42,10 +40,6 @@ public class Detail implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdBook", nullable = true)
     private Book book;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fkIdService", nullable = true)
-    private Service service;
 
     // Relación con Purchase
     @ManyToOne(fetch = FetchType.EAGER)
