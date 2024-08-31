@@ -50,6 +50,21 @@ public class ReserveController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @PreAuthorize("hasAuthority('READ_ALL_RESERVES_DISABLED')")
+    @GetMapping("disabled")
+    public ResponseEntity<Map<String, Object>> findAllDisabled() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Reserve> reserveList = reserveImp.findAllDisabled();
+            response.put("status", "success");
+            response.put("data", reserveList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @PreAuthorize("hasAuthority('CREATE_ONE_RESERVE')")
     @PostMapping("create")
