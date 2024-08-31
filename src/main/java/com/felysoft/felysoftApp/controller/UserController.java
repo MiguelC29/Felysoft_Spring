@@ -323,4 +323,49 @@ public class UserController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasAuthority('UPDATE_PROFILE_ONE_USER')")
+    @PutMapping("updateProfile/{id}")
+    public ResponseEntity<Map<String, Object>> updateProfile(@PathVariable Long id,
+                                                      @RequestParam(value = "address", required = false) String address,
+                                                      @RequestParam(value = "phoneNumber") Long phoneNumber,
+                                                      @RequestParam(value = "gender", required = false) User.Gender gender) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // INSTANCIA DEL OBJETO USER
+            User user = this.userImp.findById(id);
+
+            if (user == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Usuario no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            // Actualizar los campos del usuario con los nuevos valores si se proporcionan
+            if (address != null) {
+                user.setAddress(address.toUpperCase());
+            }
+
+            if (phoneNumber != null) {
+                user.setPhoneNumber(phoneNumber);
+            }
+
+            if (gender != null) {
+                user.setGender(gender);
+            }
+
+            // Actualizar la fecha de última modificación
+            user.setLastModification(new Timestamp(System.currentTimeMillis()));
+
+            this.userImp.update(user);
+
+            response.put("status", "success");
+            response.put("data", "Datos del Usuario actualizados correctamente");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

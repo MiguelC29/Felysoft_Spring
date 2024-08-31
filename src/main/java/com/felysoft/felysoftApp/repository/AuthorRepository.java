@@ -16,6 +16,7 @@ public interface AuthorRepository extends JpaRepository<Author, Long>{
     Author findAuthorByIdAuthorAndEliminatedFalse(Long id);
     Author findAuthorByIdAuthorAndEliminatedTrue(Long id);
     Author findAuthorByNameAndEliminatedTrue(String name);
+    Author findAuthorByNameAndEliminatedFalse(String name);
     @Query("SELECT a FROM Author a JOIN a.genres g WHERE g.idGenre = :genreId AND a.eliminated = false")
     List<Author> findByGenreId(@Param("genreId") Long idGenre);
 }

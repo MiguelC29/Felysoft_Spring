@@ -32,33 +32,33 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUser;
 
-    @Column(length = 15, unique = true)
+    @Column(length = 15, unique = true, nullable = false)
     private Long numIdentification;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TypeDoc typeDoc;
 
-    @Column(length = 45, nullable = false)
+    @Column(length = 50, nullable = false)
     private String names;
 
-    @Column(length = 45, nullable = false)
+    @Column(length = 60, nullable = false)
     private String lastNames;
 
-    @Column(length = 45, nullable = false)
+    @Column(length = 50)
     private String address;
 
     @Column(length = 10, nullable = false)
     private Long phoneNumber;
 
-    @Column(length = 320, nullable = false)
+    @Column(length = 320, unique = true, nullable = false)
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    // @Column(nullable = false)
     private Gender gender;
 
-    @Column(length = 45, nullable = false)
+    @Column(length = 50, nullable = false)
     private String user_name;
 
     @Column(nullable = false)
@@ -66,7 +66,7 @@ public class User implements UserDetails {
 
     private String nameImg;
 
-    @Column(length = 50)
+    @Column(length = 10)
     private String typeImg;
 
     @Column(length = 5000000)
@@ -85,6 +85,7 @@ public class User implements UserDetails {
     private boolean eliminated;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
     // FOREIGN KEYS

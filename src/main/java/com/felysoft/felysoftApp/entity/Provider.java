@@ -23,7 +23,7 @@ public class Provider implements Serializable {
     @Column
     private Long idProvider;
 
-    @Column(length = 320, nullable = false, unique = true)
+    @Column(length = 10, nullable = false, unique = true)
     private String nit;
 
     @Column(length = 320, nullable = false, unique = true)

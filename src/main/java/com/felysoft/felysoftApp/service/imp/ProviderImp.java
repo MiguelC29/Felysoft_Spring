@@ -45,6 +45,11 @@ public class ProviderImp implements ProviderService {
     }
 
     @Override
+    public Provider findProviderByName(String name) {
+        return this.providerRepository.findProviderByNameAndEliminatedFalse(name);
+    }
+
+    @Override
     public void create(Provider provider) {
         this.providerRepository.save(provider);
     }
