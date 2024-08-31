@@ -13,6 +13,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findProductsByEliminatedFalse();
     List<Product> findProductsByEliminatedTrue();
 
+    @Query("SELECT p FROM Product p JOIN p.provider pr WHERE pr.idProvider = :providerId AND p.eliminated = false")
+    List<Product> findByProviderId(@Param("providerId") Long idProvider);
+
     Product findProductByIdProductAndEliminatedFalse(Long id);
     Product findProductByIdProductAndEliminatedTrue(Long id);
     Product findProductByNameAndEliminatedTrue(String name);

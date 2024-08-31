@@ -9,6 +9,7 @@ import com.felysoft.felysoftApp.service.imp.CategoryImp;
 import com.felysoft.felysoftApp.service.imp.InventoryImp;
 import com.felysoft.felysoftApp.service.imp.ProductImp;
 import com.felysoft.felysoftApp.service.imp.ProviderImp;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -89,6 +90,7 @@ public class ProductController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Transactional  // Agrega esta anotación para que el método sea transaccional
     @PreAuthorize("hasAuthority('CREATE_ONE_PRODUCT')")
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(
@@ -301,6 +303,23 @@ public class ProductController {
                 response.put("status", "success");
                 response.put("data", "Eliminado Correctamente");
             }
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // LIST PRODUCTS - PROVIDER
+    @PreAuthorize("hasAuthority('READ_PRODUCTS_BY_PROVIDER')")
+    @GetMapping("productsByProvider/{id}")
+    public ResponseEntity<Map<String, Object>> findByIdProvider(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Product> productList = this.productImp.findByIdProvider(id);
+            response.put("status", "success");
+            response.put("data", productList);
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
