@@ -1,6 +1,5 @@
 package com.felysoft.felysoftApp.service.imp;
 
-import com.felysoft.felysoftApp.entity.Detail;
 import com.felysoft.felysoftApp.entity.Purchase;
 import com.felysoft.felysoftApp.repository.DetailRepository;
 import com.felysoft.felysoftApp.repository.PurchaseRepository;
@@ -25,12 +24,12 @@ public class PurchaseImp implements PurchaseService {
 
     @Override
     public List<Purchase> findAll() throws Exception {
-        return this.purchaseRepository.findPurchaseByEliminatedFalse();
+        return this.purchaseRepository.findPurchasesByEliminatedFalse();
     }
 
     @Override
     public List<Purchase> findAllDisabled() throws Exception {
-        return this.purchaseRepository.findPurchaseByEliminatedTrue();
+        return this.purchaseRepository.findPurchasesByEliminatedTrue();
     }
 
     @Override

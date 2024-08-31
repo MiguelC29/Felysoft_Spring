@@ -18,6 +18,7 @@ public enum Role {
             Permission.UPDATE_ONE_PRODUCT_DISABLED,
             Permission.DISABLE_ONE_PRODUCT,
             Permission.READ_INVENTORY_PRODUCTS,
+            Permission.READ_PRODUCTS_BY_PROVIDER,
 
             Permission.READ_ALL_CATEGORIES,
             Permission.READ_ALL_CATEGORIES_DISABLED,
@@ -214,6 +215,7 @@ public enum Role {
             Permission.CREATE_ONE_PURCHASE,
             Permission.UPDATE_ONE_PURCHASE,
             Permission.READ_EXPENSE_BY_PURCHASE,
+            Permission.READ_PRODUCTS_BY_PROVIDER,
 
             Permission.READ_MY_PROFILE
     )),

@@ -33,7 +33,6 @@ public class Purchase implements Serializable {
     @Column(nullable = false)
     private boolean eliminated;
 
-
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdProvider", nullable = false)
@@ -44,7 +43,6 @@ public class Purchase implements Serializable {
     private Payment payment;
 
     @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnore
     private List<Detail> details;
-
-
 }

@@ -196,26 +196,6 @@ public class PurchaseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("add-detail")
-    public ResponseEntity<Map<String, Object>> addDetailToPurchase(@RequestBody Map<String, Object> request){
-        Map<String, Object> response = new HashMap<>();
-        try {
-            Long purchaseId = Long.parseLong(request.get("purchaseId").toString());
-            Long detailId = Long.parseLong(request.get("detailId").toString());
-
-            this.purchaseImp.addDetailToPurchase(purchaseId, detailId);
-
-            response.put("status", "success");
-            response.put("data", "Asociación Exitosa");
-
-        } catch (Exception e) {
-            response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
     @PreAuthorize("hasAuthority('UPDATE_ONE_PURCHASE')")
     @PutMapping("update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
@@ -273,14 +253,19 @@ public class PurchaseController {
     }
 
     @PreAuthorize("hasAuthority('DISABLE_ONE_PURCHASE')")
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Purchase purchase = this.purchaseImp.findById(id);
-            purchase.setEliminated(true);
+            if (purchase == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Compra no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
 
-            purchaseImp.delete(purchase);
+            purchase.setEliminated(true);
+            this.purchaseImp.delete(purchase);
 
             response.put("status", "success");
             response.put("data", "Eliminado Correctamente");
