@@ -333,4 +333,21 @@ public class ProductController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    // LIST PRODUCTS - PROVIDER
+    @PreAuthorize("hasAuthority('READ_PRODUCTS_BY_PROVIDER')")
+    @GetMapping("productsByProvider/{id}")
+    public ResponseEntity<Map<String, Object>> findByIdProvider(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Product> productList = this.productImp.findByIdProvider(id);
+            response.put("status", "success");
+            response.put("data", productList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
