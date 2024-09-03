@@ -11,7 +11,7 @@ INSERT INTO users (user_name, numIdentification, typeDoc, names, lastNames, addr
 INSERT INTO users (user_name, numIdentification, typeDoc, names, lastNames, address, phoneNumber, email, gender, password, dateRegister, lastModification, eliminated, role, enabled) VALUES ('ramiro', 19063224, 'CC', 'Ramiro', 'Martinez', 'Calle 99a #8-0', 3105793409, 'inventario@mail.com', 'MASCULINO', '$2a$10$iZB7HNKo8Sg9ERfmYEQCl.jNJiUFaJUhS.9dAat.uNDVyvn627rai', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, 'INVENTORY_MANAGER', true);
 
 -- Insert para un usuario con rol SALESPERSON
-INSERT INTO users (user_name, numIdentification, typeDoc, names, lastNames, address, phoneNumber, email, gender, password, dateRegister, lastModification, eliminated, role, enabled) VALUES ('rLopez', 1047987456, 'CC', 'Roberto', 'Lopez', 'Carrera 15 #45-06', 312465876, 'vendedor@mail.com', 'MASCULINO', '$2a$10$N7uH4BW51DAPzOeK/Ju/Fu1BW68dV59QpLZ7jWwwA2uKhmyIQD3TS', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, 'SALESPERSON', true);
+INSERT INTO users (user_name, numIdentification, typeDoc, names, lastNames, address, phoneNumber, email, gender, password, dateRegister, lastModification, eliminated, role, enabled) VALUES ('rLopez', 1047987456, 'CC', 'Roberto', 'Lopez', 'Carrera 15 #45-06', 312465876, 'vendedor@mail.com', 'MASCULINO', '$2a$10$N7uH4BW51DAPzOeK/Ju/Fu1BW68dV59QpLZ7jWwwA2uKhmyIQD3TS', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, 'SALESPERSON', false);
 
 
 INSERT INTO categories (eliminated, name) VALUES (0, 'GALLETAS');

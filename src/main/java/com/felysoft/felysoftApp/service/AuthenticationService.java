@@ -8,6 +8,8 @@ import com.felysoft.felysoftApp.repository.UserRepository;
 import com.felysoft.felysoftApp.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -80,7 +82,7 @@ public class AuthenticationService {
     private void sendVerificationEmail(User user, String token) {
         String recipientAddress = user.getEmail();
         String subject = "Activa tu cuenta y completa tu registro | FELYSOFT";
-        String confirmationUrl = "http://localhost:3000/verify?token=" + token;
+        String confirmationUrl = "http://localhost:3000/activarCuenta?token=" + token;
         //String message = "Por favor, haz clic en el enlace para verificar tu cuenta: " + confirmationUrl;
 
         String message = """
@@ -222,21 +224,41 @@ public class AuthenticationService {
     public ReqRes login(AuthenticationRequest authRequest) {
         ReqRes response = new ReqRes();
         try {
-            User user = userRepository.findByEmailAndEliminatedFalse(authRequest.getEmail()).orElseThrow(); // findByUsername
+            Optional<User> userOptional = userRepository.findByEmailAndEliminatedFalse(authRequest.getEmail()); // findByUsername
 
-            if (!user.isEnabled()) {
+            if (userOptional.isEmpty()) {
                 response.setStatusCode(403);
-                response.setMessage("Por favor verifique su email para activar su cuenta.");
+                response.setError("Usuario no encontrado");
+                response.setMessage("El usuario ingresado no existe.");
                 return response;
             }
 
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            authRequest.getEmail(),
-                            authRequest.getPassword()
-                    )
-            );
+            try {
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                authRequest.getEmail(),
+                                authRequest.getPassword()
+                        )
+                );
+            } catch (BadCredentialsException ex) {
+                response.setStatusCode(403);
+                response.setError("Credenciales incorrectas");
+                response.setMessage("La contraseña es incorrecta.");
+                return response;
+            } catch (DisabledException ex) {
+                //response.setMessage("Su cuenta está deshabilitada. Por favor, contacte al administrador.");
+                response.setStatusCode(403);
+                response.setError("Cuenta no verificada");
+                response.setMessage("Por favor verifique su email para activar su cuenta.");
+                return response;
+            } catch (Exception ex) {
+                response.setStatusCode(500);
+                response.setError("Error de autenticación");
+                response.setMessage("Ocurrió un error al intentar iniciar sesión.");
+                return response;
+            }
 
+            User user = userOptional.get();
             var jwtToken = jwtService.generateToken(user, generateExtraClaims(user));
             //var refreshToken = jwtService.generateRefreshToken(user, new HashMap<>());
             response.setStatusCode(200);
