@@ -361,4 +361,158 @@ public class AuthenticationService {
         }
         return reqRes;
     }
+
+    public ReqRes resetPassword(String token, String newPassword) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            String email = jwtService.extractUsername(token);
+            Optional<User> userOptional = userRepository.findByEmailAndEliminatedFalse(email);
+            // QUEDE AQUI
+            if (userOptional.isEmpty()) {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("Usuario no encontrado");
+                return reqRes;
+            } else {
+                User user = userOptional.get();
+                // Si la contraseña actual es correcta, cifrar la nueva contraseña y actualizarla
+                user.setPassword(passwordEncoder.encode(newPassword));
+                // Actualizar la fecha de última modificación
+                user.setLastModification(new Timestamp(System.currentTimeMillis()));
+                userRepository.save(user);
+
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Contraseña actualizada correctamente");
+            }
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Un error ocurrió mientras se obtenia la información del usuario: " + e.getMessage());
+        }
+        return reqRes;
+    }
+
+    public ReqRes verifyUser(String email) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            // Buscar el usuario por email
+            Optional<User> userOptional = userRepository.findByEmailAndEliminatedFalse(email);
+
+            if (userOptional.isEmpty()) {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("Usuario no encontrado");
+                return reqRes;
+            }
+
+            User user = userOptional.get();
+
+            String verificationToken = jwtService.generateVerificationToken(user);
+            sendResetPasswordEmail(user, verificationToken);
+
+            reqRes.setUser(user);
+            reqRes.setStatusCode(200);
+            reqRes.setMessage("Usuario encontrado");
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Un error ocurrió mientras se obtenia la información del usuario: " + e.getMessage());
+        }
+        return reqRes;
+    }
+
+    private void sendResetPasswordEmail(User user, String token) {
+        String recipientAddress = user.getEmail();
+        String subject = "Reiniciar contraseña | FELYSOFT";
+        String confirmationUrl = "http://localhost:3000/resetPassword?token=" + token;
+
+        String message = """
+            <html>
+                 <head>
+                       <style>
+                           body {
+                             font-family: sans-serif;
+                             background-color: #f5f5f5;
+                             color: #fff;
+                             margin: 0;
+                             padding: 0;
+                           }
+                           .email-container {
+                             background-color: #f5f5f5;
+                             display: flex;
+                             justify-content: center;
+                             align-items: center;
+                             min-height: 100vh;
+                             padding: 20px;
+                           }
+                           .email-content {
+                             background-color: #ffffff;
+                             border-radius: 8px;
+                             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                             padding: 30px;
+                             text-align: center;
+                             max-width: 450px; /* Tamaño máximo del contenedor */
+                             margin: 0 auto;
+                           }
+                           h1 {
+                             font-size: 24px;
+                             font-weight: bold;
+                             color: #333;
+                             margin-bottom: 20px;
+                           }
+                           h3 {
+                             font-size: 18px;
+                             margin-bottom: 20px;
+                           }
+                           h3 span {
+                             font-weight: bold;
+                             color: #333;
+                           }
+                           .logo {
+                             width: 100px;
+                             height: 100px;
+                             margin-bottom: 30px;
+                           }
+                           .description {
+                             line-height: 1.6;
+                             margin-bottom: 30px;
+                           }
+                           .button {
+                             background-color: #265073;
+                             color: #fff;
+                             padding: 15px 30px;
+                             border: none;
+                             border-radius: 5px;
+                             font-size: 16px;
+                             cursor: pointer;
+                             text-decoration: none;
+                             display: inline-block;
+                             transition: background-color 0.3s ease;
+                           }
+                           .button:hover {
+                             background-color: #1a3d5b;
+                           }
+                       </style>
+                 </head>
+                 <body>
+                    <div role="article">
+                       <table class="email-container" role="presentation" cellpadding="0" cellspacing="0" border="0">
+                         <tr>
+                           <td>
+                             <table class="email-content" role="presentation" cellpadding="0" cellspacing="0" border="0">
+                               <tr>
+                                 <td>
+                                   <img src="https://i.postimg.cc/FznvrwC7/logo.png" alt="Felysoft Logo" class="logo">
+                                   <h1>Reiniciar contraseña en Felysoft</h1>
+                                   <h3>Hola, <span>%s</span></h3>
+                                   <p class="description">Pulsa en el siguiente botón para reiniciar tu contraseña.</p>
+                                   <a class="button" href="%s" style="color: white;">Reiniciar contraseña</a>
+                                 </td>
+                               </tr>
+                             </table>
+                           </td>
+                         </tr>
+                       </table>
+                    </div>
+                 </body>
+            </html>""".formatted(user.getNames(), confirmationUrl);
+
+        emailSenderService.sendEmail(recipientAddress, subject, message);
+    }
 }

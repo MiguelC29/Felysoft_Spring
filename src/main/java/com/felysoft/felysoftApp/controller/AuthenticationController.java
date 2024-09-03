@@ -65,4 +65,17 @@ public class AuthenticationController {
     public ResponseEntity<ReqRes> verifyAccount(@PathVariable("token") String token) {
         return ResponseEntity.ok(authenticationService.verifyAccount(token));
     }
+
+    @PreAuthorize("permitAll")
+    @GetMapping("verify-user")
+    public ResponseEntity<ReqRes> verifyUser(@RequestBody Map<String, Object> request) {
+        return ResponseEntity.ok(authenticationService.verifyUser(request.get("email").toString()));
+    }
+
+    @PreAuthorize("hasAuthority('CHANGE_PASSWORD_USER')")
+    @PutMapping("resetPassword/{email}")
+    public ResponseEntity<ReqRes> resetPassword(@PathVariable("token") String token, @RequestBody Map<String, Object> request) {
+        String newPassword = request.get("newPassword").toString();
+        return ResponseEntity.ok(this.authenticationService.resetPassword(token, newPassword));
+    }
 }
