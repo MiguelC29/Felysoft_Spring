@@ -36,6 +36,15 @@ public class JwtService {
                 .compact();
     }
 
+    public String generateVerificationToken(User user) {
+        return Jwts.builder()
+                .subject(user.getEmail())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + (EXPIRATION_MINUTES * 60 * 1000))) // Tiempo de expiración
+                .signWith(generateKey(), Jwts.SIG.HS256)
+                .compact();
+    }
+
     public long getExpirationMillis() {
         return EXPIRATION_MINUTES * 60 * 1000;
     }

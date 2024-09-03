@@ -59,4 +59,10 @@ public class AuthenticationController {
         String newPassword = request.get("newPassword").toString();
         return ResponseEntity.ok(this.authenticationService.changePassword(email, oldPassword, newPassword));
     }
+
+    @PreAuthorize("permitAll")
+    @GetMapping("verify-account/{token}")
+    public ResponseEntity<ReqRes> verifyAccount(@PathVariable("token") String token) {
+        return ResponseEntity.ok(authenticationService.verifyAccount(token));
+    }
 }

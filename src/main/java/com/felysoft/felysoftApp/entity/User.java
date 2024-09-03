@@ -3,6 +3,7 @@ package com.felysoft.felysoftApp.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.felysoft.felysoftApp.util.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -52,6 +53,7 @@ public class User implements UserDetails {
     private Long phoneNumber;
 
     @Column(length = 320, unique = true, nullable = false)
+    @Email
     private String email;
 
     @Enumerated(EnumType.STRING)
@@ -87,6 +89,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @Column(nullable = false)
+    private boolean enabled = false; // Por defecto, el usuario no está habilitado
 
     // FOREIGN KEYS
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -134,6 +139,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }
