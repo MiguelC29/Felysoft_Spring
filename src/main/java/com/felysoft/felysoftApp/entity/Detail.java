@@ -45,4 +45,9 @@ public class Detail implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdPurchase", nullable = false)
     private Purchase purchase;
+
+    // Relación con Sale
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdSale", nullable = false)
+    private Sale sale;
 }

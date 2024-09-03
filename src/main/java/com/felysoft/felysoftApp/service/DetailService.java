@@ -1,7 +1,6 @@
 package com.felysoft.felysoftApp.service;
 
-import com.felysoft.felysoftApp.entity.Detail;
-import com.felysoft.felysoftApp.entity.Purchase;
+import com.felysoft.felysoftApp.entity.*;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +12,8 @@ public interface DetailService {
     Detail findById(Long id);
 
     List<Detail> findByPurchase(Purchase purchase);
+
+    List<Detail> findBySale(Sale sale);
 
     @Transactional
     void create(Detail detail);

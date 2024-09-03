@@ -59,8 +59,4 @@ public class Service implements Serializable {
     @JoinColumn(name = "fkIdReserve")
     private Reserve reserve;
 
-    // Relación con Detail
-    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Detail> details;
 }

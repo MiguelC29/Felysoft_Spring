@@ -24,6 +24,6 @@ public interface SaleService {
     @Modifying
     void delete(Sale sale);
 
-    @Transactional
-    void addDetailToSale(Long saleId, Long detailId);
+    //@Transactional
+    //void addDetailToSale(Long saleId, Long detailId);
 }

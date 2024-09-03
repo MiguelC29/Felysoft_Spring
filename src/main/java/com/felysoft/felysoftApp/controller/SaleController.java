@@ -100,6 +100,7 @@ public class SaleController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /*
     @PostMapping("add-detail")
     public ResponseEntity<Map<String, Object>> addDetailToSale(@RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
@@ -119,7 +120,7 @@ public class SaleController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
+*/
     @PreAuthorize("hasAuthority('UPDATE_ONE_SALE')")
     @PutMapping("update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
