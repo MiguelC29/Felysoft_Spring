@@ -185,7 +185,7 @@ public class AuthenticationService {
                 "                            <h3>Hola, <span>" + user.getNames() + "</span></h3>" +
                 "                            <p class=\"description\">Pulsa en el siguiente botón para activar tu cuenta y poder completar tu registro correctamente.</p>" +
                 "                            <a class=\"button\" href=\"" + confirmationUrl + "\" style=\"color: white;\">Activar cuenta</a>" +
-                "                            <p class=\"time-exp\">Tiene 24 horas para activar la cuenta</p>" +
+                "                            <p class=\"time-exp\">Tienes 24 horas para activar la cuenta</p>" +
                 "                            <p class=\"small-question\">¿Tienes problemas con la activación?</p>" +
                 "                            <p class=\"small-message\">Respondenos a este email y te ayudaremos.</p>" +
                 "                        </td>" +
@@ -209,6 +209,12 @@ public class AuthenticationService {
 
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
+
+                if (user.isEnabled()) {
+                    resp.setStatusCode(200);
+                    resp.setMessage("La cuenta ya esta activada.");
+                    return resp;
+                }
                 user.setEnabled(true);
                 userRepository.save(user);
 
