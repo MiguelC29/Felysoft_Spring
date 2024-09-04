@@ -2,8 +2,7 @@ package com.felysoft.felysoftApp.controller;
 
 import com.felysoft.felysoftApp.entity.Payment;
 import com.felysoft.felysoftApp.entity.*;
-import com.felysoft.felysoftApp.service.imp.PaymentImp;
-import com.felysoft.felysoftApp.service.imp.SaleImp;
+import com.felysoft.felysoftApp.service.imp.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +32,10 @@ public class SaleController {
 
     // Método para agregar productos al carrito
     @PostMapping("cart/add")
-    public ResponseEntity<Map<String, Object>> addToCart(@RequestBody Detail detail) {
+    public ResponseEntity<Map<String, Object>> addToCart(@RequestBody List<Detail> details) {
         Map<String, Object> response = new HashMap<>();
         try {
-            cart.add(detail);
+            cart.addAll(details);
             response.put("status", "success");
             response.put("data", cart);
         } catch (Exception e) {
@@ -69,7 +68,6 @@ public class SaleController {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    // Método para finalizar la venta y registrar los detalles
     @PostMapping("cart/checkout")
     public ResponseEntity<Map<String, Object>> checkout(@RequestBody Map<String, Object> paymentDetails) {
         Map<String, Object> response = new HashMap<>();
@@ -86,8 +84,10 @@ public class SaleController {
             // Registrar los detalles asociados a la venta
             for (Detail detail : cart) {
                 detail.setSale(savedSale);
+
                 // Aquí llamas al método en tu servicio que maneja la persistencia de los detalles
                 // detailImp.create(detail);
+                detailImp.create(detail);
             }
 
             // Limpiar el carrito después de la venta
