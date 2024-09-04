@@ -85,114 +85,118 @@ public class AuthenticationService {
         String confirmationUrl = "http://localhost:3000/activarCuenta?token=" + token;
         //String message = "Por favor, haz clic en el enlace para verificar tu cuenta: " + confirmationUrl;
 
-        String message = """
-            <html>
-                 <head>
-                       <style>
-                           body {
-                             font-family: sans-serif;
-                             background-color: #f5f5f5;
-                             color: #fff;
-                             margin: 0;
-                             padding: 0;
-                           }
-                           .email-container {
-                             background-color: #f5f5f5;
-                             display: flex;
-                             justify-content: center;
-                             align-items: center;
-                             min-height: 100vh;
-                             padding: 20px;
-                           }
-                           .email-content {
-                             background-color: #ffffff;
-                             border-radius: 8px;
-                             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-                             padding: 30px;
-                             text-align: center;
-                             max-width: 450px; /* Tamaño máximo del contenedor */
-                             margin: 0 auto;
-                           }
-                           h1 {
-                             font-size: 24px;
-                             font-weight: bold;
-                             color: #333;
-                             margin-bottom: 20px;
-                           }
-                           h3 {
-                             font-size: 18px;
-                             margin-bottom: 20px;
-                           }
-                           h3 span {
-                             font-weight: bold;
-                             color: #333;
-                           }
-                           .logo {
-                             width: 100px;
-                             height: 100px;
-                             margin-bottom: 30px;
-                           }
-                           .description {
-                             line-height: 1.6;
-                             margin-bottom: 30px;
-                           }
-                           .button {
-                             background-color: #265073;
-                             color: #fff;
-                             padding: 15px 30px;
-                             border: none;
-                             border-radius: 5px;
-                             font-size: 16px;
-                             cursor: pointer;
-                             text-decoration: none;
-                             display: inline-block;
-                             transition: background-color 0.3s ease;
-                           }
-                           .button:hover {
-                             background-color: #1a3d5b;
-                           }
-                           .small-question {
-                             padding: 10px 20px;
-                             text-align: center;
-                             display: inline-block;
-                             font-size: 14px;
-                             margin: 20px auto;
-                             margin-bottom: 5px;
-                             color: #666;
-                           }
-                           .small-message {
-                             margin: 0 auto;
-                             padding: 0 10px 20px 20px;
-                             text-align: center;
-                             font-size: 14px;
-                             color: #666;
-                           }
-                       </style>
-                 </head>
-                 <body>
-                    <div role="article">
-                       <table class="email-container" role="presentation" cellpadding="0" cellspacing="0" border="0">
-                         <tr>
-                           <td>
-                             <table class="email-content" role="presentation" cellpadding="0" cellspacing="0" border="0">
-                               <tr>
-                                 <td>
-                                   <img src="https://i.postimg.cc/FznvrwC7/logo.png" alt="Felysoft Logo" class="logo">
-                                   <h1>Activa tu cuenta en Felysoft</h1>
-                                   <h3>Hola, <span>%s</span></h3>
-                                   <p class="description">Pulsa en el siguiente botón para activar tu cuenta y poder completar tu registro correctamente.</p>
-                                   <a class="button" href="%s" style="color: white;">Activar cuenta</a>
-                                   <p class="small-question">¿Tienes problemas con la activación?</p>
-                                   <p class="small-message">Respondenos a este email y te ayudaremos.</p>
-                                 </td>
-                               </tr>
-                             </table>
-                           </td>
-                         </tr>
-                       </table>
-                    </div>
-                 </body>
-            </html>""".formatted(user.getNames(), confirmationUrl);
+        String message = "<html>" +
+                "<head>" +
+                "    <style>" +
+                "        body {" +
+                "            font-family: sans-serif;" +
+                "            background-color: #f5f5f5;" +
+                "            color: black;" +
+                "            margin: 0;" +
+                "            padding: 0;" +
+                "        }" +
+                "        .email-container {" +
+                "            background-color: #f5f5f5;" +
+                "            min-height: 100vh;" +
+                "            padding: 20px;" +
+                "            text-align: center;" +
+                "        }" +
+                "        .email-content {" +
+                "            background-color: #ffffff;" +
+                "            border-radius: 8px;" +
+                "            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);" +
+                "            padding: 30px;" +
+                "            text-align: center;" +
+                "            max-width: 450px; /* Tamaño máximo del contenedor */" +
+                "            margin: 0 auto;" +
+                "            display: inline-block; /* Asegura que la tabla no se expanda más allá del contenido */" +
+                "        }" +
+                "        h1 {" +
+                "            font-size: 24px;" +
+                "            font-weight: bold;" +
+                "            color: #333;" +
+                "            margin-bottom: 20px;" +
+                "        }" +
+                "        h3 {" +
+                "            font-size: 18px;" +
+                "            margin-bottom: 20px;" +
+                "            color: black;" +
+                "        }" +
+                "        h3 span {" +
+                "            font-weight: bold;" +
+                "            color: #333;" +
+                "        }" +
+                "        .logo {" +
+                "            width: 100px;" +
+                "            height: 100px;" +
+                "            margin-bottom: 30px;" +
+                "        }" +
+                "        .description {" +
+                "            line-height: 1.6;" +
+                "            margin-bottom: 30px;" +
+                "            color: black;" +
+                "        }" +
+                "        .button {" +
+                "            background-color: #265073;" +
+                "            color: #fff;" +
+                "            padding: 15px 30px;" +
+                "            border: none;" +
+                "            border-radius: 5px;" +
+                "            font-size: 16px;" +
+                "            cursor: pointer;" +
+                "            text-decoration: none;" +
+                "            display: inline-block;" +
+                "            transition: background-color 0.3s ease;" +
+                "        }" +
+                "        .button:hover {" +
+                "            background-color: #1a3d5b;" +
+                "        }" +
+                "        .time-exp {" +
+                "            color: #c92310;" +
+                "            text-align: center;" +
+                "        }" +
+                "        .small-question {" +
+                "            padding: 10px 20px;" +
+                "            text-align: center;" +
+                "            display: inline-block;" +
+                "            font-size: 14px;" +
+                "            margin: 20px auto;" +
+                "            margin-bottom: 5px;" +
+                "            color: #666;" +
+                "        }" +
+                "        .small-message {" +
+                "            margin: 0 auto;" +
+                "            padding: 0 10px 20px 20px;" +
+                "            text-align: center;" +
+                "            font-size: 14px;" +
+                "            color: #666;" +
+                "        }" +
+                "    </style>" +
+                "</head>" +
+                "<body>" +
+                "    <table class=\"email-container\" role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">" +
+                "        <tr>" +
+                "            <td align=\"center\">" +
+                "                <table class=\"email-content\" role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">" +
+                "                    <tr>" +
+                "                        <td>" +
+                "                            <img src=\"https://i.postimg.cc/FznvrwC7/logo.png\" alt=\"Felysoft Logo\" class=\"logo\">" +
+                "                            <h1>Activa tu cuenta en Felysoft</h1>" +
+                "                            <h3>Hola, <span>" + user.getNames() + "</span></h3>" +
+                "                            <p class=\"description\">Pulsa en el siguiente botón para activar tu cuenta y poder completar tu registro correctamente.</p>" +
+                "                            <a class=\"button\" href=\"" + confirmationUrl + "\" style=\"color: white;\">Activar cuenta</a>" +
+                "                            <p class=\"time-exp\">Tiene 24 horas para activar la cuenta</p>" +
+                "                            <p class=\"small-question\">¿Tienes problemas con la activación?</p>" +
+                "                            <p class=\"small-message\">Respondenos a este email y te ayudaremos.</p>" +
+                "                        </td>" +
+                "                    </tr>" +
+                "                </table>" +
+                "            </td>" +
+                "        </tr>" +
+                "    </table>" +
+                "</body>" +
+                "</html>";
+
 
         emailSenderService.sendEmail(recipientAddress, subject, message);
     }
@@ -367,14 +371,14 @@ public class AuthenticationService {
         try {
             String email = jwtService.extractUsername(token);
             Optional<User> userOptional = userRepository.findByEmailAndEliminatedFalse(email);
-            // QUEDE AQUI
+
             if (userOptional.isEmpty()) {
                 reqRes.setStatusCode(404);
                 reqRes.setMessage("Usuario no encontrado");
                 return reqRes;
             } else {
                 User user = userOptional.get();
-                // Si la contraseña actual es correcta, cifrar la nueva contraseña y actualizarla
+                // Cifrar la nueva contraseña y actualizarla
                 user.setPassword(passwordEncoder.encode(newPassword));
                 // Actualizar la fecha de última modificación
                 user.setLastModification(new Timestamp(System.currentTimeMillis()));
@@ -404,6 +408,12 @@ public class AuthenticationService {
 
             User user = userOptional.get();
 
+            if (!user.isEnabled()) {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("La cuenta del usuario esta deshabilitada");
+                return reqRes;
+            }
+
             String verificationToken = jwtService.generateVerificationToken(user);
             sendResetPasswordEmail(user, verificationToken);
 
@@ -419,99 +429,117 @@ public class AuthenticationService {
 
     private void sendResetPasswordEmail(User user, String token) {
         String recipientAddress = user.getEmail();
-        String subject = "Reiniciar contraseña | FELYSOFT";
-        String confirmationUrl = "http://localhost:3000/resetPassword?token=" + token;
+        String subject = "Restablecer contraseña | FELYSOFT";
+        String confirmationUrl = "http://localhost:3000/restablecerContraseña?token=" + token;
 
-        String message = """
-            <html>
-                 <head>
-                       <style>
-                           body {
-                             font-family: sans-serif;
-                             background-color: #f5f5f5;
-                             color: #fff;
-                             margin: 0;
-                             padding: 0;
-                           }
-                           .email-container {
-                             background-color: #f5f5f5;
-                             display: flex;
-                             justify-content: center;
-                             align-items: center;
-                             min-height: 100vh;
-                             padding: 20px;
-                           }
-                           .email-content {
-                             background-color: #ffffff;
-                             border-radius: 8px;
-                             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-                             padding: 30px;
-                             text-align: center;
-                             max-width: 450px; /* Tamaño máximo del contenedor */
-                             margin: 0 auto;
-                           }
-                           h1 {
-                             font-size: 24px;
-                             font-weight: bold;
-                             color: #333;
-                             margin-bottom: 20px;
-                           }
-                           h3 {
-                             font-size: 18px;
-                             margin-bottom: 20px;
-                           }
-                           h3 span {
-                             font-weight: bold;
-                             color: #333;
-                           }
-                           .logo {
-                             width: 100px;
-                             height: 100px;
-                             margin-bottom: 30px;
-                           }
-                           .description {
-                             line-height: 1.6;
-                             margin-bottom: 30px;
-                           }
-                           .button {
-                             background-color: #265073;
-                             color: #fff;
-                             padding: 15px 30px;
-                             border: none;
-                             border-radius: 5px;
-                             font-size: 16px;
-                             cursor: pointer;
-                             text-decoration: none;
-                             display: inline-block;
-                             transition: background-color 0.3s ease;
-                           }
-                           .button:hover {
-                             background-color: #1a3d5b;
-                           }
-                       </style>
-                 </head>
-                 <body>
-                    <div role="article">
-                       <table class="email-container" role="presentation" cellpadding="0" cellspacing="0" border="0">
-                         <tr>
-                           <td>
-                             <table class="email-content" role="presentation" cellpadding="0" cellspacing="0" border="0">
-                               <tr>
-                                 <td>
-                                   <img src="https://i.postimg.cc/FznvrwC7/logo.png" alt="Felysoft Logo" class="logo">
-                                   <h1>Reiniciar contraseña en Felysoft</h1>
-                                   <h3>Hola, <span>%s</span></h3>
-                                   <p class="description">Pulsa en el siguiente botón para reiniciar tu contraseña.</p>
-                                   <a class="button" href="%s" style="color: white;">Reiniciar contraseña</a>
-                                 </td>
-                               </tr>
-                             </table>
-                           </td>
-                         </tr>
-                       </table>
-                    </div>
-                 </body>
-            </html>""".formatted(user.getNames(), confirmationUrl);
+        String message = "<html>" +
+                "<head>" +
+                "    <style>" +
+                "        body {" +
+                "            font-family: sans-serif;" +
+                "            background-color: #f5f5f5;" +
+                "            color: black;" +
+                "            margin: 0;" +
+                "            padding: 0;" +
+                "        }" +
+                "        .email-container {" +
+                "            background-color: #f5f5f5;" +
+                "            min-height: 100vh;" +
+                "            padding: 20px;" +
+                "            text-align: center;" +
+                "        }" +
+                "        .email-content {" +
+                "            background-color: #ffffff;" +
+                "            border-radius: 8px;" +
+                "            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);" +
+                "            padding: 30px;" +
+                "            text-align: center;" +
+                "            max-width: 450px; /* Tamaño máximo del contenedor */" +
+                "            margin: 0 auto;" +
+                "            display: inline-block; /* Asegura que la tabla no se expanda más allá del contenido */" +
+                "        }" +
+                "        h1 {" +
+                "            font-size: 24px;" +
+                "            font-weight: bold;" +
+                "            color: #333;" +
+                "            margin-bottom: 20px;" +
+                "        }" +
+                "        h3 {" +
+                "            font-size: 18px;" +
+                "            margin-bottom: 20px;" +
+                "            color: black;" +
+                "        }" +
+                "        h3 span {" +
+                "            font-weight: bold;" +
+                "            color: #333;" +
+                "        }" +
+                "        .logo {" +
+                "            width: 100px;" +
+                "            height: 100px;" +
+                "            margin-bottom: 30px;" +
+                "        }" +
+                "        .description {" +
+                "            line-height: 1.6;" +
+                "            margin-bottom: 30px;" +
+                "            color: black;" +
+                "        }" +
+                "        .button {" +
+                "            background-color: #265073;" +
+                "            color: #fff;" +
+                "            padding: 15px 30px;" +
+                "            border: none;" +
+                "            border-radius: 5px;" +
+                "            font-size: 16px;" +
+                "            cursor: pointer;" +
+                "            text-decoration: none;" +
+                "            display: inline-block;" +
+                "            transition: background-color 0.3s ease;" +
+                "        }" +
+                "        .button:hover {" +
+                "            background-color: #1a3d5b;" +
+                "        }" +
+                "        .time-exp {" +
+                "            color: #c92310;" +
+                "            text-align: center;" +
+                "        }" +
+                "        .small-question {" +
+                "            padding: 10px 20px;" +
+                "            text-align: center;" +
+                "            display: inline-block;" +
+                "            font-size: 14px;" +
+                "            margin: 20px auto;" +
+                "            margin-bottom: 5px;" +
+                "            color: #666;" +
+                "        }" +
+                "        .small-message {" +
+                "            margin: 0 auto;" +
+                "            padding: 0 10px 20px 20px;" +
+                "            text-align: center;" +
+                "            font-size: 14px;" +
+                "            color: #666;" +
+                "        }" +
+                "    </style>" +
+                "</head>" +
+                "<body>" +
+                "    <table class=\"email-container\" role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">" +
+                "            <tr>" +
+                "                <td>" +
+                "                    <table class=\"email-content\" role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">" +
+                "                        <tr>" +
+                "                            <td>" +
+                "                                <img src=\"https://i.postimg.cc/FznvrwC7/logo.png\" alt=\"Felysoft Logo\" class=\"logo\">" +
+                "                                <h1>Restablecer contraseña en Felysoft</h1>" +
+                "                                <h3>Hola, <span>" + user.getNames() + "</span></h3>" +
+                "                                <p class=\"description\">Pulsa en el siguiente botón para restablecer tu contraseña.</p>" +
+                "                                <a class=\"button\" href=\""+ confirmationUrl +"\" style=\"color: white;\">Restablecer contraseña</a>" +
+                "                            </td>" +
+                "                        </tr>" +
+                "                    </table>" +
+                "                </td>" +
+                "            </tr>" +
+                "        </table>" +
+                "</body>" +
+                "</html>";
 
         emailSenderService.sendEmail(recipientAddress, subject, message);
     }
