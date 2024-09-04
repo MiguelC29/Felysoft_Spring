@@ -384,6 +384,12 @@ public class AuthenticationService {
                 return reqRes;
             } else {
                 User user = userOptional.get();
+                if (passwordEncoder.matches(newPassword, user.getPassword())) {
+                    reqRes.setStatusCode(200);
+                    reqRes.setMessage("Contraseña igual a la actual");
+                    return reqRes;
+                }
+
                 // Cifrar la nueva contraseña y actualizarla
                 user.setPassword(passwordEncoder.encode(newPassword));
                 // Actualizar la fecha de última modificación
