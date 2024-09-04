@@ -1,7 +1,9 @@
 package com.felysoft.felysoftApp.controller;
 
 import com.felysoft.felysoftApp.dto.AuthenticationRequest;
+import com.felysoft.felysoftApp.entity.Author;
 import com.felysoft.felysoftApp.entity.Genre;
+import com.felysoft.felysoftApp.service.imp.AuthorImp;
 import com.felysoft.felysoftApp.service.imp.GenreImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,9 @@ import java.util.Map;
 public class GenreController {
     @Autowired
     private GenreImp genreImp;
+
+    @Autowired
+    private AuthorImp authorImp;
 
     @PreAuthorize("hasAuthority('READ_ALL_GENRES')")
     @GetMapping("all")
@@ -169,7 +174,25 @@ public class GenreController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    //ASOCIATION GENRES - AUTHOR
+
+    // ASOCIATION GENRES - AUTHOR
+    @PreAuthorize("hasAuthority('READ_ALL_GENRE_AUTHOR_ASSOCIATIONS')")
+    @GetMapping("genreAuthorAssociations")
+    public ResponseEntity<Map<String, Object>> findGenreAuthorAssociations() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Object[]> genreList = this.genreImp.findGenreAuthorNames();
+
+            response.put("status", "success");
+            response.put("data", genreList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('READ_GENRES_BY_AUTHOR')")
     @GetMapping("genresByAuthor/{id}")
     public ResponseEntity<Map<String, Object>> findByIdAuthor(@PathVariable Long id) {
@@ -186,7 +209,6 @@ public class GenreController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 
     @PreAuthorize("hasAuthority('ASSOCIATE_GENRE_AUTHOR')")
     @PostMapping("add-author")
@@ -212,6 +234,39 @@ public class GenreController {
             response.put("data","Asociacion Exitosa");
         }catch (Exception e){
             response.put("status",HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('DELETE_ONE_ASSOCIATION')")
+    @PutMapping("deleteAssociation")
+    public ResponseEntity<Map<String, Object>> deleteAssociation(@RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Genre genre = this.genreImp.findGenreByName(request.get("genreName").toString());
+            Author author = this.authorImp.findAuthorByName(request.get("authorName").toString());
+
+            if (genre == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Género no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            if (author == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Autor no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            genre.getAuthors().remove(author);
+            this.genreImp.delete(genre);
+
+            response.put("status", "success");
+            response.put("data", "Eliminado Correctamente");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }

@@ -24,24 +24,21 @@ public class Product implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private Long idProduct;
 
+    @Column(nullable = false)
     private String nameImg;
 
-    @Column(length = 50)
+    @Column(length = 50, nullable = false)
     private String typeImg;
 
-    @Column(length = 5000000)
+    @Column(length = 5000000, nullable = false)
     @Lob
     private byte[] image;
 
     @Column(length = 45, nullable = false)
     @NotBlank
     private String name;
-
-    @Column(length = 45, nullable = false)
-    private String brand;
 
     @Column(nullable = false)
     @DecimalMin(value = "0.01")
@@ -54,6 +51,10 @@ public class Product implements Serializable {
     private boolean eliminated;
 
     // FOREIGN KEYS
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdBrand", nullable = false)
+    private Brand brand;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdCategory", nullable = false)
     private Category category;
