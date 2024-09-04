@@ -40,8 +40,8 @@ public class SaleImp implements SaleService {
     }
 
     @Override
-    public void create(Sale sale) {
-        this.saleRepository.save(sale);
+    public Sale create(Sale sale) {
+        return this.saleRepository.save(sale);
     }
 
     @Override

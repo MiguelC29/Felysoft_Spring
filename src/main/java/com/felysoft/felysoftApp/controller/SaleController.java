@@ -1,7 +1,7 @@
 package com.felysoft.felysoftApp.controller;
 
 import com.felysoft.felysoftApp.entity.Payment;
-import com.felysoft.felysoftApp.entity.Sale;
+import com.felysoft.felysoftApp.entity.*;
 import com.felysoft.felysoftApp.service.imp.PaymentImp;
 import com.felysoft.felysoftApp.service.imp.SaleImp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,105 @@ public class SaleController {
 
     @Autowired
     private PaymentImp paymentImp;
+
+
+    //CARRITO
+    // Lista temporal para almacenar los detalles del carrito
+    private List<Detail> cart = new ArrayList<>();
+
+    // Método para agregar productos al carrito
+    @PostMapping("cart/add")
+    public ResponseEntity<Map<String, Object>> addToCart(@RequestBody Detail detail) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            cart.add(detail);
+            response.put("status", "success");
+            response.put("data", cart);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // Método para visualizar el carrito
+    @GetMapping("cart")
+    public ResponseEntity<Map<String, Object>> viewCart() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            response.put("status", "success");
+            response.put("data", cart);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // Método para calcular el total de la venta
+    private BigDecimal calculateTotalSale() {
+        return cart.stream()
+                .map(detail -> detail.getUnitPrice().multiply(new BigDecimal(detail.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    // Método para finalizar la venta y registrar los detalles
+    @PostMapping("cart/checkout")
+    public ResponseEntity<Map<String, Object>> checkout(@RequestBody Map<String, Object> paymentDetails) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Crear la venta
+            Sale sale = Sale.builder()
+                    .dateSale(new Timestamp(System.currentTimeMillis()))
+                    .totalSale(calculateTotalSale())
+                    .payment(paymentImp.findById(Long.parseLong(paymentDetails.get("fkIdPayment").toString())))
+                    .build();
+
+            Sale savedSale = saleImp.create(sale);
+
+            // Registrar los detalles asociados a la venta
+            for (Detail detail : cart) {
+                detail.setSale(savedSale);
+                // Aquí llamas al método en tu servicio que maneja la persistencia de los detalles
+                // detailImp.create(detail);
+            }
+
+            // Limpiar el carrito después de la venta
+            cart.clear();
+
+            response.put("status", "success");
+            response.put("data", "Venta registrada exitosamente");
+
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // Método para cancelar el carrito
+    @DeleteMapping("cart/cancel")
+    public ResponseEntity<Map<String, Object>> cancelCart() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            cart.clear();
+            response.put("status", "success");
+            response.put("data", "Carrito cancelado");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+
+
+
 
     @PreAuthorize("hasAuthority('READ_ALL_SALES')")
     @GetMapping("all")

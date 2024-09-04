@@ -14,7 +14,7 @@ public interface SaleService {
     Sale findByIdDisabled(Long id);
 
     @Transactional
-    void create(Sale sale);
+    Sale create(Sale sale);
 
     @Transactional
     @Modifying
