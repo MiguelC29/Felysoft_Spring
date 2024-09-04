@@ -40,7 +40,7 @@ public class JwtService {
         return Jwts.builder()
                 .subject(user.getEmail())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + (EXPIRATION_MINUTES * 60 * 1000))) // Tiempo de expiración
+                .expiration(new Date(System.currentTimeMillis() + (1440 * 60 * 1000))) // Tiempo de expiración 24h
                 .signWith(generateKey(), Jwts.SIG.HS256)
                 .compact();
     }
