@@ -213,19 +213,20 @@ public class AuthenticationService {
                 if (user.isEnabled()) {
                     resp.setStatusCode(200);
                     resp.setMessage("La cuenta ya esta activada.");
-                    return resp;
-                }
-                user.setEnabled(true);
-                userRepository.save(user);
+                } else {
+                    user.setEnabled(true);
+                    userRepository.save(user);
 
-                resp.setStatusCode(200);
-                resp.setMessage("Cuenta verificada correctamente. Ahora puede iniciar sesión.");
+                    resp.setStatusCode(200);
+                    resp.setMessage("Cuenta verificada correctamente. Ahora puede iniciar sesión.");
+                }
             } else {
                 resp.setStatusCode(404);
                 resp.setMessage("Token invalido o la cuenta no existe.");
             }
         } catch (Exception e) {
             resp.setStatusCode(500);
+            resp.setMessage("Error");
             resp.setError("Un error ocurrió mientras se verificaba la cuenta: " + e.getMessage());
         }
         return resp;

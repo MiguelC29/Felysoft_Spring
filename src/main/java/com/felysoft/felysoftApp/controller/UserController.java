@@ -368,4 +368,29 @@ public class UserController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasAuthority('DISABLE_ENABLED_ONE_USER')")
+    @PutMapping("enabled_disabled/{id}")
+    public ResponseEntity<Map<String, Object>> enabled_disabled(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            User user = this.userImp.findById(id);
+
+            if (user != null) {
+                user.setEnabled(!user.isEnabled());
+                this.userImp.update(user);
+                response.put("status", "success");
+                response.put("data", "Usuario " + ((user.isEnabled()) ? "habilitado" : "deshabilitado") + " Correctamente");
+            } else {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Usuario no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            response.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

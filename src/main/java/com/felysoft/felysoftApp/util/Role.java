@@ -156,6 +156,7 @@ public enum Role {
             Permission.UPDATE_ONE_USER,
             Permission.UPDATE_ONE_USER_DISABLED,
             Permission.DISABLE_ONE_USER,
+            Permission.DISABLE_ENABLED_ONE_USER,
 
             Permission.READ_ALL_PURCHASES,
             Permission.READ_ALL_PURCHASES_DISABLED,
