@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 @Service
@@ -244,6 +246,9 @@ public class AuthenticationService {
                 return response;
             }
 
+            User user = userOptional.get();
+
+            // Autenticar al usuario
             try {
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
@@ -257,10 +262,19 @@ public class AuthenticationService {
                 response.setMessage("La contraseña es incorrecta.");
                 return response;
             } catch (DisabledException ex) {
-                //response.setMessage("Su cuenta está deshabilitada. Por favor, contacte al administrador.");
+                // Verificar si la cuenta está deshabilitada
+
+                // Calcular la diferencia en horas entre la fecha actual y la fecha de creación del usuario
+                long hoursSinceCreation = Duration.between(user.getDateRegister().toInstant(), Instant.now()).toHours();
+
+                if (hoursSinceCreation > 24) {
+                    response.setError("Cuenta deshabilitada");
+                    response.setMessage("Su cuenta está deshabilitada. Contacte al administrador.");
+                } else {
+                    response.setError("Cuenta no verificada");
+                    response.setMessage("Por favor verifique su email para activar su cuenta.");
+                }
                 response.setStatusCode(403);
-                response.setError("Cuenta no verificada");
-                response.setMessage("Por favor verifique su email para activar su cuenta.");
                 return response;
             } catch (Exception ex) {
                 response.setStatusCode(500);
@@ -269,7 +283,7 @@ public class AuthenticationService {
                 return response;
             }
 
-            User user = userOptional.get();
+            // Generar y devolver el token JWT
             var jwtToken = jwtService.generateToken(user, generateExtraClaims(user));
             //var refreshToken = jwtService.generateRefreshToken(user, new HashMap<>());
             response.setStatusCode(200);
