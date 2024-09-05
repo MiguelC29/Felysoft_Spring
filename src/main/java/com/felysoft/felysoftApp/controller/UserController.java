@@ -285,6 +285,7 @@ public class UserController {
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
 
+            user.setEnabled(true);
             user.setEliminated(false);
 
             this.userImp.delete(user);
@@ -307,6 +308,7 @@ public class UserController {
             User user = this.userImp.findById(id);
 
             if (user != null) {
+                user.setEnabled(false);
                 user.setEliminated(true);
                 this.userImp.delete(user);
                 response.put("status", "success");
