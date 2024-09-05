@@ -228,7 +228,7 @@ public class AuthenticationService {
             }
         } catch (Exception e) {
             resp.setStatusCode(500);
-            resp.setMessage("Error");
+            resp.setMessage("Un error ocurrió mientras se verificaba la cuenta");
             resp.setError("Un error ocurrió mientras se verificaba la cuenta: " + e.getMessage());
         }
         return resp;
@@ -393,11 +393,7 @@ public class AuthenticationService {
             String email = jwtService.extractUsername(token);
             Optional<User> userOptional = userRepository.findByEmailAndEliminatedFalse(email);
 
-            if (userOptional.isEmpty()) {
-                reqRes.setStatusCode(404);
-                reqRes.setMessage("Usuario no encontrado");
-                return reqRes;
-            } else {
+            if (userOptional.isPresent()) {
                 User user = userOptional.get();
                 if (passwordEncoder.matches(newPassword, user.getPassword())) {
                     reqRes.setStatusCode(200);
@@ -413,10 +409,14 @@ public class AuthenticationService {
 
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("Contraseña actualizada correctamente");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("Token invalido o la cuenta no existe.");
             }
         } catch (Exception e) {
             reqRes.setStatusCode(500);
-            reqRes.setMessage("Un error ocurrió mientras se obtenia la información del usuario: " + e.getMessage());
+            reqRes.setMessage("Un error ocurrió mientras se verificaba la cuenta");
+            reqRes.setError("Un error ocurrió mientras se verificaba la cuenta: " + e.getMessage());
         }
         return reqRes;
     }
