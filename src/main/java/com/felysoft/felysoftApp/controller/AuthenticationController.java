@@ -3,7 +3,6 @@ package com.felysoft.felysoftApp.controller;
 import com.felysoft.felysoftApp.dto.AuthenticationRequest;
 import com.felysoft.felysoftApp.dto.RegisterRequest;
 import com.felysoft.felysoftApp.dto.ReqRes;
-import com.felysoft.felysoftApp.entity.EmailRequest;
 import com.felysoft.felysoftApp.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
