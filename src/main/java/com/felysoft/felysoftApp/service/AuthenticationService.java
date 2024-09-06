@@ -84,7 +84,7 @@ public class AuthenticationService {
     private void sendVerificationEmail(User user, String token) {
         String recipientAddress = user.getEmail();
         String subject = "Activa tu cuenta y completa tu registro | FELYSOFT";
-        String confirmationUrl = "https://felysoftapp.netlify.app/activarCuenta?token=" + token;
+        String confirmationUrl = "https://felysoft-react.vercel.app/activarCuenta?token=" + token;
         //String message = "Por favor, haz clic en el enlace para verificar tu cuenta: " + confirmationUrl;
 
         String message = "<html>" +
@@ -457,7 +457,7 @@ public class AuthenticationService {
     private void sendResetPasswordEmail(User user, String token) {
         String recipientAddress = user.getEmail();
         String subject = "Restablecer contraseña | FELYSOFT";
-        String confirmationUrl = "https://felysoftapp.netlify.app/restablecerContraseña?token=" + token;
+        String confirmationUrl = "https://felysoft-react.vercel.app/restablecerContraseña?token=" + token;
 
         String message = "<html>" +
                 "<head>" +
