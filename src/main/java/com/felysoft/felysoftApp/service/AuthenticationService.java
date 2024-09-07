@@ -3,9 +3,10 @@ package com.felysoft.felysoftApp.service;
 import com.felysoft.felysoftApp.dto.AuthenticationRequest;
 import com.felysoft.felysoftApp.dto.RegisterRequest;
 import com.felysoft.felysoftApp.dto.ReqRes;
+import com.felysoft.felysoftApp.entity.Role;
 import com.felysoft.felysoftApp.entity.User;
+import com.felysoft.felysoftApp.repository.RoleRepository;
 import com.felysoft.felysoftApp.repository.UserRepository;
-import com.felysoft.felysoftApp.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,6 +30,9 @@ public class AuthenticationService {
     private UserRepository userRepository;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
     private JwtService jwtService;
 
     @Autowired
@@ -50,6 +54,10 @@ public class AuthenticationService {
 
                 return resp;
             } else {
+                // Buscar el rol "CUSTOMER" en la base de datos
+                Role defaultRole = roleRepository.findByName("CUSTOMER")
+                        .orElseThrow(() -> new RuntimeException("Rol 'CUSTOMER' no encontrado"));
+
                 var user = User.builder()
                         .numIdentification(authRequest.getNumIdentification())
                         .typeDoc(authRequest.getTypeDoc())
@@ -59,7 +67,7 @@ public class AuthenticationService {
                         .user_name(authRequest.getUser_name())
                         .email(authRequest.getEmail().toLowerCase())
                         .password(passwordEncoder.encode(authRequest.getPassword()))
-                        .role(Role.CUSTOMER)
+                        .role(defaultRole) // Establecer el rol por defecto
                         .enabled(false) // El usuario no está habilitado hasta que verifique su correo
                         .build();
 
@@ -284,10 +292,12 @@ public class AuthenticationService {
             }
 
             // Generar y devolver el token JWT
-            var jwtToken = jwtService.generateToken(user, generateExtraClaims(user));
+            var jwtToken = jwtService.generateToken(user);
             //var refreshToken = jwtService.generateRefreshToken(user, new HashMap<>());
             response.setStatusCode(200);
             response.setToken(jwtToken);
+
+            // Asignar el primer rol del usuario
             response.setRole(user.getRole());
             // response.setRefreshToken(refreshToken);
             //response.setExpirationTime("15Hrs");
@@ -302,6 +312,7 @@ public class AuthenticationService {
         return response;
     }
 
+    /*
     public ReqRes refreshToken(ReqRes refreshTokenRegist) {
         ReqRes response = new ReqRes();
         try {
@@ -321,7 +332,7 @@ public class AuthenticationService {
             response.setError(e.getMessage());
         }
         return response;
-    }
+    }*/
 
     public ReqRes getMyInfo(String email) {
         ReqRes reqRes = new ReqRes();
@@ -340,15 +351,6 @@ public class AuthenticationService {
             reqRes.setMessage("Un error ocurrió mientras se obtenia la información del usuario: " + e.getMessage());
         }
         return reqRes;
-    }
-
-    private Map<String, Object> generateExtraClaims(User user) {
-        Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("name", user.getNames());
-        extraClaims.put("role", user.getRole().name());
-        extraClaims.put("permissions", user.getAuthorities());
-
-        return extraClaims;
     }
 
     public ReqRes changePassword(String email, String oldPassword, String newPassword) {

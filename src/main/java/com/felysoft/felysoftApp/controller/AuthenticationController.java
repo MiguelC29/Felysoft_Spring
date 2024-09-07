@@ -35,11 +35,12 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.register(authRequest));
     }
 
+    /*
     @PreAuthorize("permitAll")
     @PostMapping("refresh")
     public ResponseEntity<ReqRes> refreshToken(@RequestBody @Valid ReqRes req) {
         return ResponseEntity.ok(authenticationService.refreshToken(req));
-    }
+    }*/
 
     @PreAuthorize("hasAuthority('READ_MY_PROFILE')")
     @GetMapping("get-profile")
