@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
-public class 	FelysoftAppApplication {
+public class FelysoftAppApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(FelysoftAppApplication.class, args);
