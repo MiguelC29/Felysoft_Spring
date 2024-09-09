@@ -1,9 +1,10 @@
 package com.felysoft.felysoftApp.controller;
 
 import com.felysoft.felysoftApp.dto.AuthenticationRequest;
+import com.felysoft.felysoftApp.entity.Role;
 import com.felysoft.felysoftApp.entity.User;
+import com.felysoft.felysoftApp.service.imp.RoleImp;
 import com.felysoft.felysoftApp.service.imp.UserImp;
-import com.felysoft.felysoftApp.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,9 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserImp userImp;
+
+    @Autowired
+    private RoleImp roleImp;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -115,7 +119,7 @@ public class UserController {
             @RequestParam("username") String username,
             @RequestParam("password") String password,
             @RequestParam(name = "image", required = false) MultipartFile image,
-            @RequestParam("role") Role role) {
+            @RequestParam("roleId") Long roleId) {
 
         Map<String, Object> response = new HashMap<>();
         try {
@@ -157,7 +161,13 @@ public class UserController {
                 }
 
                 // Obtener y asignar el rol
-                //Role role = roleImp.findById(fkIdRole);
+                Role role = roleImp.findById(roleId); // Obtener el rol desde la base de datos
+
+                if (role == null) {
+                    response.put("status", HttpStatus.BAD_REQUEST);
+                    response.put("data", "Rol no encontrado");
+                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                }
 
                 User user = userBuilder
                         .role(role)
@@ -191,8 +201,7 @@ public class UserController {
           @RequestParam(value = "username", required = false) String username,
           @RequestParam(value = "password", required = false) String password,
           @RequestParam(value = "image", required = false) MultipartFile image,
-          @RequestParam(name = "role", required = false) Role role) {
-
+          @RequestParam(name = "role", required = false) Long roleId) {
         Map<String, Object> response = new HashMap<>();
         try {
             // INSTANCIA DEL OBJETO USER
@@ -247,7 +256,15 @@ public class UserController {
                 user.setTypeImg(image.getContentType());
             }
 
-            if (role != null) {
+            if (roleId != null) {
+                Role role = roleImp.findById(roleId); // Obtener el rol desde la base de datos
+
+                if (role == null) {
+                    response.put("status", HttpStatus.BAD_REQUEST);
+                    response.put("data", "Rol no encontrado");
+                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                }
+
                 user.setRole(role);
             }
 
@@ -285,6 +302,7 @@ public class UserController {
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
 
+            user.setEnabled(true);
             user.setEliminated(false);
 
             this.userImp.delete(user);
@@ -307,6 +325,7 @@ public class UserController {
             User user = this.userImp.findById(id);
 
             if (user != null) {
+                user.setEnabled(false);
                 user.setEliminated(true);
                 this.userImp.delete(user);
                 response.put("status", "success");
@@ -314,6 +333,76 @@ public class UserController {
             } else {
                 response.put("status", HttpStatus.NOT_FOUND);
                 response.put("data", "User not found for deletion");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            response.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_PROFILE_ONE_USER')")
+    @PutMapping("updateProfile/{id}")
+    public ResponseEntity<Map<String, Object>> updateProfile(@PathVariable Long id,
+                                                      @RequestParam(value = "address", required = false) String address,
+                                                      @RequestParam(value = "phoneNumber") Long phoneNumber,
+                                                      @RequestParam(value = "gender", required = false) User.Gender gender) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // INSTANCIA DEL OBJETO USER
+            User user = this.userImp.findById(id);
+
+            if (user == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Usuario no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            // Actualizar los campos del usuario con los nuevos valores si se proporcionan
+            if (address != null) {
+                user.setAddress(address.toUpperCase());
+            }
+
+            if (phoneNumber != null) {
+                user.setPhoneNumber(phoneNumber);
+            }
+
+            if (gender != null) {
+                user.setGender(gender);
+            }
+
+            // Actualizar la fecha de última modificación
+            user.setLastModification(new Timestamp(System.currentTimeMillis()));
+
+            this.userImp.update(user);
+
+            response.put("status", "success");
+            response.put("data", "Datos del Usuario actualizados correctamente");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('DISABLE_ENABLED_ONE_USER')")
+    @PutMapping("enabled_disabled/{id}")
+    public ResponseEntity<Map<String, Object>> enabled_disabled(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            User user = this.userImp.findById(id);
+
+            if (user != null) {
+                user.setEnabled(!user.isEnabled());
+                this.userImp.update(user);
+                response.put("status", "success");
+                response.put("data", "Usuario " + ((user.isEnabled()) ? "habilitado" : "deshabilitado") + " Correctamente");
+            } else {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Usuario no encontrado");
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {

@@ -1,13 +1,7 @@
 package com.felysoft.felysoftApp.controller;
 
-import com.felysoft.felysoftApp.entity.Expense;
-import com.felysoft.felysoftApp.entity.Payment;
-import com.felysoft.felysoftApp.entity.Provider;
-import com.felysoft.felysoftApp.entity.Purchase;
-import com.felysoft.felysoftApp.service.imp.ExpenseImp;
-import com.felysoft.felysoftApp.service.imp.PaymentImp;
-import com.felysoft.felysoftApp.service.imp.ProviderImp;
-import com.felysoft.felysoftApp.service.imp.PurchaseImp;
+import com.felysoft.felysoftApp.entity.*;
+import com.felysoft.felysoftApp.service.imp.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +21,19 @@ public class PurchaseController {
     private PurchaseImp purchaseImp;
 
     @Autowired
-    private ExpenseImp expenseImp;
+    private DetailImp detailImp;
+
+    @Autowired
+    private InventoryImp inventoryImp;
+
+    @Autowired
+    private ProductImp productImp;
+
+    @Autowired
+    private ServiceImp serviceImp;
+
+    @Autowired
+    private BookImp bookImp;
 
     @Autowired
     private PaymentImp paymentImp;
@@ -86,6 +92,7 @@ public class PurchaseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /*
     @PreAuthorize("hasAuthority('READ_EXPENSE_BY_PURCHASE')")
     @GetMapping("expensePurchase/{id}")
     public ResponseEntity<Map<String, Object>> findByExpensePurchase(@PathVariable Purchase id) {
@@ -101,43 +108,83 @@ public class PurchaseController {
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+    }*/
 
     @PreAuthorize("hasAuthority('CREATE_ONE_PURCHASE')")
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request){
         Map<String, Object> response = new HashMap<>();
         try {
-            // Construir el objeto Purchase usando el patrón Builder
-            Purchase purchase = Purchase.builder()
-                    .date(new Timestamp(System.currentTimeMillis()))
-                    .total(new BigDecimal(request.get("total").toString()))
-                    .provider(providerImp.findById(Long.parseLong(request.get("fkIdProvider").toString())))
-                    .build();
-
-            this.purchaseImp.create(purchase);
-
             // INSTANCIA OBJETO PAGO
             Payment payment = Payment.builder()
                     .methodPayment(Payment.MethodPayment.valueOf(request.get("methodPayment").toString().toUpperCase()))
                     .state(Payment.State.valueOf(request.get("state").toString().toUpperCase()))
-                    .total(purchase.getTotal())
-                    .date(purchase.getDate())
+                    .total(new BigDecimal(request.get("total").toString()))
+                    .date(new Timestamp(System.currentTimeMillis()))
                     .build();
 
             this.paymentImp.create(payment);
 
-            // INSTANCIA OBJETO GASTO
-            Expense expense = Expense.builder()
-                    .type(Expense.Type.PROVEEDORES)
-                    .total(purchase.getTotal())
-                    .date(purchase.getDate())
-                    .description(request.get("description").toString().toUpperCase())
+            // Construir el objeto Purchase usando el patrón Builder
+            Purchase purchase = Purchase.builder()
+                    .date(payment.getDate())
+                    .total(payment.getTotal())
+                    .provider(providerImp.findById(Long.parseLong(request.get("fkIdProvider").toString())))
                     .payment(payment)
-                    .purchase(purchase)
                     .build();
 
-            this.expenseImp.create(expense);
+            this.purchaseImp.create(purchase);
+
+            // Registrar los detalles de la compra
+            List<Map<String, Object>> detailsRequest = (List<Map<String, Object>>) request.get("details");
+
+            for (Map<String, Object> detailRequest : detailsRequest) {
+                Detail detail = new Detail();
+
+                if (detailRequest.get("idProduct") != null) {
+                    // Si es un producto, necesitamos cantidad y precio unitario
+
+                    Product product = productImp.findById(Long.parseLong(detailRequest.get("idProduct").toString()));
+                    if (product == null) {
+                        response.put("status", HttpStatus.NOT_FOUND);
+                        response.put("data", "Producto no encontrado");
+                        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+                    }
+                    var cantidad = Integer.parseInt(detailRequest.get("quantity").toString());
+                    detail.setProduct(product);
+                    detail.setQuantity(cantidad);
+
+                    Inventory inventory = inventoryImp.findByProduct(product);
+                    inventory.setStock(inventory.getStock() + cantidad);
+                    if(inventory.getStock() < 1) {
+                        inventory.setState(Inventory.State.AGOTADO);
+                    } else {
+                        if(inventory.getStock() < 6) {
+                            inventory.setState(Inventory.State.BAJO);
+                        } else {
+                            inventory.setState(Inventory.State.DISPONIBLE);
+                        }
+                    }
+                    inventoryImp.update(inventory);
+                }
+                else if (detailRequest.get("idBook") != null) {
+                    Book book = bookImp.findById(Long.parseLong(detailRequest.get("idBook").toString()));
+                    if (book == null) {
+                        response.put("status", HttpStatus.NOT_FOUND);
+                        response.put("data", "Libro no encontrado");
+                        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+                    }
+                    // Si es un libro, solo el precio unitario es requerido
+                    detail.setBook(book);
+                    detail.setQuantity(1);  // Establecemos una cantidad predeterminada para los libros
+                }
+
+                detail.setUnitPrice(new BigDecimal(detailRequest.get("unitPrice").toString()));
+                detail.setEliminated(false);
+                detail.setPurchase(purchase);
+
+                this.detailImp.create(detail);  // Registrar cada detalle en la base de datos
+            }
 
             response.put("status", "success");
             response.put("data", "Registro Exitoso");
@@ -149,60 +196,124 @@ public class PurchaseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("add-detail")
-    public ResponseEntity<Map<String, Object>> addDetailToPurchase(@RequestBody Map<String, Object> request){
-        Map<String, Object> response = new HashMap<>();
-        try {
-            Long purchaseId = Long.parseLong(request.get("purchaseId").toString());
-            Long detailId = Long.parseLong(request.get("detailId").toString());
 
-            this.purchaseImp.addDetailToPurchase(purchaseId, detailId);
-
-            response.put("status", "success");
-            response.put("data", "Asociación Exitosa");
-
-        } catch (Exception e) {
-            response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+    private void updateInventoryState(Inventory inventory) {
+        if (inventory.getStock() < 1) {
+            inventory.setState(Inventory.State.AGOTADO);
+        } else if (inventory.getStock() < 6) {
+            inventory.setState(Inventory.State.BAJO);
+        } else {
+            inventory.setState(Inventory.State.DISPONIBLE);
         }
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('UPDATE_ONE_PURCHASE')")
+
     @PutMapping("update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
         try {
-            Purchase purchase = this.purchaseImp.findById(id);
+            // Recuperar la compra existente
+            Purchase purchase = purchaseImp.findById(id);
+            if (purchase == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Compra no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
 
-            purchase.setDate(new Timestamp(System.currentTimeMillis()));
+            // Actualizar la información de la compra
+            Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+            purchase.setDate(currentTimestamp);
             purchase.setTotal(new BigDecimal(request.get("total").toString()));
 
-            //FORÁNEAS
-            Provider provider = providerImp.findById(Long.parseLong(request.get("fkIdProvider").toString()));
-            purchase.setProvider(provider);
+            // No actualizar el proveedor; mantén el proveedor actual
+            // purchase.setProvider(providerImp.findById(Long.parseLong(request.get("fkIdProvider").toString())));
 
-            this.purchaseImp.update(purchase);
-
-            /// INSTANCIA OBJETO GASTO
-            Expense expense = this.expenseImp.findByPurchase(purchase);
-
-            expense.setDate(purchase.getDate());
-            expense.setTotal(purchase.getTotal());
-            expense.setDescription(request.get("description").toString().toUpperCase());
-
-            this.expenseImp.update(expense);
-
-            // INSTANCIA OBJETO PAGO
-            Payment payment = this.paymentImp.findById(expense.getPayment().getIdPayment());
-
+            // Actualizar el pago
+            Payment payment = purchase.getPayment();
             payment.setMethodPayment(Payment.MethodPayment.valueOf(request.get("methodPayment").toString().toUpperCase()));
             payment.setState(Payment.State.valueOf(request.get("state").toString().toUpperCase()));
-            payment.setDate(purchase.getDate());
             payment.setTotal(purchase.getTotal());
+            payment.setDate(purchase.getDate());
 
-            this.paymentImp.update(payment);
+            paymentImp.update(payment);
+            purchaseImp.update(purchase);
+
+            // Primero, eliminar los detalles antiguos y ajustar el stock
+            for (Detail oldDetail : purchase.getDetails()) {
+                if (oldDetail.getProduct() != null) {
+                    Product oldProduct = oldDetail.getProduct();
+                    Inventory inventory = inventoryImp.findByProduct(oldProduct);
+                    int oldQuantity = oldDetail.getQuantity();
+                    inventory.setStock(inventory.getStock() - oldQuantity);
+                    updateInventoryState(inventory);
+                    inventoryImp.update(inventory);
+                }
+            }
+
+            // Actualizar o crear nuevos detalles de la compra
+            List<Map<String, Object>> detailsRequest = (List<Map<String, Object>>) request.get("details");
+
+            for (Map<String, Object> detailRequest : detailsRequest) {
+                Detail detail = null;
+
+                if (detailRequest.get("idDetail") != null) {
+                    // Buscar el detalle en la base de datos usando el idDetail
+                    Long detailId = Long.parseLong(detailRequest.get("idDetail").toString());
+                    detail = detailImp.findById(detailId);
+
+                    if (detail == null) {
+                        response.put("status", HttpStatus.NOT_FOUND);
+                        response.put("data", "Detalle no encontrado con id: " + detailId);
+                        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+                    }
+                } else {
+                    // Si idDetail no está presente, crear un nuevo detalle
+                    response.put("data", "Detalle no encontrado");
+                }
+
+                // Verificar si es un producto o un libro y actualizar en consecuencia
+                if (detailRequest.get("idProduct") != null) {
+                    Product product = productImp.findById(Long.parseLong(detailRequest.get("idProduct").toString()));
+                    if (product == null) {
+                        response.put("status", HttpStatus.NOT_FOUND);
+                        response.put("data", "Producto no encontrado");
+                        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+                    }
+
+                    int newQuantity = Integer.parseInt(detailRequest.get("quantity").toString());
+                    detail.setProduct(product);
+                    detail.setQuantity(newQuantity);
+
+                    // Ajustar el stock en función de la diferencia de cantidad
+                    Inventory inventory = inventoryImp.findByProduct(product);
+                    int oldQuantity = (detail.getIdDetail() != null) ? detailImp.findById(detail.getIdDetail()).getQuantity() : 0;
+                    int difference = newQuantity - oldQuantity;
+                    inventory.setStock(inventory.getStock() + difference);
+                    updateInventoryState(inventory);
+                    inventoryImp.update(inventory);
+                } else if (detailRequest.get("idBook") != null) {
+                    Book book = bookImp.findById(Long.parseLong(detailRequest.get("idBook").toString()));
+                    if (book == null) {
+                        response.put("status", HttpStatus.NOT_FOUND);
+                        response.put("data", "Libro no encontrado");
+                        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+                    }
+                    detail.setBook(book);
+                    detail.setQuantity(1); // La cantidad predeterminada para libros
+                }
+
+                // Actualizar el resto de los campos del detalle
+                detail.setUnitPrice(new BigDecimal(detailRequest.get("unitPrice").toString()));
+                detail.setEliminated(false);
+                detail.setPurchase(purchase);
+
+                // Actualizar el detalle en la base de datos
+                if (detail.getIdDetail() != null) {
+                    detailImp.update(detail);  // Actualizar detalle existente
+                } else {
+                    detailImp.create(detail);  // Crear nuevo detalle si no tiene id
+                }
+            }
 
             response.put("status", "success");
             response.put("data", "Actualización exitosa");
@@ -213,6 +324,13 @@ public class PurchaseController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
+
+
+
+
+
 
     @PreAuthorize("hasAuthority('UPDATE_ONE_PURCHASE_DISABLED')")
     @PutMapping("enable/{id}")
@@ -234,14 +352,19 @@ public class PurchaseController {
     }
 
     @PreAuthorize("hasAuthority('DISABLE_ONE_PURCHASE')")
-    @DeleteMapping("delete/{id}")
+    @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Purchase purchase = this.purchaseImp.findById(id);
-            purchase.setEliminated(true);
+            if (purchase == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Compra no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
 
-            purchaseImp.delete(purchase);
+            purchase.setEliminated(true);
+            this.purchaseImp.delete(purchase);
 
             response.put("status", "success");
             response.put("data", "Eliminado Correctamente");

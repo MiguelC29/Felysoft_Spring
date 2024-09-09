@@ -55,4 +55,8 @@ public class Payment implements Serializable {
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Expense> expenses;
+
+    @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Purchase> purchases;
 }

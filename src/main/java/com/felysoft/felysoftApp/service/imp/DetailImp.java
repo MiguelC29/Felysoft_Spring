@@ -1,6 +1,7 @@
 package com.felysoft.felysoftApp.service.imp;
 
 import com.felysoft.felysoftApp.entity.Detail;
+import com.felysoft.felysoftApp.entity.Purchase;
 import com.felysoft.felysoftApp.repository.DetailRepository;
 import com.felysoft.felysoftApp.service.DetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,11 @@ public class DetailImp implements DetailService {
     @Override
     public Detail findById(Long id) {
         return this.detailRepository.findDetailByIdDetailAndEliminatedFalse(id);
+    }
+
+    @Override
+    public List<Detail> findByPurchase(Purchase purchase) {
+        return this.detailRepository.findDetailsByPurchaseAndEliminatedFalse(purchase);
     }
 
     @Override

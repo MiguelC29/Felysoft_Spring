@@ -1,13 +1,7 @@
 package com.felysoft.felysoftApp.controller;
 
-import com.felysoft.felysoftApp.entity.Book;
-import com.felysoft.felysoftApp.entity.Detail;
-import com.felysoft.felysoftApp.entity.Product;
-import com.felysoft.felysoftApp.entity.Service;
-import com.felysoft.felysoftApp.service.imp.BookImp;
-import com.felysoft.felysoftApp.service.imp.DetailImp;
-import com.felysoft.felysoftApp.service.imp.ProductImp;
-import com.felysoft.felysoftApp.service.imp.ServiceImp;
+import com.felysoft.felysoftApp.entity.*;
+import com.felysoft.felysoftApp.service.imp.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +27,9 @@ public class DetailController {
 
     @Autowired
     private ServiceImp serviceImp;
+
+    @Autowired
+    private PurchaseImp purchaseImp;
 
     @PreAuthorize("hasAuthority('READ_ALL_DETAILS')")
     @GetMapping("all")
@@ -90,11 +87,6 @@ public class DetailController {
                 detailBuilder.book(book);
             }
 
-            if (request.containsKey("fkIdService") && request.get("fkIdService") != null) {
-                Service service = serviceImp.findById(Long.parseLong(request.get("fkIdService").toString()));
-                detailBuilder.service(service);
-            }
-
             // Construir el objeto Detail
             Detail detail = detailBuilder.build();
 
@@ -127,9 +119,6 @@ public class DetailController {
             Book book = bookImp.findById(Long.parseLong(request.get("fkIdBook").toString()));
             detail.setBook(book);
 
-            Service service = serviceImp.findById(Long.parseLong(request.get("fkIdService").toString()));
-            detail.setService(service);
-
             this.detailImp.update(detail);
 
             response.put("status", "success");
@@ -154,6 +143,30 @@ public class DetailController {
 
             response.put("status", "success");
             response.put("data", "Eliminado Correctamente");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('READ_ALL_DETAILS')")
+    @GetMapping("details/{id}")
+    public ResponseEntity<Map<String, Object>> findByIdPurchase(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Purchase purchase = this.purchaseImp.findById(id);
+            if (purchase == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Compra no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            List<Detail> detailList = this.detailImp.findByPurchase(purchase);
+
+            response.put("status", "success");
+            response.put("data", detailList);
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());

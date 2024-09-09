@@ -2,10 +2,8 @@ package com.felysoft.felysoftApp.controller;
 
 import com.felysoft.felysoftApp.entity.Expense;
 import com.felysoft.felysoftApp.entity.Payment;
-import com.felysoft.felysoftApp.entity.Purchase;
 import com.felysoft.felysoftApp.service.imp.ExpenseImp;
 import com.felysoft.felysoftApp.service.imp.PaymentImp;
-import com.felysoft.felysoftApp.service.imp.PurchaseImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +24,6 @@ public class ExpenseController {
 
     @Autowired
     private PaymentImp paymentImp;
-
-    @Autowired
-    private PurchaseImp purchaseImp;
 
     @PreAuthorize("hasAuthority('READ_ALL_EXPENSES')")
     @GetMapping("all")
@@ -89,7 +84,6 @@ public class ExpenseController {
         Map<String, Object> response = new HashMap<>();
         try {
             // Obtener y asignar las llaves foráneas antes de construir el objeto Expense
-            Purchase purchase = purchaseImp.findById(Long.parseLong(request.get("fkIdPurchase").toString()));
             Payment payment = paymentImp.findById(Long.parseLong(request.get("fkIdPayment").toString()));
 
             Expense expense = Expense.builder()
@@ -97,7 +91,6 @@ public class ExpenseController {
                     .date(new Timestamp(System.currentTimeMillis()))
                     .total(new BigDecimal(request.get("total").toString()))
                     .description(request.get("description").toString().toUpperCase())
-                    .purchase(purchase)
                     .payment(payment)
                     .build();
 
@@ -136,10 +129,6 @@ public class ExpenseController {
 
             //DESCRIPCION
             expense.setDescription(request.get("description").toString().toUpperCase());
-
-            //FORÁNEAS
-            Purchase purchase = purchaseImp.findById(Long.parseLong(request.get("fkIdPurchase").toString()));
-            expense.setPurchase(purchase);
 
             Payment payment = paymentImp.findById(Long.parseLong(request.get("fkIdPayment").toString()));
             expense.setPayment(payment);

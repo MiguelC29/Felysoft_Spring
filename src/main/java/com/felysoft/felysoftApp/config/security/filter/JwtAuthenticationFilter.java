@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        //1. Obtener el header que contiene el jwt
+        // 1. Obtener el header que contiene el jwt
         final String authHeader = request.getHeader("Authorization"); // Bearer jwt
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) { //authHeader.isBlank()
@@ -47,14 +47,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String userEmail = jwtService.extractUsername(jwt);
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            //4. Setear un objeto Authentication dentro del SecurityContext
+            // 4. Cargar el usuario
             User user = (User) userImp.loadUserByUsername(userEmail);
 
             if (jwtService.isTokenValid(jwt, user)) {
+                // 5. Crear el objeto Authentication con el rol basado en el token
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userEmail,
                         null,
-                        user.getAuthorities()
+                        user.getAuthorities() // Esto debería estar basado en los roles obtenidos
                 );
                 authToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
@@ -63,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        //5. Ejecutar el resto de filtros
+        // 6. Ejecutar el resto de filtros
         filterChain.doFilter(request, response);
     }
 }

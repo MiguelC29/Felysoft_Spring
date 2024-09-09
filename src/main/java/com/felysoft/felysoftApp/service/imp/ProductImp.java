@@ -45,6 +45,11 @@ public class ProductImp implements ProductService {
     }
 
     @Override
+    public List<Product> findByIdProvider(Long id) {
+        return this.productRepository.findByProviderId(id);
+    }
+
+    @Override
     public void create(Product product) {
         this.productRepository.save(product);
     }

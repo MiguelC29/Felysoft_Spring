@@ -68,9 +68,11 @@ public class Book implements Serializable {
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Detail> details;
+    private List<Inventory> inventories;
 
+    // Relación con Detail
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Inventory> inventories;
+    private List<Detail> details;
+
 }

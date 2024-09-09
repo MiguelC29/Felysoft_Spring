@@ -7,20 +7,20 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface PaymentService {
-    public List<Payment> findAll() throws Exception;
-    public List<Payment> findAllDisabled() throws Exception;
+    List<Payment> findAll() throws Exception;
+    List<Payment> findAllDisabled() throws Exception;
 
-    public Payment findById(Long id);
-    public Payment findByIdDisabled(Long id);
-
-    @Transactional
-    public void create(Payment payment);
+    Payment findById(Long id);
+    Payment findByIdDisabled(Long id);
 
     @Transactional
-    @Modifying
-    public void update(Payment payment);
+    void create(Payment payment);
 
     @Transactional
     @Modifying
-    public void delete(Payment payment);
+    void update(Payment payment);
+
+    @Transactional
+    @Modifying
+    void delete(Payment payment);
 }

@@ -1,6 +1,5 @@
 package com.felysoft.felysoftApp.service.imp;
 
-import com.felysoft.felysoftApp.entity.Detail;
 import com.felysoft.felysoftApp.entity.Purchase;
 import com.felysoft.felysoftApp.repository.DetailRepository;
 import com.felysoft.felysoftApp.repository.PurchaseRepository;
@@ -13,6 +12,10 @@ import java.util.List;
 @Service
 public class PurchaseImp implements PurchaseService {
 
+    @Override
+    public void addDetailToPurchase(Long purchaseId, Long detailId) {
+    }
+
     @Autowired
     private PurchaseRepository purchaseRepository;
 
@@ -21,12 +24,12 @@ public class PurchaseImp implements PurchaseService {
 
     @Override
     public List<Purchase> findAll() throws Exception {
-        return this.purchaseRepository.findPurchaseByEliminatedFalse();
+        return this.purchaseRepository.findPurchasesByEliminatedFalse();
     }
 
     @Override
     public List<Purchase> findAllDisabled() throws Exception {
-        return this.purchaseRepository.findPurchaseByEliminatedTrue();
+        return this.purchaseRepository.findPurchasesByEliminatedTrue();
     }
 
     @Override
@@ -54,12 +57,12 @@ public class PurchaseImp implements PurchaseService {
         this.purchaseRepository.save(purchase);
     }
 
-    @Override
+    /*@Override
     public void addDetailToPurchase(Long purchaseId, Long detailId) {
         Purchase purchase = this.purchaseRepository.findById(purchaseId).orElse(null);
         Detail detail = this.detailRepository.findById(detailId).orElse(null);
 
         purchase.getDetails().add(detail);
-        this.purchaseRepository.save(purchase);
-    }
+        this.purchaseRepository.save(purchase);*/
+
 }

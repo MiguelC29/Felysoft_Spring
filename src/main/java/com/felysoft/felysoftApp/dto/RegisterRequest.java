@@ -1,7 +1,7 @@
 package com.felysoft.felysoftApp.dto;
 
+import com.felysoft.felysoftApp.entity.Role;
 import com.felysoft.felysoftApp.entity.User;
-import com.felysoft.felysoftApp.util.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

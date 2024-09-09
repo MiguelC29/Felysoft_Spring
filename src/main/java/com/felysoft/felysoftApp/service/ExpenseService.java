@@ -14,8 +14,6 @@ public interface ExpenseService {
     Expense findById(Long id);
     Expense findByIdDisabled(Long id);
 
-    Expense findByPurchase(Purchase purchase);
-
     @Transactional
     void create(Expense expense);
 

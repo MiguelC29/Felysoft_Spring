@@ -34,12 +34,7 @@ public class ExpenseImp implements ExpenseService {
     public Expense findByIdDisabled(Long id) {
         return this.expenseRepository.findExpenseByIdExpenseAndEliminatedTrue(id);
     }
-
-    @Override
-    public Expense findByPurchase(Purchase purchase) {
-        return this.expenseRepository.findExpenseByPurchase(purchase);
-    }
-
+    
     @Override
     public void create(Expense expense) {
         this.expenseRepository.save(expense);

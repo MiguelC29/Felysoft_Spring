@@ -43,10 +43,6 @@ public class Expense implements Serializable {
 
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fkIdPurchase", nullable = false)
-    private Purchase purchase;
-
-    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdPayment", nullable = false)
     private Payment payment;
 }
