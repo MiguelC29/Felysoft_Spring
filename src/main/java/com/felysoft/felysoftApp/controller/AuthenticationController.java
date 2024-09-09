@@ -35,11 +35,12 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.register(authRequest));
     }
 
+    /*
     @PreAuthorize("permitAll")
     @PostMapping("refresh")
     public ResponseEntity<ReqRes> refreshToken(@RequestBody @Valid ReqRes req) {
         return ResponseEntity.ok(authenticationService.refreshToken(req));
-    }
+    }*/
 
     @PreAuthorize("hasAuthority('READ_MY_PROFILE')")
     @GetMapping("get-profile")
@@ -58,5 +59,24 @@ public class AuthenticationController {
         String oldPassword = request.get("oldPassword").toString();
         String newPassword = request.get("newPassword").toString();
         return ResponseEntity.ok(this.authenticationService.changePassword(email, oldPassword, newPassword));
+    }
+
+    @PreAuthorize("permitAll")
+    @GetMapping("verify-account/{token}")
+    public ResponseEntity<ReqRes> verifyAccount(@PathVariable("token") String token) {
+        return ResponseEntity.ok(authenticationService.verifyAccount(token));
+    }
+
+    @PreAuthorize("permitAll")
+    @GetMapping("verify-user/{email}")
+    public ResponseEntity<ReqRes> verifyUser(@PathVariable("email") String email) {
+        return ResponseEntity.ok(authenticationService.verifyUser(email));
+    }
+
+    @PreAuthorize("permitAll")
+    @PutMapping("resetPassword/{token}")
+    public ResponseEntity<ReqRes> resetPassword(@PathVariable("token") String token, @RequestBody Map<String, Object> request) {
+        String newPassword = request.get("newPassword").toString();
+        return ResponseEntity.ok(this.authenticationService.resetPassword(token, newPassword));
     }
 }
