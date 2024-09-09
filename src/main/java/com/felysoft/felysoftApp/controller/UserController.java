@@ -1,9 +1,10 @@
 package com.felysoft.felysoftApp.controller;
 
 import com.felysoft.felysoftApp.dto.AuthenticationRequest;
+import com.felysoft.felysoftApp.entity.Role;
 import com.felysoft.felysoftApp.entity.User;
+import com.felysoft.felysoftApp.service.imp.RoleImp;
 import com.felysoft.felysoftApp.service.imp.UserImp;
-import com.felysoft.felysoftApp.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,9 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserImp userImp;
+
+    @Autowired
+    private RoleImp roleImp;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -115,7 +119,7 @@ public class UserController {
             @RequestParam("username") String username,
             @RequestParam("password") String password,
             @RequestParam(name = "image", required = false) MultipartFile image,
-            @RequestParam("role") Role role) {
+            @RequestParam("roleId") Long roleId) {
 
         Map<String, Object> response = new HashMap<>();
         try {
@@ -157,7 +161,13 @@ public class UserController {
                 }
 
                 // Obtener y asignar el rol
-                //Role role = roleImp.findById(fkIdRole);
+                Role role = roleImp.findById(roleId); // Obtener el rol desde la base de datos
+
+                if (role == null) {
+                    response.put("status", HttpStatus.BAD_REQUEST);
+                    response.put("data", "Rol no encontrado");
+                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                }
 
                 User user = userBuilder
                         .role(role)
@@ -191,8 +201,7 @@ public class UserController {
           @RequestParam(value = "username", required = false) String username,
           @RequestParam(value = "password", required = false) String password,
           @RequestParam(value = "image", required = false) MultipartFile image,
-          @RequestParam(name = "role", required = false) Role role) {
-
+          @RequestParam(name = "role", required = false) Long roleId) {
         Map<String, Object> response = new HashMap<>();
         try {
             // INSTANCIA DEL OBJETO USER
@@ -247,7 +256,15 @@ public class UserController {
                 user.setTypeImg(image.getContentType());
             }
 
-            if (role != null) {
+            if (roleId != null) {
+                Role role = roleImp.findById(roleId); // Obtener el rol desde la base de datos
+
+                if (role == null) {
+                    response.put("status", HttpStatus.BAD_REQUEST);
+                    response.put("data", "Rol no encontrado");
+                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                }
+
                 user.setRole(role);
             }
 

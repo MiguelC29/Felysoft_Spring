@@ -17,6 +17,12 @@ public class UserImp implements UserService, UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RoleImp roleImp;
+
+    @Autowired
+    private PermissionImp permissionImp;
+
     @Override
     public List<User> findAll() throws Exception {
         return this.userRepository.findUsersByEliminatedFalse();

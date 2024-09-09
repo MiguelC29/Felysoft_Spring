@@ -24,7 +24,12 @@ public class JwtService {
     @Value("${security.jwt.secret-key}")
     private String SECRET_KEY;
 
-    public String generateToken(User user, Map<String, Object> extraClaims) {
+    public String generateToken(User user) {
+        // Crear claims con solo el rol
+        Map<String, Object> extraClaims = Map.of(
+                "role", user.getRole().getName()
+        );
+
         return Jwts
                 .builder()
                 .claims(extraClaims)
@@ -51,12 +56,15 @@ public class JwtService {
 
     private SecretKey generateKey() {
         byte[] secretAsBytes = Decoders.BASE64.decode(SECRET_KEY);
-
         return Keys.hmacShaKeyFor(secretAsBytes);
     }
 
     public String extractUsername(String jwt) {
         return extractAllClaims(jwt).getSubject();
+    }
+
+    public String extractRole(String jwt) {
+        return (String) extractAllClaims(jwt).get("role");
     }
 
     private Claims extractAllClaims(String jwt) {
@@ -70,7 +78,8 @@ public class JwtService {
 
     public boolean isTokenValid(String jwt, User user) {
         final String username = extractUsername(jwt);
-        return (username.equals(user.getUsername()) && !isTokenExpired(jwt));
+        final String role = extractRole(jwt);
+        return (username.equals(user.getUsername()) && !isTokenExpired(jwt) && role.equals(user.getRole().getName()));
     }
 
     private boolean isTokenExpired(String jwt) {
