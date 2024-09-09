@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
     List<User> findAll() throws Exception;
@@ -18,6 +19,7 @@ public interface UserService {
     User validateUser(String email, String password);
 
     User findByNumIdentification(Long numIdentification);
+    Optional<User> findByEmail(String email);
 
     @Transactional
     void create(User user);
