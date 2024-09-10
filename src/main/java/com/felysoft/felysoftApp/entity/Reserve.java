@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.time.LocalDate;
 
 @Data
@@ -34,7 +33,7 @@ public class Reserve implements Serializable {
     private BigDecimal deposit;
 
     @Column(nullable = false)
-    private Time time;
+    private Integer time;
 
     @Column(nullable = false)
     private boolean eliminated;

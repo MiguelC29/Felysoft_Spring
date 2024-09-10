@@ -30,7 +30,7 @@ public class SaleImp implements SaleService {
     }
 
     @Override
-    public Sale findById(Long id){
+    public Sale findById(Long id) {
         return this.saleRepository.findSaleByIdSaleAndEliminatedFalse(id);
     }
 
@@ -40,8 +40,8 @@ public class SaleImp implements SaleService {
     }
 
     @Override
-    public void create(Sale sale) {
-        this.saleRepository.save(sale);
+    public Sale create(Sale sale) {
+        return this.saleRepository.save(sale);
     }
 
     @Override
@@ -53,7 +53,10 @@ public class SaleImp implements SaleService {
     public void delete(Sale sale) {
         this.saleRepository.save(sale);
     }
+}
 
+
+    /*
     @Override
     public void addDetailToSale(Long saleId, Long detailId){
         Sale sale = this.saleRepository.findById(saleId).orElse(null);
@@ -62,4 +65,4 @@ public class SaleImp implements SaleService {
         sale.getDetails().add(detail);
         this.saleRepository.save(sale);
     }
-}
+*/

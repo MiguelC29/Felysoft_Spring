@@ -1,8 +1,8 @@
 package com.felysoft.felysoftApp.controller;
 
 import com.felysoft.felysoftApp.dto.AuthenticationRequest;
-import com.felysoft.felysoftApp.entity.Genre;
-import com.felysoft.felysoftApp.service.imp.GenreImp;
+import com.felysoft.felysoftApp.entity.Editorial;
+import com.felysoft.felysoftApp.service.imp.EditorialImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,20 +14,20 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/genre/")
-public class GenreController {
+@RequestMapping("/api/editorial/")
+public class EditorialController {
     @Autowired
-    private GenreImp genreImp;
+    private EditorialImp editorialImp;
 
-    @PreAuthorize("hasAuthority('READ_ALL_GENRES')")
+    @PreAuthorize("hasAuthority('READ_ALL_EDITORIALS')")
     @GetMapping("all")
     public ResponseEntity<Map<String, Object>> findAll(){
         Map<String,Object> response= new HashMap<>();
         try{
-            List<Genre> genreList= this.genreImp.findAll();
+            List<Editorial> editorialList= this.editorialImp.findAll();
 
             response.put("status","success");
-            response.put("data", genreList);
+            response.put("data", editorialList);
         }catch (Exception e){
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -35,16 +35,15 @@ public class GenreController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    @PreAuthorize("hasAuthority('READ_ALL_GENRES_DISABLED')")
+    @PreAuthorize("hasAuthority('READ_ALL_EDITORIALS_DISABLED')")
     @GetMapping("disabled")
     public ResponseEntity<Map<String, Object>> findAllDisabled(){
         Map<String,Object> response= new HashMap<>();
         try{
-            List<Genre> genreList= this.genreImp.findAllDisabled();
+            List<Editorial> editorialList= this.editorialImp.findAllDisabled();
 
             response.put("status","success");
-            response.put("data", genreList);
+            response.put("data", editorialList);
         }catch (Exception e){
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -53,15 +52,15 @@ public class GenreController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('READ_ONE_GENRE')")
+    @PreAuthorize("hasAuthority('READ_ONE_EDITORIAL')")
     @GetMapping("list/{id}")
     public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
-            Genre genre = this.genreImp.findById(id);
+            Editorial editorial = this.editorialImp.findById(id);
 
             response.put("status", "success");
-            response.put("data", genre);
+            response.put("data", editorial);
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -69,18 +68,17 @@ public class GenreController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    @PreAuthorize("hasAuthority('CREATE_ONE_GENRE')")
+    @PreAuthorize("hasAuthority('CREATE_ONE_EDITORIAL')")
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String,Object> request){
         Map<String,Object> response= new HashMap<>();
 
         try{
             final boolean isAdmin = AuthenticationRequest.isAdmin();
-            //INSTANCIA DEL OBJETO GENRE
-            Genre genre = this.genreImp.findGenreByNameAndEliminated(request.get("name").toString().toUpperCase());
+            //INSTANCIA DEL OBJETO EDITORIAL
+            Editorial editorial = this.editorialImp.findGenreByNameAndEliminated(request.get("name").toString().toUpperCase());
 
-            if(genre!=null){
+            if(editorial!=null){
                 response.put("status",HttpStatus.BAD_GATEWAY);
                 response.put("data","Datos Desahibilitados");
 
@@ -91,12 +89,12 @@ public class GenreController {
                 return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
 
             }else {
-                Genre newgenre = Genre.builder()
+                Editorial neweditorial = Editorial.builder()
                         .name(request.get("name").toString().toUpperCase())
                         .description(request.get("description").toString().toUpperCase())
                         .build();
 
-                this.genreImp.create(newgenre);
+                this.editorialImp.create(neweditorial);
                 response.put("status","success");
                 response.put("data","Registro Exitoso");
             }
@@ -108,17 +106,16 @@ public class GenreController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    @PreAuthorize("hasAuthority('UPDATE_ONE_GENRE')")
+    @PreAuthorize("hasAuthority('UPDATE_ONE_EDITORIAL')")
     @PutMapping("update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
         try {
-            Genre genre = this.genreImp.findById(id);
-            genre.setName(request.get("name").toString().toUpperCase());
-            genre.setDescription(request.get("description").toString().toUpperCase());
+            Editorial editorial = this.editorialImp.findById(id);
+            editorial.setName(request.get("name").toString().toUpperCase());
+            editorial.setDescription(request.get("description").toString().toUpperCase());
 
-            this.genreImp.update(genre);
+            this.editorialImp.update(editorial);
 
             response.put("status", "success");
             response.put("data", "Actualización exitosa");
@@ -129,16 +126,15 @@ public class GenreController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    @PreAuthorize("hasAuthority('UPDATE_ONE_GENRE_DISABLED')")
+    @PreAuthorize("hasAuthority('UPDATE_ONE_EDITORIAL_DISABLED')")
     @PutMapping("enable/{id}")
     public ResponseEntity<Map<String, Object>> enable(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
-            Genre genre = this.genreImp.findByIdDisabled(id);
-            genre.setEliminated(false);
+            Editorial editorial = this.editorialImp.findByIdDisabled(id);
+            editorial.setEliminated(false);
 
-            this.genreImp.update(genre);
+            this.editorialImp.update(editorial);
 
             response.put("status", "success");
             response.put("data", "Habilitado Correctamente");
@@ -149,69 +145,20 @@ public class GenreController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    @PreAuthorize("hasAuthority('DISABLE_ONE_GENRE')")
+    @PreAuthorize("hasAuthority('DISABLE_ONE_EDITORIAL')")
     @PutMapping("delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
-            Genre genre = this.genreImp.findById(id);
-            genre.setEliminated(true);
+            Editorial editorial = this.editorialImp.findById(id);
+            editorial.setEliminated(true);
 
-            this.genreImp.delete(genre);
+            this.editorialImp.delete(editorial);
 
             response.put("status", "success");
             response.put("data", "Eliminado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    //ASOCIATION GENRES - AUTHOR
-    @PreAuthorize("hasAuthority('READ_GENRES_BY_AUTHOR')")
-    @GetMapping("genresByAuthor/{id}")
-    public ResponseEntity<Map<String, Object>> findByIdAuthor(@PathVariable Long id) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            List<Genre> genreList = this.genreImp.findByIdAuthor(id);
-
-            response.put("status", "success");
-            response.put("data", genreList);
-        } catch (Exception e) {
-            response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-
-    @PreAuthorize("hasAuthority('ASSOCIATE_GENRE_AUTHOR')")
-    @PostMapping("add-author")
-    public ResponseEntity<Map<String, Object>> addAuthorToGenre(@RequestBody Map<String,Object> request){
-        Map<String,Object> response= new HashMap<>();
-
-        try{
-            Long genreId = Long.parseLong(request.get("genreId").toString());
-            Long authorId = Long.parseLong(request.get("authorId").toString());
-
-            //Si la Asociación es existente
-            boolean associationExists = this.genreImp.checkAssociationExists(genreId,authorId);
-            if(associationExists){
-                response.put("associationType", "genre-author");
-                response.put("entity1", "género");
-                response.put("entity2", "autor");
-                throw new RuntimeException("Asociación existente");
-            }
-
-            this.genreImp.addAuthorToGenre(genreId,authorId);
-
-            response.put("status","success");
-            response.put("data","Asociacion Exitosa");
-        }catch (Exception e){
-            response.put("status",HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }

@@ -14,7 +14,7 @@ public interface SaleService {
     Sale findByIdDisabled(Long id);
 
     @Transactional
-    void create(Sale sale);
+    Sale create(Sale sale);
 
     @Transactional
     @Modifying
@@ -24,6 +24,6 @@ public interface SaleService {
     @Modifying
     void delete(Sale sale);
 
-    @Transactional
-    void addDetailToSale(Long saleId, Long detailId);
+    //@Transactional
+    //void addDetailToSale(Long saleId, Long detailId);
 }

@@ -156,15 +156,7 @@ public class PurchaseController {
 
                     Inventory inventory = inventoryImp.findByProduct(product);
                     inventory.setStock(inventory.getStock() + cantidad);
-                    if(inventory.getStock() < 1) {
-                        inventory.setState(Inventory.State.AGOTADO);
-                    } else {
-                        if(inventory.getStock() < 6) {
-                            inventory.setState(Inventory.State.BAJO);
-                        } else {
-                            inventory.setState(Inventory.State.DISPONIBLE);
-                        }
-                    }
+                    updateInventoryState(inventory);
                     inventoryImp.update(inventory);
                 }
                 else if (detailRequest.get("idBook") != null) {
@@ -324,13 +316,6 @@ public class PurchaseController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-
-
-
-
-
-
 
     @PreAuthorize("hasAuthority('UPDATE_ONE_PURCHASE_DISABLED')")
     @PutMapping("enable/{id}")

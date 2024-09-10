@@ -19,10 +19,6 @@ public interface CategoryService {
 
     Category findCategoryByNameAndEliminated(String name);
 
-    Category findCategoryByName(String name);
-
-    List<Object[]> findCategoryProviderNames();
-
     @Transactional
     void create(Category category);
 

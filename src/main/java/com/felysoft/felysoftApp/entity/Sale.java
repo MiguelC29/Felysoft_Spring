@@ -38,11 +38,7 @@ public class Sale implements Serializable {
     @JoinColumn(name = "fkIdPayment", nullable = false)
     private Payment payment;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
-    @JoinTable(
-            name = "details_sales", joinColumns = @JoinColumn(name = "fkIdSale", referencedColumnName = "idSale"),
-            inverseJoinColumns = @JoinColumn(name = "fkIdDetail", referencedColumnName = "idDetail")
-    )
     private List<Detail> details;
 }

@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserImp implements UserService, UserDetailsService {
@@ -51,6 +52,11 @@ public class UserImp implements UserService, UserDetailsService {
     @Override
     public User findByNumIdentification(Long numIdentification) {
         return this.userRepository.findUserByNumIdentificationAndEliminatedTrue(numIdentification);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return this.userRepository.findByEmailAndEliminatedFalse(email);
     }
 
     @Override

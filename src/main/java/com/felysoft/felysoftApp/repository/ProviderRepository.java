@@ -20,8 +20,6 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
 
     Provider findProviderByNitAndEliminatedTrue(String nit);
 
-    Provider findProviderByNameAndEliminatedFalse(String name);
-
     @Query("SELECT p FROM Provider p JOIN p.categories c WHERE c.idCategory = :categoryId AND p.eliminated = false")
     List<Provider> findByCategoryId(@Param("categoryId") Long idCategory);
 }
