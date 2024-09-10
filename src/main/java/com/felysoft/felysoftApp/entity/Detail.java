@@ -35,12 +35,10 @@ public class Detail implements Serializable {
 
     // Relación con Product, Book o Service
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
     @JoinColumn(name = "fkIdProduct", nullable = true)
     private Product product;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
     @JoinColumn(name = "fkIdBook", nullable = true)
     private Book book;
 
