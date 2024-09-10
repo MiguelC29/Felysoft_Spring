@@ -83,7 +83,6 @@ public class SaleController {
 
 
     @PostMapping("cart/checkout")
-    @Transactional
     public ResponseEntity<Map<String, Object>> checkout(@RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -94,26 +93,26 @@ public class SaleController {
                 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
             }
 
-            // INSTANCIA OBJETO PAGO
+            // Crear el pago
             Payment payment = Payment.builder()
                     .methodPayment(Payment.MethodPayment.valueOf(request.get("methodPayment").toString().toUpperCase()))
                     .state(Payment.State.valueOf(request.get("state").toString().toUpperCase()))
-                    .total(new BigDecimal(request.get("total").toString()))
+                    .total(new BigDecimal(request.get("total").toString())) // Total provisto desde la solicitud
                     .date(new Timestamp(System.currentTimeMillis()))
                     .build();
 
-            this.paymentImp.create(payment);
+            this.paymentImp.create(payment); // Guardar el pago en la base de datos
 
             // Crear la venta
             Sale sale = Sale.builder()
                     .dateSale(payment.getDate())
                     .totalSale(payment.getTotal())
-                    .payment(payment)
+                    .payment(payment) // Asociar el pago con la venta
                     .build();
 
-            this.saleImp.create(sale);
+            this.saleImp.create(sale); // Guardar la venta en la base de datos
 
-            // Registrar los detalles asociados a la venta
+            // Registrar los detalles de la compra
             List<Map<String, Object>> detailsRequest = (List<Map<String, Object>>) request.get("details");
 
             for (Map<String, Object> detailRequest : detailsRequest) {
@@ -144,7 +143,8 @@ public class SaleController {
                         }
                     }
                     inventoryImp.update(inventory);
-                } else if (detailRequest.get("idBook") != null) {
+                }
+                else if (detailRequest.get("idBook") != null) {
                     Book book = bookImp.findById(Long.parseLong(detailRequest.get("idBook").toString()));
                     if (book == null) {
                         response.put("status", HttpStatus.NOT_FOUND);
