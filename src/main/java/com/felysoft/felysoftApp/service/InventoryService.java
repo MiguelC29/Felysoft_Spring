@@ -14,6 +14,7 @@ public interface InventoryService {
     Inventory findById(Long id);
 
     List<Inventory> findByTypeInv(Inventory.TypeInv typeInv);
+    List<Inventory> findByTypeInvAndState(Inventory.TypeInv typeInv, Inventory.State state);
 
     Inventory findByProduct(Product product);
     Inventory findByProductDisabled(Product product);

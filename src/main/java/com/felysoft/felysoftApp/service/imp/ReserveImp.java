@@ -1,6 +1,7 @@
 package com.felysoft.felysoftApp.service.imp;
 
 import com.felysoft.felysoftApp.entity.Reserve;
+import com.felysoft.felysoftApp.entity.User;
 import com.felysoft.felysoftApp.repository.ReserveRepository;
 import com.felysoft.felysoftApp.service.ReserveService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,11 @@ public class ReserveImp implements ReserveService {
     @Override
     public List<Reserve> findAllDisabled() throws Exception {
         return this.reserveRepository.findReservesByEliminatedTrue();
+    }
+
+    @Override
+    public List<Reserve> findReservesByUser(User user) throws Exception {
+        return this.reserveRepository.findReservesByEliminatedFalseAndUser(user);
     }
 
     @Override

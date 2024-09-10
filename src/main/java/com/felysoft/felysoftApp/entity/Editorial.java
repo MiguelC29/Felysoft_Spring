@@ -8,36 +8,33 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "typeServices")
+@Table(name = "editorials")
 @Entity
-public class TypeService implements Serializable {
+public class Editorial implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    private Long idTypeService;
+    private Long idEditorial;
 
-    @Column(length = 45, nullable = false, unique = true)
+    @Column(length = 45, nullable = false)
     private String name;
 
-    @Column(length = 540, nullable = false)
+    @Column(length = 320, nullable = false, columnDefinition = "TEXT")
     private String description;
-
-    @Column(nullable = false)
-    private BigDecimal price;
 
     @Column(nullable = false)
     private boolean eliminated;
 
     // FOREIGN KEYS
+    @OneToMany(mappedBy = "editorial", cascade = CascadeType.ALL)
     @JsonIgnore
-    @OneToMany(mappedBy = "typeService", cascade = CascadeType.ALL)
-    private List<Service> services;
+    private List<Book> books;
+
 }

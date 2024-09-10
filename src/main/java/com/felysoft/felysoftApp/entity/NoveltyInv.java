@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "novelties_inventory")
+@Table(name = "noveltiesinvetory")
 @Entity
 public class NoveltyInv implements Serializable {
 

@@ -19,8 +19,6 @@ public interface AuthorService {
 
     Author findAuthorByNameAndEliminated(String name);
 
-    Author findAuthorByName(String name);
-
     @Transactional
     void create(Author author);
 

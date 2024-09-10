@@ -1,14 +1,8 @@
 package com.felysoft.felysoftApp.controller;
 
 import com.felysoft.felysoftApp.dto.AuthenticationRequest;
-import com.felysoft.felysoftApp.entity.Author;
-import com.felysoft.felysoftApp.entity.Book;
-import com.felysoft.felysoftApp.entity.Genre;
-import com.felysoft.felysoftApp.entity.Inventory;
-import com.felysoft.felysoftApp.service.imp.AuthorImp;
-import com.felysoft.felysoftApp.service.imp.BookImp;
-import com.felysoft.felysoftApp.service.imp.GenreImp;
-import com.felysoft.felysoftApp.service.imp.InventoryImp;
+import com.felysoft.felysoftApp.entity.*;
+import com.felysoft.felysoftApp.service.imp.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.Year;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +31,9 @@ public class BookController {
 
     @Autowired
     private InventoryImp inventoryImp;
+
+    @Autowired
+    private EditorialImp editorialImp;
 
     @PreAuthorize("hasAuthority('READ_ALL_BOOKS')")
     @GetMapping("all")
@@ -90,12 +88,12 @@ public class BookController {
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(
             @RequestParam("title") String title,
-            @RequestParam("editorial") String editorial,
             @RequestParam("description") String description,
-            @RequestParam("yearPublication") short yearPublication,
+            @RequestParam("yearPublication") Year yearPublication,
             @RequestParam("priceTime") BigDecimal priceTime,
             @RequestParam("author") Long authorId,
             @RequestParam("genre") Long genreId,
+            @RequestParam("editorial") Long editorialId,
             @RequestParam("image") MultipartFile image
     ){
         Map<String, Object> response = new HashMap<>();
@@ -118,7 +116,6 @@ public class BookController {
             //INSTANCIA DEL OBJETO BOOK
             Book.BookBuilder bookBuilder = Book.builder()
                     .title(title.toUpperCase())
-                    .editorial(editorial.toUpperCase())
                     .description(description.toUpperCase())
                     .yearPublication(yearPublication)
                     .priceTime(priceTime);
@@ -133,9 +130,12 @@ public class BookController {
 
             Genre genre = genreImp.findById(genreId);
 
+            Editorial editorial = editorialImp.findById(editorialId);
+
             Book book = bookBuilder
                     .author(author)
                     .genre(genre)
+                    .editorial(editorial)
                     .build();
 
             this.bookImp.create(book);
@@ -170,12 +170,12 @@ public class BookController {
     public ResponseEntity<Map<String, Object>> update(
             @PathVariable Long id,
             @RequestParam(value = "title",required = false) String title,
-            @RequestParam(value = "editorial",required = false) String editorial,
             @RequestParam(value = "description",required = false) String description,
-            @RequestParam(value = "yearPublication",required = false) short yearPublication,
+            @RequestParam(value = "yearPublication",required = false) Year yearPublication,
             @RequestParam(value = "priceTime",required = false) BigDecimal priceTime,
             @RequestParam(value = "author",required = false) Long authorId,
             @RequestParam(value = "genre",required = false) Long genreId,
+            @RequestParam(value = "editorial",required = false) Long editorialId,
             @RequestParam(value = "image",required = false) MultipartFile image
     ) {
         Map<String, Object> response = new HashMap<>();
@@ -191,13 +191,11 @@ public class BookController {
             if(title != null){
                 book.setTitle(title.toUpperCase());
             }
-            if(editorial != null){
-                book.setEditorial(editorial.toUpperCase());
-            }
+
             if(description != null){
                 book.setDescription(description.toUpperCase());
             }
-            if(yearPublication != 0){
+            if(yearPublication != null){
                 book.setYearPublication(yearPublication);
             }
             if(priceTime != null){
@@ -222,6 +220,15 @@ public class BookController {
                     return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
                 }
                 book.setGenre(genre);
+            }
+            if(editorialId != null){
+                Editorial editorial = editorialImp.findById(editorialId);
+                if(editorial == null){
+                    response.put("status", HttpStatus.NOT_FOUND);
+                    response.put("data", "Editorial no encontrada");
+                    return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+                }
+                book.setEditorial(editorial);
             }
 
             if (image != null){
