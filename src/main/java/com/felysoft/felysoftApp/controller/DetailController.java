@@ -31,6 +31,9 @@ public class DetailController {
     @Autowired
     private PurchaseImp purchaseImp;
 
+    @Autowired
+    private SaleImp saleImp;
+
     @PreAuthorize("hasAuthority('READ_ALL_DETAILS')")
     @GetMapping("all")
     public ResponseEntity<Map<String, Object>> findAll() {
@@ -152,7 +155,7 @@ public class DetailController {
     }
 
     @PreAuthorize("hasAuthority('READ_ALL_DETAILS')")
-    @GetMapping("details/{id}")
+    @GetMapping("purchaseDetails/{id}")
     public ResponseEntity<Map<String, Object>> findByIdPurchase(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -164,6 +167,30 @@ public class DetailController {
             }
 
             List<Detail> detailList = this.detailImp.findByPurchase(purchase);
+
+            response.put("status", "success");
+            response.put("data", detailList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('READ_ALL_DETAILS')")
+    @GetMapping("saleDetails/{id}")
+    public ResponseEntity<Map<String, Object>> findByIdSale(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Sale sale = this.saleImp.findById(id);
+            if (sale == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Venta no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            List<Detail> detailList = this.detailImp.findBySale(sale);
 
             response.put("status", "success");
             response.put("data", detailList);

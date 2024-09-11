@@ -92,24 +92,6 @@ public class PurchaseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    /*
-    @PreAuthorize("hasAuthority('READ_EXPENSE_BY_PURCHASE')")
-    @GetMapping("expensePurchase/{id}")
-    public ResponseEntity<Map<String, Object>> findByExpensePurchase(@PathVariable Purchase id) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            Expense expense = this.expenseImp.findByPurchase(id);
-
-            response.put("status", "success");
-            response.put("data", expense);
-        } catch (Exception e) {
-            response.put("status", HttpStatus.BAD_GATEWAY);
-            response.put("data", e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }*/
-
     @PreAuthorize("hasAuthority('CREATE_ONE_PURCHASE')")
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> request){
@@ -188,7 +170,6 @@ public class PurchaseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
     private void updateInventoryState(Inventory inventory) {
         if (inventory.getStock() < 1) {
             inventory.setState(Inventory.State.AGOTADO);
@@ -198,7 +179,6 @@ public class PurchaseController {
             inventory.setState(Inventory.State.DISPONIBLE);
         }
     }
-
 
     @PutMapping("update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
