@@ -1,14 +1,8 @@
 package com.felysoft.felysoftApp.controller;
 
 import com.felysoft.felysoftApp.dto.AuthenticationRequest;
-import com.felysoft.felysoftApp.entity.Category;
-import com.felysoft.felysoftApp.entity.Inventory;
-import com.felysoft.felysoftApp.entity.Product;
-import com.felysoft.felysoftApp.entity.Provider;
-import com.felysoft.felysoftApp.service.imp.CategoryImp;
-import com.felysoft.felysoftApp.service.imp.InventoryImp;
-import com.felysoft.felysoftApp.service.imp.ProductImp;
-import com.felysoft.felysoftApp.service.imp.ProviderImp;
+import com.felysoft.felysoftApp.entity.*;
+import com.felysoft.felysoftApp.service.imp.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +28,9 @@ public class ProductController {
 
     @Autowired
     private ProviderImp providerImp;
+
+    @Autowired
+    private BrandImp brandImp;
 
     @Autowired
     private InventoryImp inventoryImp;
@@ -93,11 +90,11 @@ public class ProductController {
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(
             @RequestParam("name") String name,
-            @RequestParam("brand") String brand,
             @RequestParam("salePrice") BigDecimal salePrice,
             @RequestParam("expiryDate") Date expiryDate,
             @RequestParam("category") Long categoryId,
             @RequestParam("provider") Long providerId,
+            @RequestParam("brand") Long brandId,
             @RequestParam("stockInicial") int stockInicial,
             @RequestParam("image") MultipartFile image) {
         Map<String, Object> response = new HashMap<>();
@@ -120,7 +117,6 @@ public class ProductController {
                 // Construir el objeto Product usando el patrón Builder
                 Product.ProductBuilder productBuilder = Product.builder()
                         .name(name.toUpperCase())
-                        .brand(brand.toUpperCase())
                         .salePrice(salePrice)
                         .expiryDate(new Date(expiryDate.getTime()));
 
@@ -133,10 +129,12 @@ public class ProductController {
                 // Obtener las llaves foráneas
                 Category category = categoryImp.findById(categoryId);
                 Provider provider = providerImp.findById(providerId);
+                Brand brand = brandImp.findById(brandId);
 
                 Product product = productBuilder
                         .category(category)
                         .provider(provider)
+                        .brand(brand)
                         .build();
 
                 // Construir el objeto Inventory usando el patrón Builder
@@ -167,11 +165,11 @@ public class ProductController {
     @PutMapping("update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id,
                                                       @RequestParam(value = "name", required = false) String name,
-                                                      @RequestParam(value = "brand", required = false) String brand,
                                                       @RequestParam(value = "salePrice", required = false) BigDecimal salePrice,
                                                       @RequestParam(value = "expiryDate", required = false) Date expiryDate,
                                                       @RequestParam(value = "category", required = false) Long categoryId,
                                                       @RequestParam(value = "provider", required = false) Long providerId,
+                                                      @RequestParam(value = "brand", required = false) Long brandId,
                                                       @RequestParam(value = "image", required = false) MultipartFile image) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -188,10 +186,6 @@ public class ProductController {
             // Actualizar los campos del producto con los nuevos valores si se proporcionan
             if (name != null) {
                 product.setName(name.toUpperCase());
-            }
-
-            if (brand != null) {
-                product.setBrand(brand.toUpperCase());
             }
 
             if (salePrice != null) {
@@ -220,6 +214,16 @@ public class ProductController {
                     return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
                 }
                 product.setProvider(provider);
+            }
+
+            if (brandId != null) {
+                Brand brand = brandImp.findById(brandId);
+                if (brand == null) {
+                    response.put("status", HttpStatus.NOT_FOUND);
+                    response.put("data", "Marca no encontrado");
+                    return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+                }
+                product.setBrand(brand);
             }
 
             // Si se proporciona una nueva imagen, actualizarla

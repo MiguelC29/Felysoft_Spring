@@ -40,9 +40,6 @@ public class Product implements Serializable {
     @NotBlank
     private String name;
 
-    @Column(length = 45, nullable = false)
-    private String brand;
-
     @Column(nullable = false)
     @DecimalMin(value = "0.01")
     private BigDecimal salePrice;
@@ -61,6 +58,10 @@ public class Product implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdProvider", nullable = false)
     private Provider provider;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdBrand", nullable = false)
+    private Brand brand;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnore

@@ -54,4 +54,9 @@ public class ReserveImp implements ReserveService {
     public void delete(Reserve reserve) {
         this.reserveRepository.save(reserve);
     }
+
+    @Override
+    public void cancel(Reserve reserve) {
+        this.reserveRepository.save(reserve);
+    }
 }
