@@ -43,6 +43,12 @@ public class AuthorImp implements AuthorService {
     public Author findAuthorByNameAndEliminated(String name){
         return this.authorRepository.findAuthorByNameAndEliminatedTrue(name);
     }
+
+    @Override
+    public Author findAuthorByName(String name) {
+        return this.authorRepository.findAuthorByNameAndEliminatedFalse(name);
+    }
+
     @Override
     public void create(Author author) {
         this.authorRepository.save(author);

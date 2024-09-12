@@ -15,10 +15,13 @@ public interface GenreService {
 
     Genre findByIdDisabled(Long id);
 
-
     List<Genre> findByIdAuthor(Long id);
 
     Genre findGenreByNameAndEliminated(String name);
+
+    Genre findGenreByName(String name);
+
+    List<Object[]> findGenreAuthorNames();
 
     @Transactional
     void create(Genre genre);
