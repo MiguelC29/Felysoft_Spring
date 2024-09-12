@@ -19,6 +19,8 @@ public interface ProviderService {
 
     Provider findProviderByNitAndEliminated(String nit);
 
+    Provider findProviderByName(String name);
+
     @Transactional
     void create(Provider provider);
 
