@@ -121,6 +121,37 @@ public class ReserveController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @PreAuthorize("hasAuthority('CHANGE_STATE_RESERVE')")
+    @PutMapping("changeState/{id}")
+    public ResponseEntity<Map<String, Object>> changeState(@PathVariable Long id, @RequestBody Map<String,Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Reserve reserve = this.reserveImp.findById(id);
+
+            reserve.setState(Reserve.State.valueOf(request.get("state").toString()));
+            this.reserveImp.update(reserve);
+
+            Inventory inventory= this.inventoryImp.findByBook(reserve.getBook());
+            if(inventory == null){
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Libro en el Inventario no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }else{
+                inventory.setState(Inventory.State.DISPONIBLE);
+                this.inventoryImp.update(inventory);
+
+            }
+            var message = (reserve.getState()== Reserve.State.CANCELADA) ? "Cancelada": "Finalizada";
+
+            response.put("status", "success");
+            response.put("data", "La reserva ha sido %s correctamente".formatted(message));
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @PreAuthorize("hasAuthority('CREATE_ONE_RESERVE')")
     @PostMapping("create")
