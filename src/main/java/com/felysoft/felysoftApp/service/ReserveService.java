@@ -25,4 +25,7 @@ public interface ReserveService {
     @Transactional
     @Modifying
     void delete(Reserve reserve);
+    @Transactional
+    @Modifying
+    void cancel(Reserve reserve);
 }

@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @Table(name = "reserves")
 @Entity
 public class Reserve implements Serializable {
-
+    public enum State {CANCELADA,FINALIZADA,RESERVADA}
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -34,6 +34,10 @@ public class Reserve implements Serializable {
 
     @Column(nullable = false)
     private Integer time;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Reserve.State state;
 
     @Column(nullable = false)
     private boolean eliminated;
