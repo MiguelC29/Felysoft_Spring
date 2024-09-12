@@ -95,7 +95,7 @@ public class ProductController {
             @RequestParam("category") Long categoryId,
             @RequestParam("provider") Long providerId,
             @RequestParam("brand") Long brandId,
-            @RequestParam("stockInicial") int stockInicial,
+            @RequestParam(value = "stockInicial", required = false) Integer stockInicial,
             @RequestParam("image") MultipartFile image) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -137,19 +137,26 @@ public class ProductController {
                         .brand(brand)
                         .build();
 
-                // Construir el objeto Inventory usando el patrón Builder
-                Inventory inventory = Inventory.builder()
-                        .stock(stockInicial)
-                        .state((stockInicial < 6 ? Inventory.State.BAJO : Inventory.State.DISPONIBLE))
-                        .typeInv(Inventory.TypeInv.PRODUCTOS)
-                        .dateRegister(new Timestamp(System.currentTimeMillis()))
-                        .lastModification(new Timestamp(System.currentTimeMillis()))
-                        .product(product)
-                        .build();
+                // Verificar si `stockInicial` no es null
+                if (stockInicial != null) {
+                    // Construir el objeto Inventory usando el patrón Builder
+                    Inventory inventory = Inventory.builder()
+                            .stock(stockInicial)
+                            .state((stockInicial < 6 ? Inventory.State.BAJO : Inventory.State.DISPONIBLE))
+                            .typeInv(Inventory.TypeInv.PRODUCTOS)
+                            .dateRegister(new Timestamp(System.currentTimeMillis()))
+                            .lastModification(new Timestamp(System.currentTimeMillis()))
+                            .product(product)
+                            .build();
 
-                this.productImp.create(product);
-                this.inventoryImp.create(inventory);
+                    this.productImp.create(product); // Guardar producto
+                    this.inventoryImp.create(inventory); // Guardar inventario
+                } else {
+                    // Si no hay stock inicial, solo se guarda el producto
+                    this.productImp.create(product);
+                }
 
+                // Respuesta de éxito
                 response.put("status", "success");
                 response.put("data", "Registro Exitoso");
             }

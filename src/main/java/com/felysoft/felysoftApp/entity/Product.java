@@ -2,7 +2,6 @@ package com.felysoft.felysoftApp.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,7 +40,7 @@ public class Product implements Serializable {
     private String name;
 
     @Column(nullable = false)
-    @DecimalMin(value = "0.01")
+    //@DecimalMin(value = "0.01")
     private BigDecimal salePrice;
 
     @Column
