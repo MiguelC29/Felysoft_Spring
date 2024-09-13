@@ -136,10 +136,28 @@ public class PurchaseController {
                     detail.setProduct(product);
                     detail.setQuantity(cantidad);
 
+                    product.setSalePrice(new BigDecimal(detailRequest.get("salePrice").toString()));
+                    productImp.update(product);
+
                     Inventory inventory = inventoryImp.findByProduct(product);
-                    inventory.setStock(inventory.getStock() + cantidad);
-                    updateInventoryState(inventory);
-                    inventoryImp.update(inventory);
+
+                    if (inventory == null) {
+                        // Construir el objeto Inventory usando el patrón Builder
+                        inventory = Inventory.builder()
+                                .stock(cantidad)
+                                .state((cantidad < 6 ? Inventory.State.BAJO : Inventory.State.DISPONIBLE))
+                                .typeInv(Inventory.TypeInv.PRODUCTOS)
+                                .dateRegister(new Timestamp(System.currentTimeMillis()))
+                                .lastModification(new Timestamp(System.currentTimeMillis()))
+                                .product(product)
+                                .build();
+
+                        this.inventoryImp.create(inventory); // Guardar inventario
+                    } else {
+                        inventory.setStock(inventory.getStock() + cantidad);
+                        updateInventoryState(inventory);
+                        inventoryImp.update(inventory);
+                    }
                 }
                 else if (detailRequest.get("idBook") != null) {
                     Book book = bookImp.findById(Long.parseLong(detailRequest.get("idBook").toString()));
