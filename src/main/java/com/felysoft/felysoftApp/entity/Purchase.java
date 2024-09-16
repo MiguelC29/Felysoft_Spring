@@ -39,6 +39,10 @@ public class Purchase implements Serializable {
     private Provider provider;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdEditorial", nullable = false)
+    private Editorial editorial;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdPayment", nullable = false)
     private Payment payment;
 
