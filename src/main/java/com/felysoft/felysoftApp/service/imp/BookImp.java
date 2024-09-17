@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class BookImp implements BookService{
+public class BookImp implements BookService {
 
     @Autowired
     private BookRepository bookRepository;
@@ -37,6 +37,17 @@ public class BookImp implements BookService{
     @Override
     public Book findBookByTitleAndEliminated(String title) {
         return this.bookRepository.findBookByTitleAndEliminatedTrue(title);
+    }
+
+    @Override
+    public Book findBookTitle(String title) {
+        return this.bookRepository.findBookByTitle(title);
+    }
+
+
+    @Override
+    public List<Book> findByIdEditorial(Long id) {
+        return this.bookRepository.findByEditorialId(id);
     }
 
     @Override

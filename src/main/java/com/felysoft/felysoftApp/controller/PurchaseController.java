@@ -40,6 +40,8 @@ public class PurchaseController {
 
     @Autowired
     private ProviderImp providerImp;
+    @Autowired
+    private EditorialImp editorialImp;
 
     @PreAuthorize("hasAuthority('READ_ALL_PURCHASES')")
     @GetMapping("all")
@@ -111,7 +113,8 @@ public class PurchaseController {
             Purchase purchase = Purchase.builder()
                     .date(payment.getDate())
                     .total(payment.getTotal())
-                    .provider(providerImp.findById(Long.parseLong(request.get("fkIdProvider").toString())))
+                    .provider((request.get("fkIdProvider") != null) ? providerImp.findById(Long.parseLong(request.get("fkIdProvider").toString())) : null)
+                    .editorial((request.get("fkIdEditorial") != null) ? editorialImp.findById(Long.parseLong(request.get("fkIdEditorial").toString())) : null)
                     .payment(payment)
                     .build();
 
@@ -189,7 +192,7 @@ public class PurchaseController {
     }
 
     private void updateInventoryState(Inventory inventory) {
-        if (inventory.getStock() < 1) {
+        if (inventory.getStock() <= 0) {
             inventory.setState(Inventory.State.AGOTADO);
         } else if (inventory.getStock() < 6) {
             inventory.setState(Inventory.State.BAJO);

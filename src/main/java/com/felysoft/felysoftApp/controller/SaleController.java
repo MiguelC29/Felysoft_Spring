@@ -155,7 +155,7 @@ public class SaleController {
     }
 
     private void updateInventoryState(Inventory inventory) {
-        if (inventory.getStock() < 1) {
+        if (inventory.getStock() <= 0) {
             inventory.setState(Inventory.State.AGOTADO);
         } else if (inventory.getStock() < 6) {
             inventory.setState(Inventory.State.BAJO);

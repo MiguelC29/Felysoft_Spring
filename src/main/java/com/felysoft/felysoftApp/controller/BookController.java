@@ -317,4 +317,21 @@ public class BookController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    // LIST PRODUCTS - PROVIDER
+    @PreAuthorize("hasAuthority('READ_BOOKS_BY_EDITORIAL')")
+    @GetMapping("booksByEditorial/{id}")
+    public ResponseEntity<Map<String, Object>> findByIdEditorial(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Book> bookList = this.bookImp.findByIdEditorial(id);
+            response.put("status", "success");
+            response.put("data", bookList);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
