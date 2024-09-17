@@ -35,8 +35,12 @@ public class Purchase implements Serializable {
 
     // FOREIGN KEYS
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fkIdProvider", nullable = false)
+    @JoinColumn(name = "fkIdProvider")
     private Provider provider;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fkIdEditorial")
+    private Editorial editorial;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fkIdPayment", nullable = false)

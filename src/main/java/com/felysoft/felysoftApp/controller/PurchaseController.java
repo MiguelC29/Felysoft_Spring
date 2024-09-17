@@ -40,6 +40,8 @@ public class PurchaseController {
 
     @Autowired
     private ProviderImp providerImp;
+    @Autowired
+    private EditorialImp editorialImp;
 
     @PreAuthorize("hasAuthority('READ_ALL_PURCHASES')")
     @GetMapping("all")
@@ -111,7 +113,8 @@ public class PurchaseController {
             Purchase purchase = Purchase.builder()
                     .date(payment.getDate())
                     .total(payment.getTotal())
-                    .provider(providerImp.findById(Long.parseLong(request.get("fkIdProvider").toString())))
+                    .provider((request.get("fkIdProvider") != null) ? providerImp.findById(Long.parseLong(request.get("fkIdProvider").toString())) : null)
+                    .editorial((request.get("fkIdEditorial") != null) ? editorialImp.findById(Long.parseLong(request.get("fkIdEditorial").toString())) : null)
                     .payment(payment)
                     .build();
 
@@ -136,10 +139,28 @@ public class PurchaseController {
                     detail.setProduct(product);
                     detail.setQuantity(cantidad);
 
+                    product.setSalePrice(new BigDecimal(detailRequest.get("salePrice").toString()));
+                    productImp.update(product);
+
                     Inventory inventory = inventoryImp.findByProduct(product);
-                    inventory.setStock(inventory.getStock() + cantidad);
-                    updateInventoryState(inventory);
-                    inventoryImp.update(inventory);
+
+                    if (inventory == null) {
+                        // Construir el objeto Inventory usando el patrón Builder
+                        inventory = Inventory.builder()
+                                .stock(cantidad)
+                                .state((cantidad < 6 ? Inventory.State.BAJO : Inventory.State.DISPONIBLE))
+                                .typeInv(Inventory.TypeInv.PRODUCTOS)
+                                .dateRegister(new Timestamp(System.currentTimeMillis()))
+                                .lastModification(new Timestamp(System.currentTimeMillis()))
+                                .product(product)
+                                .build();
+
+                        this.inventoryImp.create(inventory); // Guardar inventario
+                    } else {
+                        inventory.setStock(inventory.getStock() + cantidad);
+                        updateInventoryState(inventory);
+                        inventoryImp.update(inventory);
+                    }
                 }
                 else if (detailRequest.get("idBook") != null) {
                     Book book = bookImp.findById(Long.parseLong(detailRequest.get("idBook").toString()));
@@ -151,6 +172,25 @@ public class PurchaseController {
                     // Si es un libro, solo el precio unitario es requerido
                     detail.setBook(book);
                     detail.setQuantity(1);  // Establecemos una cantidad predeterminada para los libros
+
+                    book.setPriceTime(new BigDecimal(detailRequest.get("salePrice").toString())); //priceTime
+                    bookImp.update(book);
+
+                    Inventory inventory = inventoryImp.findByBook(book);
+
+                    if (inventory == null) {
+                        // Construir el objeto Inventory usando el patrón Builder
+                        inventory = Inventory.builder()
+                                .stock(1)
+                                .state(Inventory.State.DISPONIBLE)
+                                .typeInv(Inventory.TypeInv.LIBROS)
+                                .dateRegister(new Timestamp(System.currentTimeMillis()))
+                                .lastModification(new Timestamp(System.currentTimeMillis()))
+                                .book(book)
+                                .build();
+
+                        this.inventoryImp.create(inventory); // Guardar inventario
+                    }
                 }
 
                 detail.setUnitPrice(new BigDecimal(detailRequest.get("unitPrice").toString()));
@@ -171,7 +211,7 @@ public class PurchaseController {
     }
 
     private void updateInventoryState(Inventory inventory) {
-        if (inventory.getStock() < 1) {
+        if (inventory.getStock() <= 0) {
             inventory.setState(Inventory.State.AGOTADO);
         } else if (inventory.getStock() < 6) {
             inventory.setState(Inventory.State.BAJO);

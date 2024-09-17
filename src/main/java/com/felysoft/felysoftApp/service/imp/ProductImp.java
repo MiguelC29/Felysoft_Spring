@@ -45,6 +45,11 @@ public class ProductImp implements ProductService {
     }
 
     @Override
+    public Product findProductByName(String name) {
+        return this.productRepository.findProductByName(name);
+    }
+
+    @Override
     public List<Product> findByIdProvider(Long id) {
         return this.productRepository.findByProviderId(id);
     }

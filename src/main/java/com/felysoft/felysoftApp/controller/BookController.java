@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.Year;
 import java.util.HashMap;
 import java.util.List;
@@ -90,7 +89,6 @@ public class BookController {
             @RequestParam("title") String title,
             @RequestParam("description") String description,
             @RequestParam("yearPublication") Year yearPublication,
-            @RequestParam("priceTime") BigDecimal priceTime,
             @RequestParam("author") Long authorId,
             @RequestParam("genre") Long genreId,
             @RequestParam("editorial") Long editorialId,
@@ -118,7 +116,7 @@ public class BookController {
                     .title(title.toUpperCase())
                     .description(description.toUpperCase())
                     .yearPublication(yearPublication)
-                    .priceTime(priceTime);
+                    .priceTime(new BigDecimal(0));
 
             if (image != null){
                 bookBuilder.nameImg(image.getOriginalFilename())
@@ -139,20 +137,6 @@ public class BookController {
                     .build();
 
             this.bookImp.create(book);
-
-            //INSTANCIA OBJETO INVENTARIO
-            Inventory inventory = Inventory.builder()
-                    .stock(1)
-                    .state(Inventory.State.DISPONIBLE)
-                    .typeInv(Inventory.TypeInv.LIBROS)
-                    // Configurar fechas de creación y actualización
-                    .dateRegister(new Timestamp(System.currentTimeMillis()))
-                    .lastModification(new Timestamp(System.currentTimeMillis()))
-                    //CAMPOS LLAVES FORANEAS
-                    .book(book)
-                    .build();
-
-            this.inventoryImp.create(inventory);
 
             response.put("status","success");
             response.put("data","Registro Exitoso");
@@ -310,6 +294,23 @@ public class BookController {
                 response.put("status", "success");
                 response.put("data", "Eliminado Correctamente");
             }
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // LIST PRODUCTS - PROVIDER
+    @PreAuthorize("hasAuthority('READ_BOOKS_BY_EDITORIAL')")
+    @GetMapping("booksByEditorial/{id}")
+    public ResponseEntity<Map<String, Object>> findByIdEditorial(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Book> bookList = this.bookImp.findByIdEditorial(id);
+            response.put("status", "success");
+            response.put("data", bookList);
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());

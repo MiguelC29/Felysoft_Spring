@@ -19,6 +19,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Product findProductByIdProductAndEliminatedFalse(Long id);
     Product findProductByIdProductAndEliminatedTrue(Long id);
     Product findProductByNameAndEliminatedTrue(String name);
+    Product findProductByName(String name);
     /*
     @PreAuthorize("hasAuthority('SAVE_ONE_PRODUCT')")
     Product save(Product product);*/

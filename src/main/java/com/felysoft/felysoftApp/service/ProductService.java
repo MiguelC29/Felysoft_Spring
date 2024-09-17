@@ -15,6 +15,8 @@ public interface ProductService {
 
     Product findProductByNameAndEliminated(String name);
 
+    Product findProductByName(String name);
+
     List<Product> findByIdProvider(Long id);
 
     void create(Product product);

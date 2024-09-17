@@ -95,22 +95,26 @@ public class ProductController {
             @RequestParam("category") Long categoryId,
             @RequestParam("provider") Long providerId,
             @RequestParam("brand") Long brandId,
-            @RequestParam("stockInicial") int stockInicial,
+            @RequestParam(value = "stockInicial", required = false) Integer stockInicial,
             @RequestParam("image") MultipartFile image) {
         Map<String, Object> response = new HashMap<>();
         try {
             final boolean isAdmin = AuthenticationRequest.isAdmin();
 
-            Product productByName = this.productImp.findProductByNameAndEliminated(name.toUpperCase());
+            Product productByName = this.productImp.findProductByName(name.toUpperCase());
 
             if (productByName != null) {
-                response.put("status",HttpStatus.BAD_GATEWAY);
-                response.put("data","Datos Desahibilitados");
+                if (productByName.isEliminated()) {
+                    response.put("data","Datos Desahibilitados");
 
-                // Verifica si el rol es de administrador
-                String message = (isAdmin) ? "Información ya registrada pero desahibilitada" : "Información ya registrada pero desahibilitada; Contacte al Administrador";
+                    // Verifica si el rol es de administrador
+                    String message = (isAdmin) ? "Información ya registrada pero desahibilitada" : "Información ya registrada pero desahibilitada; Contacte al Administrador";
 
-                response.put("detail", message);
+                    response.put("detail", message);
+                } else {
+                    response.put("status",HttpStatus.BAD_GATEWAY);
+                    response.put("data","El producto ya existe");
+                }
 
                 return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
             } else {
@@ -137,19 +141,26 @@ public class ProductController {
                         .brand(brand)
                         .build();
 
-                // Construir el objeto Inventory usando el patrón Builder
-                Inventory inventory = Inventory.builder()
-                        .stock(stockInicial)
-                        .state((stockInicial < 6 ? Inventory.State.BAJO : Inventory.State.DISPONIBLE))
-                        .typeInv(Inventory.TypeInv.PRODUCTOS)
-                        .dateRegister(new Timestamp(System.currentTimeMillis()))
-                        .lastModification(new Timestamp(System.currentTimeMillis()))
-                        .product(product)
-                        .build();
+                // Verificar si `stockInicial` no es null
+                if (stockInicial != null) {
+                    // Construir el objeto Inventory usando el patrón Builder
+                    Inventory inventory = Inventory.builder()
+                            .stock(stockInicial)
+                            .state((stockInicial < 6 ? Inventory.State.BAJO : Inventory.State.DISPONIBLE)) //TODO: falta que desde frontend no se deje ingresa un stock menor o igual a 0
+                            .typeInv(Inventory.TypeInv.PRODUCTOS)
+                            .dateRegister(new Timestamp(System.currentTimeMillis()))
+                            .lastModification(new Timestamp(System.currentTimeMillis()))
+                            .product(product)
+                            .build();
 
-                this.productImp.create(product);
-                this.inventoryImp.create(inventory);
+                    this.productImp.create(product); // Guardar producto
+                    this.inventoryImp.create(inventory); // Guardar inventario
+                } else {
+                    // Si no hay stock inicial, solo se guarda el producto
+                    this.productImp.create(product);
+                }
 
+                // Respuesta de éxito
                 response.put("status", "success");
                 response.put("data", "Registro Exitoso");
             }
@@ -257,20 +268,20 @@ public class ProductController {
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
             Inventory inventory = this.inventoryImp.findByProductDisabled(product);
-            if (inventory == null) {
-                response.put("status", HttpStatus.NOT_FOUND);
-                response.put("data", "El producto no se encuentra en el inventario");
-                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-            } else {
-                product.setEliminated(false);
+            if (inventory != null) {
+                //response.put("status", HttpStatus.NOT_FOUND);
+                //response.put("data", "El producto no se encuentra en el inventario");
+                //return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
                 inventory.setEliminated(false);
 
-                this.productImp.update(product);
                 this.inventoryImp.update(inventory);
-
-                response.put("status", "success");
-                response.put("data", "Habilitado Correctamente");
             }
+            product.setEliminated(false);
+
+            this.productImp.update(product);
+
+            response.put("status", "success");
+            response.put("data", "Habilitado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -291,20 +302,18 @@ public class ProductController {
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
             Inventory inventory = this.inventoryImp.findByProduct(product);
-            if (inventory == null) {
-                response.put("status", HttpStatus.NOT_FOUND);
-                response.put("data", "El producto no se encuentra en el inventario");
-                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-            } else {
-                product.setEliminated(true);
+            if (inventory != null) {
+                //response.put("status", HttpStatus.NOT_FOUND);
+                //response.put("data", "El producto no se encuentra en el inventario");
+                //return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
                 inventory.setEliminated(true);
 
                 this.inventoryImp.delete(inventory);
-                this.productImp.delete(product);
-
-                response.put("status", "success");
-                response.put("data", "Eliminado Correctamente");
             }
+            product.setEliminated(true);
+            this.productImp.delete(product);
+            response.put("status", "success");
+            response.put("data", "Eliminado Correctamente");
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());

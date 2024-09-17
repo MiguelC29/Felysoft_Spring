@@ -93,10 +93,6 @@ public class User implements UserDetails {
     @JsonIgnore
     private List<Reserve> reserves;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Employee> employees;
-
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;

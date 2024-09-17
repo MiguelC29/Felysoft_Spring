@@ -37,4 +37,8 @@ public class Editorial implements Serializable {
     @JsonIgnore
     private List<Book> books;
 
+    @OneToMany(mappedBy = "editorial", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Purchase> purchases;
+
 }
