@@ -14,6 +14,11 @@ public interface BookService {
     Book findByIdDisabled(Long id);
 
     Book findBookByTitleAndEliminated(String title);
+
+    Book findBookTitle(String title);
+
+    List<Book> findByIdEditorial(Long id);
+
     @Transactional
     void create(Book book);
 

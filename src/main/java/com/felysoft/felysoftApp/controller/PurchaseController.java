@@ -172,6 +172,25 @@ public class PurchaseController {
                     // Si es un libro, solo el precio unitario es requerido
                     detail.setBook(book);
                     detail.setQuantity(1);  // Establecemos una cantidad predeterminada para los libros
+
+                    book.setPriceTime(new BigDecimal(detailRequest.get("salePrice").toString())); //priceTime
+                    bookImp.update(book);
+
+                    Inventory inventory = inventoryImp.findByBook(book);
+
+                    if (inventory == null) {
+                        // Construir el objeto Inventory usando el patrón Builder
+                        inventory = Inventory.builder()
+                                .stock(1)
+                                .state(Inventory.State.DISPONIBLE)
+                                .typeInv(Inventory.TypeInv.LIBROS)
+                                .dateRegister(new Timestamp(System.currentTimeMillis()))
+                                .lastModification(new Timestamp(System.currentTimeMillis()))
+                                .book(book)
+                                .build();
+
+                        this.inventoryImp.create(inventory); // Guardar inventario
+                    }
                 }
 
                 detail.setUnitPrice(new BigDecimal(detailRequest.get("unitPrice").toString()));
