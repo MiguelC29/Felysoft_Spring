@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -151,7 +152,7 @@ public class SaleController {
                         // Verificar si el stock se agotó
                         if (inventory.getStock() == 0) {
                             notifyInventoryManagers(inventory, true);
-                        } else if (inventory.getStock() < 6) {
+                        } else if (inventory.getStock() == 5 || inventory.getStock() < 2) {
                             notifyInventoryManagers(inventory, false);
                         }
                     }
@@ -199,6 +200,7 @@ public class SaleController {
     private void sendLowStockEmail(User user, Inventory inventory) {
         String recipientAddress = user.getEmail();
         String subject = "Stock Bajo | FELYSOFT";
+        String confirmationUrl = "https://felysoft-react.vercel.app/compras";
 
         String message = "<html>" +
                 "<head>" +
@@ -206,7 +208,7 @@ public class SaleController {
                 "        body {" +
                 "            font-family: sans-serif;" +
                 "            background-color: #f5f5f5;" +
-                "            color: black;" +
+                "            color: #333;" +
                 "            margin: 0;" +
                 "            padding: 0;" +
                 "            text-align: center;" + // Centra el texto en todo el cuerpo
@@ -230,7 +232,7 @@ public class SaleController {
                 "        h1 {" +
                 "            font-size: 24px;" +
                 "            font-weight: bold;" +
-                "            color: #333;" +
+                "            color: rgb(38, 80, 115);" +
                 "            margin-bottom: 20px;" +
                 "        }" +
                 "        h3 {" +
@@ -240,7 +242,7 @@ public class SaleController {
                 "        }" +
                 "        h3 span {" +
                 "            font-weight: bold;" +
-                "            color: #333;" +
+                "            color: rgb(38, 80, 115);" +
                 "        }" +
                 "        .logo {" +
                 "            width: 100px;" +
@@ -251,6 +253,24 @@ public class SaleController {
                 "            line-height: 1.6;" +
                 "            margin-bottom: 30px;" +
                 "            color: black;" +
+                "        }" +
+                "        p {" +
+                "            color: black;" +
+                "        }" +
+                "        .button {" +
+                "            background-color: rgb(38, 80, 115);" +
+                "            color: #fff;" +
+                "            padding: 15px 30px;" +
+                "            border: none;" +
+                "            border-radius: 5px;" +
+                "            font-size: 16px;" +
+                "            cursor: pointer;" +
+                "            text-decoration: none;" +
+                "            display: inline-block;" +
+                "            transition: background-color 0.3s ease;" +
+                "        }" +
+                "        .button:hover {" +
+                "            background-color: #1a3d5b;" +
                 "        }" +
                 "    </style>" +
                 "</head>" +
@@ -266,6 +286,8 @@ public class SaleController {
                 "                            <h3>Hola, <span>" + user.getNames() + "</span></h3>" +
                 "                            <p>El producto <strong>\"" + inventory.getProduct().getName() + "\"</strong> tiene un stock de <strong>" + inventory.getStock() + "</strong> unidades.</p>" +
                 "                            <p>Se recomienda reabastecer este producto antes de que se agote.</p>" +
+                "                            <a class=\"button\" href=\"" + confirmationUrl + "\" style=\"color: white;\">Gestionar Productos</a>" +
+                "                            <p><strong>Fecha de Notificación:</strong> " + LocalDate.now() + "</p>" +
                 "                        </td>" +
                 "                    </tr>" +
                 "                </table>" +
@@ -281,6 +303,7 @@ public class SaleController {
     private void sendSoldOutStockEmail(User user, Product product) {
         String recipientAddress = user.getEmail();
         String subject = "Stock agotado | FELYSOFT";
+        String confirmationUrl = "https://felysoft-react.vercel.app/compras";
 
         String message = "<html>" +
                 "<head>" +
@@ -312,7 +335,7 @@ public class SaleController {
                 "        h1 {" +
                 "            font-size: 24px;" +
                 "            font-weight: bold;" +
-                "            color: #333;" +
+                "            color: rgb(38, 80, 115);" +
                 "            margin-bottom: 20px;" +
                 "        }" +
                 "        h3 {" +
@@ -322,7 +345,7 @@ public class SaleController {
                 "        }" +
                 "        h3 span {" +
                 "            font-weight: bold;" +
-                "            color: #333;" +
+                "            color: rgb(38, 80, 115);" +
                 "        }" +
                 "        .logo {" +
                 "            width: 100px;" +
@@ -333,6 +356,24 @@ public class SaleController {
                 "            line-height: 1.6;" +
                 "            margin-bottom: 30px;" +
                 "            color: black;" +
+                "        }" +
+                "        p {" +
+                "            color: black;" +
+                "        }" +
+                "        .button {" +
+                "            background-color: rgb(38, 80, 115);" +
+                "            color: #fff;" +
+                "            padding: 15px 30px;" +
+                "            border: none;" +
+                "            border-radius: 5px;" +
+                "            font-size: 16px;" +
+                "            cursor: pointer;" +
+                "            text-decoration: none;" +
+                "            display: inline-block;" +
+                "            transition: background-color 0.3s ease;" +
+                "        }" +
+                "        .button:hover {" +
+                "            background-color: #1a3d5b;" +
                 "        }" +
                 "    </style>" +
                 "</head>" +
@@ -347,6 +388,8 @@ public class SaleController {
                 "                            <h1>Stock Agotado</h1>" +
                 "                            <h3>Hola, <span>" + user.getNames() + "</span></h3>" +
                 "                            <p class=\"description\">El producto <strong>\"" + product.getName() + "\"</strong> ha agotado su stock.</p>" +
+                "                            <a class=\"button\" href=\"" + confirmationUrl + "\" style=\"color: white;\">Gestionar Productos</a>" +
+                "                            <p><strong>Fecha de Notificación:</strong> " + LocalDate.now() + "</p>" +
                 "                        </td>" +
                 "                    </tr>" +
                 "                </table>" +
