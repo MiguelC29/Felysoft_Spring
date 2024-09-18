@@ -388,6 +388,43 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_PROFILE_ONE_USER')")
+    @PutMapping("updateImageProfile/{id}")
+    public ResponseEntity<Map<String, Object>> updateImageProfile(@PathVariable Long id,
+                                                             @RequestParam(value = "image", required = false) MultipartFile image) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // INSTANCIA DEL OBJETO USER
+            User user = this.userImp.findById(id);
+
+            if (user == null) {
+                response.put("status", HttpStatus.NOT_FOUND);
+                response.put("data", "Usuario no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            // Actualizar los campos del usuario con los nuevos valores si se proporcionan
+            if (image != null) {
+                user.setImage(image.getBytes());
+                user.setNameImg(image.getOriginalFilename());
+                user.setTypeImg(image.getContentType());
+            }
+
+            // Actualizar la fecha de última modificación
+            user.setLastModification(new Timestamp(System.currentTimeMillis()));
+
+            this.userImp.update(user);
+
+            response.put("status", "success");
+            response.put("data", "Foto de perfil actualizada correctamente correctamente");
+        } catch (Exception e) {
+            response.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('DISABLE_ENABLED_ONE_USER')")
     @PutMapping("enabled_disabled/{id}")
     public ResponseEntity<Map<String, Object>> enabled_disabled(@PathVariable Long id) {
