@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.service.imp;
 
+import com.felysoft.felysoftApp.entity.Role;
 import com.felysoft.felysoftApp.entity.User;
 import com.felysoft.felysoftApp.repository.UserRepository;
 import com.felysoft.felysoftApp.service.UserService;
@@ -18,12 +19,6 @@ public class UserImp implements UserService, UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private RoleImp roleImp;
-
-    @Autowired
-    private PermissionImp permissionImp;
-
     @Override
     public List<User> findAll() throws Exception {
         return this.userRepository.findUsersByEliminatedFalse();
@@ -32,6 +27,11 @@ public class UserImp implements UserService, UserDetailsService {
     @Override
     public List<User> findAllDisabled() throws Exception {
         return this.userRepository.findUsersByEliminatedTrue();
+    }
+
+    @Override
+    public List<User> findByRole(Role role) {
+        return this.userRepository.findUsersByRoleAndEliminatedFalseAndEnabledTrue(role);
     }
 
     @Override

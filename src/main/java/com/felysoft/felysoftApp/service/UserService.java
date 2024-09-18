@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.service;
 
+import com.felysoft.felysoftApp.entity.Role;
 import com.felysoft.felysoftApp.entity.User;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,8 @@ public interface UserService {
     List<User> findAll() throws Exception;
 
     List<User> findAllDisabled() throws Exception;
+
+    List<User> findByRole(Role role);
 
     User findById(Long id);
 

@@ -2,6 +2,7 @@ package com.felysoft.felysoftApp.controller;
 
 import com.felysoft.felysoftApp.entity.Payment;
 import com.felysoft.felysoftApp.entity.*;
+import com.felysoft.felysoftApp.service.EmailSenderService;
 import com.felysoft.felysoftApp.service.imp.*;
 import com.felysoft.felysoftApp.service.imp.DetailImp;
 import jakarta.transaction.Transactional;
@@ -16,6 +17,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/sale/")
@@ -34,6 +36,15 @@ public class SaleController {
 
     @Autowired
     private ProductImp productImp;
+
+    @Autowired
+    private EmailSenderService emailSenderService;
+
+    @Autowired
+    private UserImp userImp;
+
+    @Autowired
+    private RoleImp roleImp;
 
     @PreAuthorize("hasAuthority('READ_ALL_SALES')")
     @GetMapping("all")
@@ -136,6 +147,11 @@ public class SaleController {
                         inventory.setStock(inventory.getStock() - cantidad);
                         updateInventoryState(inventory);
                         inventoryImp.update(inventory);
+
+                        // Verificar si el stock se agotó
+                        if (inventory.getStock() == 0) {
+                            notifyInventoryManagers(product);
+                        }
                     }
                     detail.setUnitPrice(new BigDecimal(detailRequest.get("unitPrice").toString()));
                     detail.setEliminated(false);
@@ -162,6 +178,97 @@ public class SaleController {
         } else {
             inventory.setState(Inventory.State.DISPONIBLE);
         }
+    }
+
+    private void notifyInventoryManagers(Product product) {
+        Optional<Role> role = roleImp.findByName("INVENTORY_MANAGER");
+        if (role.isPresent()) {
+            List<User> inventoryManagers = userImp.findByRole(role.get());
+            for (User user : inventoryManagers) {
+                sendLowStockEmail(user, product);
+            }
+        }
+    }
+
+    private void sendLowStockEmail(User user, Product product) {
+        String recipientAddress = user.getEmail();
+        String subject = "Stock agotado | FELYSOFT";
+
+        String message = "<html>" +
+                "<head>" +
+                "    <style>" +
+                "        body {" +
+                "            font-family: sans-serif;" +
+                "            background-color: #f5f5f5;" +
+                "            color: black;" +
+                "            margin: 0;" +
+                "            padding: 0;" +
+                "            text-align: center;" + // Centra el texto en todo el cuerpo
+                "        }" +
+                "        .email-container {" +
+                "            background-color: #f5f5f5;" +
+                "            min-height: 100vh;" +
+                "            padding: 20px;" +
+                "            text-align: center;" + // Centra el texto dentro del contenedor
+                "        }" +
+                "        .email-content {" +
+                "            background-color: #ffffff;" +
+                "            border-radius: 8px;" +
+                "            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);" +
+                "            padding: 30px;" +
+                "            text-align: center;" +
+                "            max-width: 450px;" +
+                "            margin: 0 auto;" +
+                "            display: inline-block;" + // Asegura que la tabla no se expanda más allá del contenido
+                "        }" +
+                "        h1 {" +
+                "            font-size: 24px;" +
+                "            font-weight: bold;" +
+                "            color: #333;" +
+                "            margin-bottom: 20px;" +
+                "        }" +
+                "        h3 {" +
+                "            font-size: 18px;" +
+                "            margin-bottom: 20px;" +
+                "            color: black;" +
+                "        }" +
+                "        h3 span {" +
+                "            font-weight: bold;" +
+                "            color: #333;" +
+                "        }" +
+                "        .logo {" +
+                "            width: 100px;" +
+                "            height: 100px;" +
+                "            margin-bottom: 30px;" +
+                "        }" +
+                "        .description {" +
+                "            line-height: 1.6;" +
+                "            margin-bottom: 30px;" +
+                "            color: black;" +
+                "        }" +
+                "    </style>" +
+                "</head>" +
+                "<body>" +
+                "    <table class=\"email-container\" role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">" +
+                "        <tr>" +
+                "            <td align=\"center\" valign=\"top\">" + // Centra el contenido
+                "                <table class=\"email-content\" role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">" +
+                "                    <tr>" +
+                "                        <td>" +
+                "                            <img src=\"https://i.postimg.cc/FznvrwC7/logo.png\" alt=\"Felysoft Logo\" class=\"logo\">" +
+                "                            <h1>Stock Agotado</h1>" +
+                "                            <h3>Hola, <span>" + user.getNames() + "</span></h3>" +
+                "                            <p class=\"description\">El producto <strong>\"" + product.getName() + "\"</strong> ha agotado su stock.</p>" +
+                "                        </td>" +
+                "                    </tr>" +
+                "                </table>" +
+                "            </td>" +
+                "        </tr>" +
+                "    </table>" +
+                "</body>" +
+                "</html>";
+
+        emailSenderService.sendEmail(recipientAddress, subject, message);
     }
 
     @PreAuthorize("hasAuthority('UPDATE_ONE_SALE')")

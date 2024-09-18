@@ -1,5 +1,6 @@
 package com.felysoft.felysoftApp.repository;
 
+import com.felysoft.felysoftApp.entity.Role;
 import com.felysoft.felysoftApp.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -21,6 +22,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // Obtener una lista de usuarios eliminados
     List<User> findUsersByEliminatedTrue();
+
+    // Obtener lista de usuarios por rol, solo si no está eliminado
+    List<User> findUsersByRoleAndEliminatedFalseAndEnabledTrue(Role role);
 
     // Buscar un usuario por ID, solo si no está eliminado
     User findUserByIdUserAndEliminatedFalse(Long id);
