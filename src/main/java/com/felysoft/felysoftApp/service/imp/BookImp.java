@@ -25,6 +25,11 @@ public class BookImp implements BookService {
     }
 
     @Override
+    public List<Book> findBooksInInventory() throws Exception {
+        return bookRepository.findByInventoryFalse();
+    }
+
+    @Override
     public Book findById(Long id) {
         return this.bookRepository.findBookByIdBookAndEliminatedFalse(id);
     }

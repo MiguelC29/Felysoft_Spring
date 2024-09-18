@@ -9,7 +9,7 @@ import java.util.List;
 public interface BookService {
     List<Book> findAll() throws Exception;
     List<Book> findAllDisabled() throws Exception;
-
+    List<Book> findBooksInInventory() throws Exception;
     Book findById(Long id);
     Book findByIdDisabled(Long id);
 
