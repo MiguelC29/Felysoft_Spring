@@ -354,7 +354,6 @@ public class ProductController {
     //@Scheduled(cron = "0 * * * * ?") // Ejecutar cada minuto para pruebas
     //@Scheduled(cron = "0 */5 * * * ?") // Ejecutar cada 5 minutos
     public void checkExpiringProducts() throws Exception {
-        System.out.println("Ejecutando tarea programada..."); // Verifica que el método se está ejecutando
         List<Product> products = this.productImp.findAll();
 
         // Configura el umbral para productos próximos a vencerse (por ejemplo, 7 días antes de la fecha de vencimiento)

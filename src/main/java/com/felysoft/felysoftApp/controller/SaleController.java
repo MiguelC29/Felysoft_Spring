@@ -272,6 +272,10 @@ public class SaleController {
                 "        .button:hover {" +
                 "            background-color: #1a3d5b;" +
                 "        }" +
+                "        .critical {" +
+                "            color: #d9534f;" +  // Rojo para resaltar
+                "            font-weight: bold;" +
+                "        }" +
                 "    </style>" +
                 "</head>" +
                 "<body>" +
@@ -284,8 +288,17 @@ public class SaleController {
                 "                            <img src=\"https://i.postimg.cc/FznvrwC7/logo.png\" alt=\"Felysoft Logo\" class=\"logo\">" +
                 "                            <h1>Stock Bajo</h1>" +
                 "                            <h3>Hola, <span>" + user.getNames() + "</span></h3>" +
-                "                            <p>El producto <strong>\"" + inventory.getProduct().getName() + "\"</strong> tiene un stock de <strong>" + inventory.getStock() + "</strong> unidades.</p>" +
-                "                            <p>Se recomienda reabastecer este producto antes de que se agote.</p>" +
+                "                            <p>El producto <strong>\"" + inventory.getProduct().getName() + "\"</strong> tiene un stock de <strong>" + inventory.getStock() + "</strong> unidades.</p>";
+                // Si el stock es menor a 2, añadir un mensaje crítico
+                if (inventory.getStock() < 2) {
+                    message +=
+                            "                <p class=\"critical\">¡Atención! El stock de este producto es crítico. Solo quedan <strong>" + inventory.getStock() + "</strong> unidades. Por favor, reabastezca inmediatamente para evitar el agotamiento.</p>";
+                } else {
+                    message +=
+                            "                <p>Se recomienda reabastecer este producto antes de que se agote.</p>";
+                }
+
+        message +=
                 "                            <a class=\"button\" href=\"" + confirmationUrl + "\" style=\"color: white;\">Gestionar Productos</a>" +
                 "                            <p><strong>Fecha de Notificación:</strong> " + LocalDate.now() + "</p>" +
                 "                        </td>" +
