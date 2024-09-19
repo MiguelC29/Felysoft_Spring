@@ -12,6 +12,7 @@ public interface ReserveRepository extends JpaRepository<Reserve, Long>{
     List<Reserve> findReservesByEliminatedFalse();
     List<Reserve> findReservesByEliminatedTrue();
     List<Reserve> findReservesByEliminatedFalseAndUser(User user);
+    List<Reserve> findReservesByEliminatedFalseAndUserAndState(User user, Reserve.State state);
     Reserve findReservesByIdReserveAndEliminatedFalse(Long id);
     Reserve findReservesByIdReserveAndEliminatedTrue(Long id);
 }
