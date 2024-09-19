@@ -11,6 +11,7 @@ public interface ReserveService {
     List<Reserve> findAll() throws Exception;
     List<Reserve> findAllDisabled() throws Exception;
     List<Reserve> findReservesByUser(User user) throws Exception;
+    List<Reserve> findReservesByUserActive(User user, Reserve.State state) throws Exception;
 
     Reserve findById(Long id);
     Reserve findByIdDisabled(Long id);

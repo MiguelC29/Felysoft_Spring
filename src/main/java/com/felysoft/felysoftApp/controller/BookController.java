@@ -50,6 +50,21 @@ public class BookController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @PreAuthorize("hasAuthority('READ_ALL_BOOKS_IN_INVENTORY')")
+    @GetMapping("inInventory")
+    public ResponseEntity<Map<String, Object>> findAllInInventory() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Book> booksInInventory = this.bookImp.findBooksInInventory();
+            response.put("data", booksInInventory);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('READ_ALL_BOOKS_DISABLED')")
     @GetMapping("disabled")
     public ResponseEntity<Map<String, Object>> findAllDisabled(){
@@ -244,21 +259,21 @@ public class BookController {
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
             Inventory inventory= this.inventoryImp.findByBookDisable(book);
-            if(inventory == null){
-                response.put("status", HttpStatus.NOT_FOUND);
-                response.put("data", "Inventario no encontrado");
-                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-            }
-            else {
-                book.setEliminated(false);
+            if(inventory != null){
+                //response.put("status", HttpStatus.NOT_FOUND);
+                //response.put("data", "Inventario no encontrado");
+                //return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
                 inventory.setEliminated(false);
 
-                this.bookImp.update(book);
                 this.inventoryImp.update(inventory);
+            }
+                book.setEliminated(false);
+
+                this.bookImp.update(book);
 
                 response.put("status", "success");
                 response.put("data", "Habilitado Correctamente");
-            }
+
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());
@@ -279,21 +294,19 @@ public class BookController {
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
             Inventory inventory= this.inventoryImp.findByBook(book);
-            if(inventory == null){
-                response.put("status", HttpStatus.NOT_FOUND);
-                response.put("data", "Inventario no encontrado");
-                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-            }
-            else {
-                book.setEliminated(true);
+            if(inventory != null){
+                //response.put("status", HttpStatus.NOT_FOUND);
+                //response.put("data", "Inventario no encontrado");
+                //return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
                 inventory.setEliminated(true);
 
-                this.bookImp.delete(book);
                 this.inventoryImp.delete(inventory);
-
+            }
+                book.setEliminated(true);
+                this.bookImp.delete(book);
                 response.put("status", "success");
                 response.put("data", "Eliminado Correctamente");
-            }
+
         } catch (Exception e) {
             response.put("status", HttpStatus.BAD_GATEWAY);
             response.put("data", e.getMessage());

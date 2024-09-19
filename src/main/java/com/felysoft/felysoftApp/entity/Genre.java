@@ -23,7 +23,7 @@ public class Genre implements Serializable {
     @Column
     private Long idGenre;
 
-    @Column(length = 45, nullable = false)
+    @Column(length = 45, nullable = false,unique = true)
     private String name;
 
     @Column(length = 320, nullable = false)

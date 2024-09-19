@@ -31,6 +31,11 @@ public class ReserveImp implements ReserveService {
     }
 
     @Override
+    public List<Reserve> findReservesByUserActive(User user, Reserve.State state) throws Exception {
+        return this.reserveRepository.findReservesByEliminatedFalseAndUserAndState(user, state);
+    }
+
+    @Override
     public Reserve findById(Long id) {
         return this.reserveRepository.findReservesByIdReserveAndEliminatedFalse(id);
     }

@@ -201,7 +201,7 @@ public class UserController {
           @RequestParam(value = "username", required = false) String username,
           @RequestParam(value = "password", required = false) String password,
           @RequestParam(value = "image", required = false) MultipartFile image,
-          @RequestParam(name = "role", required = false) Long roleId) {
+          @RequestParam(name = "roleId", required = false) Long roleId) {
         Map<String, Object> response = new HashMap<>();
         try {
             // INSTANCIA DEL OBJETO USER
