@@ -2,10 +2,12 @@ package com.felysoft.felysoftApp.controller;
 
 import com.felysoft.felysoftApp.dto.AuthenticationRequest;
 import com.felysoft.felysoftApp.entity.*;
+import com.felysoft.felysoftApp.service.EmailSenderService;
 import com.felysoft.felysoftApp.service.imp.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,9 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/product/")
@@ -34,6 +36,15 @@ public class ProductController {
 
     @Autowired
     private InventoryImp inventoryImp;
+
+    @Autowired
+    private EmailSenderService emailSenderService; // Para enviar los correos
+
+    @Autowired
+    private RoleImp roleImp;
+
+    @Autowired
+    private UserImp userImp;
 
     @PreAuthorize("hasAuthority('READ_ALL_PRODUCTS')")
     @GetMapping("all")
@@ -337,5 +348,99 @@ public class ProductController {
             return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Scheduled(cron = "0 0 8 ? * 2-7") // Se ejecuta todos los días a las 8 AM de lunes a sábado
+    //@Scheduled(cron = "0 * * * * ?") // Ejecutar cada minuto para pruebas
+    //@Scheduled(cron = "0 */5 * * * ?") // Ejecutar cada 5 minutos
+    public void checkExpiringProducts() throws Exception {
+        System.out.println("Ejecutando tarea programada..."); // Verifica que el método se está ejecutando
+        List<Product> products = this.productImp.findAll();
+
+        // Configura el umbral para productos próximos a vencerse (por ejemplo, 7 días antes de la fecha de vencimiento)
+        int thresholdDays = 7;
+        LocalDate today = LocalDate.now();
+
+        // Usamos un Map para almacenar productos próximos a vencerse
+        Map<Product, Long> expiringProducts = new HashMap<>();
+
+        for (Product product : products) {
+            if (product.getExpiryDate() != null) {
+                Inventory inventory = inventoryImp.findByProduct(product);
+                if (inventory != null && inventory.getStock() > 0) {
+                    // Verificar si la fecha de vencimiento está dentro del rango de próximos a vencer
+                    LocalDate expirationDate = product.getExpiryDate().toLocalDate();
+                    long daysToExpire = ChronoUnit.DAYS.between(today, expirationDate);
+
+                    // Verificar si el producto está próximo a vencer dentro del umbral
+                    if (daysToExpire <= thresholdDays && daysToExpire >= 0) {
+                        // Enviar correo de aviso sobre el producto próximo a vencerse
+                        //notifyInventoryManagers(inventory, daysToExpire);
+
+                        // Almacena el producto con su número de días restantes
+                        expiringProducts.put(product, daysToExpire);
+                    }
+                }
+            }
+        }
+
+        if (!expiringProducts.isEmpty()) {
+            // Enviar correo con los productos próximos a vencer
+            notifyInventoryManagers(expiringProducts);
+        }
+    }
+
+    private void notifyInventoryManagers(Map<Product, Long> expiringProducts) {
+        Optional<Role> role = roleImp.findByName("INVENTORY_MANAGER");
+        if (role.isPresent()) {
+            List<User> inventoryManagers = userImp.findByRole(role.get());
+            for (User user : inventoryManagers) {
+                sendExpiringProductsNotification(user, expiringProducts);
+            }
+        }
+    }
+
+    private void sendExpiringProductsNotification(User user, Map<Product, Long> expiringProducts) {
+        String recipientAddress = user.getEmail();
+        String subject = "Productos Próximos a Vencerse | FELYSOFT";
+        StringBuilder messageBuilder = new StringBuilder();
+
+        messageBuilder.append("<html><head><style>")
+                .append("body { font-family: sans-serif; background-color: #f5f5f5; color: black; margin: 0; padding: 0; }")
+                .append(".email-container { background-color: #ffffff; padding: 20px; border-radius: 8px; margin: 0 auto; max-width: 600px; text-align: center; }") // Centra todo el contenido dentro del contenedor
+                .append("table { width: 100%; border-collapse: collapse; margin: 0 auto; }") // Centra la tabla dentro del contenedor
+                .append("th, td { padding: 10px; color: black; text-align: center; border: 1px solid #ddd; }") // Centra el contenido de las celdas
+                .append("th { background-color: rgb(38, 80, 115); color: #ffffff; }") // Cambia el color del encabezado de la tabla
+                .append(".logo { display: block; width: 100px; height: 100px; margin: 0 auto 30px; }") // Centra el logo
+                .append("h1, h3, p { color: black; }") // Cambiar color a negro
+                .append("h3 span {font-weight: bold; color: rgb(38, 80, 115);}") // Cambiar color a negro
+                .append("</style></head><body>")
+                .append("<div class='email-container'>")
+                .append("<img src=\"https://i.postimg.cc/FznvrwC7/logo.png\" alt=\"Felysoft Logo\" class=\"logo\">")
+                .append("<h1>Productos Próximos a Vencerse</h1>")
+                .append("<h3>Hola, <span>" + user.getNames() + "</span></h3>")
+                .append("<p>A continuación se muestra la lista de productos que están próximos a vencerse:</p>")
+                .append("<table>")
+                .append("<tr><th>Nombre del Producto</th><th>Fecha de Vencimiento</th><th>Días Restantes</th></tr>");
+
+        for (Map.Entry<Product, Long> entry : expiringProducts.entrySet()) {
+            Product product = entry.getKey();
+            long daysToExpire = entry.getValue();
+            LocalDate expirationDate = product.getExpiryDate().toLocalDate();
+
+            messageBuilder.append("<tr>")
+                    .append("<td>").append(product.getName()).append("</td>")
+                    .append("<td>").append(expirationDate).append("</td>")
+                    .append("<td>").append(daysToExpire).append("</td>")
+                    .append("</tr>");
+        }
+
+        messageBuilder.append("</table>")
+                .append("<p>Por favor, tome las acciones necesarias.</p>")
+                .append("</div></body></html>");
+
+        String message = messageBuilder.toString();
+
+        emailSenderService.sendEmail(recipientAddress, subject, message);
     }
 }
