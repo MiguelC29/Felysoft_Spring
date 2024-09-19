@@ -389,6 +389,52 @@ public class ProductController {
         }
     }
 
+    @Scheduled(cron = "0 0 8 ? * 2-7") // Se ejecuta todos los días a las 8 AM de lunes a sábado
+    //@Scheduled(cron = "0 * * * * ?") // Ejecutar cada minuto para pruebas
+    //@Scheduled(cron = "0 */5 * * * ?") // Ejecutar cada 5 minutos
+    public void checkExpiringProductsToday() throws Exception {
+        // Obtener todos los productos
+        List<Product> products = this.productImp.findAll();
+
+        // Obtener la fecha actual
+        LocalDate today = LocalDate.now();
+
+        // Usamos una lista para almacenar productos próximos a vencerse
+        List<Product> expiringProductsToday = new ArrayList<>();
+
+        for (Product product : products) {
+            if (product.getExpiryDate() != null) {
+                // Obtener la fecha de vencimiento del producto y convertirla a LocalDate
+                LocalDate expiryDate = product.getExpiryDate().toLocalDate();
+
+                // Verificar si la fecha de vencimiento es hoy
+                if (expiryDate.equals(today)) {
+                    // Verificar el stock del producto
+                    Inventory inventory = inventoryImp.findByProduct(product);
+                    if (inventory != null && inventory.getStock() > 0) {
+                        // Almacenar el producto en la lista
+                        expiringProductsToday.add(product);
+                    }
+                }
+            }
+        }
+
+        // Si hay productos que se vencen hoy, enviar notificaciones
+        if (!expiringProductsToday.isEmpty()) {
+            notifyInventoryManagersOfExpiringProductsToday(expiringProductsToday);
+        }
+    }
+
+    private void notifyInventoryManagersOfExpiringProductsToday(List<Product> expiringProducts) {
+        Optional<Role> role = roleImp.findByName("INVENTORY_MANAGER");
+        if (role.isPresent()) {
+            List<User> inventoryManagers = userImp.findByRole(role.get());
+            for (User user : inventoryManagers) {
+                sendNotificationForExpiringProductsToday(user, expiringProducts);
+            }
+        }
+    }
+
     private void notifyInventoryManagers(Map<Product, Long> expiringProducts) {
         Optional<Role> role = roleImp.findByName("INVENTORY_MANAGER");
         if (role.isPresent()) {
@@ -436,6 +482,47 @@ public class ProductController {
 
         messageBuilder.append("</table>")
                 .append("<p>Por favor, tome las acciones necesarias.</p>")
+                .append("</div></body></html>");
+
+        String message = messageBuilder.toString();
+
+        emailSenderService.sendEmail(recipientAddress, subject, message);
+    }
+
+    private void sendNotificationForExpiringProductsToday(User user, List<Product> expiringProducts) {
+        String recipientAddress = user.getEmail();
+        String subject = "Productos que Vencen Hoy | FELYSOFT";
+        StringBuilder messageBuilder = new StringBuilder();
+
+        messageBuilder.append("<html><head><style>")
+                .append("body { font-family: sans-serif; background-color: #f5f5f5; color: black; margin: 0; padding: 0; }")
+                .append(".email-container { background-color: #ffffff; padding: 20px; border-radius: 8px; margin: 0 auto; max-width: 600px; text-align: center; }") // Centra todo el contenido dentro del contenedor
+                .append("table { width: 100%; border-collapse: collapse; margin: 0 auto; }") // Centra la tabla dentro del contenedor
+                .append("th, td { padding: 10px; color: black; text-align: center; border: 1px solid #ddd; }") // Centra el contenido de las celdas
+                .append("th { background-color: rgb(38, 80, 115); color: #ffffff; }") // Cambia el color del encabezado de la tabla
+                .append(".logo { display: block; width: 100px; height: 100px; margin: 0 auto 30px; }") // Centra el logo
+                .append("h1, h3, p { color: black; }") // Cambiar color a negro
+                .append("h3 span {font-weight: bold; color: rgb(38, 80, 115);}") // Cambiar color a negro
+                .append("</style></head><body>")
+                .append("<div class='email-container'>")
+                .append("<img src=\"https://i.postimg.cc/FznvrwC7/logo.png\" alt=\"Felysoft Logo\" class=\"logo\">")
+                .append("<h1>Productos que Vencen Hoy</h1>")
+                .append("<h3>Hola, <span>" + user.getNames() + "</span></h3>")
+                .append("<p>Este es un recordatorio sobre los productos que vencen hoy. A continuación se muestra la lista:</p>")
+                .append("<table>")
+                .append("<tr><th>Nombre del Producto</th><th>Fecha de Vencimiento</th></tr>");
+
+        for (Product product : expiringProducts) {
+            LocalDate expirationDate = product.getExpiryDate().toLocalDate();
+
+            messageBuilder.append("<tr>")
+                    .append("<td>").append(product.getName()).append("</td>")
+                    .append("<td>").append(expirationDate).append("</td>")
+                    .append("</tr>");
+        }
+
+        messageBuilder.append("</table>")
+                .append("<p>Por favor, tome las acciones necesarias para gestionar estos productos.</p>")
                 .append("</div></body></html>");
 
         String message = messageBuilder.toString();
