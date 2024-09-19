@@ -409,7 +409,7 @@ public class ProductController {
                 .append("body { font-family: sans-serif; background-color: #f5f5f5; color: black; margin: 0; padding: 0; }")
                 .append(".email-container { background-color: #ffffff; padding: 20px; border-radius: 8px; margin: 0 auto; max-width: 600px; text-align: center; }") // Centra todo el contenido dentro del contenedor
                 .append("table { width: 100%; border-collapse: collapse; margin: 0 auto; }") // Centra la tabla dentro del contenedor
-                .append("th, td { padding: 10px; text-align: center; border: 1px solid #ddd; }") // Centra el contenido de las celdas
+                .append("th, td { padding: 10px; color: black; text-align: center; border: 1px solid #ddd; }") // Centra el contenido de las celdas
                 .append("th { background-color: rgb(38, 80, 115); color: #ffffff; }") // Cambia el color del encabezado de la tabla
                 .append(".logo { display: block; width: 100px; height: 100px; margin: 0 auto 30px; }") // Centra el logo
                 .append("h1, h3, p { color: black; }") // Cambiar color a negro

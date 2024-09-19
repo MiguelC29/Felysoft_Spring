@@ -335,7 +335,7 @@ public class SaleController {
                 "        h1 {" +
                 "            font-size: 24px;" +
                 "            font-weight: bold;" +
-                "            color: rgb(38, 80, 115);" +
+                "            color: #961a1a;" +
                 "            margin-bottom: 20px;" +
                 "        }" +
                 "        h3 {" +
@@ -345,7 +345,7 @@ public class SaleController {
                 "        }" +
                 "        h3 span {" +
                 "            font-weight: bold;" +
-                "            color: rgb(38, 80, 115);" +
+                "            color: #333;" +
                 "        }" +
                 "        .logo {" +
                 "            width: 100px;" +
