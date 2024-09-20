@@ -194,7 +194,7 @@ public class ReserveController {
                 .append("</style></head><body>")
                 .append("<div class='email-container'>")
                 .append("<img src=\"https://i.postimg.cc/FznvrwC7/logo.png\" alt=\"Felysoft Logo\" class=\"logo\">")
-                .append("<h1>Creaste una nueva Reserva</h1>")
+                .append("<h1>Cancelaste una Reserva</h1>")
                 .append("<h3>Hola, <span>" + user.getNames() + "</span></h3>")
                 .append("<p>Cancelaste una reserva con los siguientes Datos:</p>")
                 .append("<table>")
