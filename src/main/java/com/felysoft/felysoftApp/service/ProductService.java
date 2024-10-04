@@ -13,9 +13,11 @@ public interface ProductService {
 
     Product findByIdDisabled(Long id);
 
-    Product findProductByNameAndEliminated(String name);
+//    Product findProductByNameAndEliminated(String name);
+//
+//    Product findProductByName(String name);
 
-    Product findProductByName(String name);
+    Product findProductByBarcode(String barcode);
 
     List<Product> findByIdProvider(Long id);
 

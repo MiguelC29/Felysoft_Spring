@@ -39,14 +39,19 @@ public class ProductImp implements ProductService {
         return this.productRepository.findProductByIdProductAndEliminatedTrue(id);
     }
 
-    @Override
-    public Product findProductByNameAndEliminated(String name) {
-        return this.productRepository.findProductByNameAndEliminatedTrue(name);
-    }
+//    @Override
+//    public Product findProductByNameAndEliminated(String name) {
+//        return this.productRepository.findProductByNameAndEliminatedTrue(name);
+//    }
+//
+//    @Override
+//    public Product findProductByName(String name) {
+//        return this.productRepository.findProductByName(name);
+//    }
 
     @Override
-    public Product findProductByName(String name) {
-        return this.productRepository.findProductByName(name);
+    public Product findProductByBarcode(String barcode) {
+        return this.productRepository.findProductByBarcode(barcode);
     }
 
     @Override

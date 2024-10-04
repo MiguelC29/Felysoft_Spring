@@ -97,9 +97,27 @@ public class ProductController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('READ_ONE_PRODUCT')")
+    @GetMapping("listBarcode/{barcode}")
+    public ResponseEntity<Map<String, Object>> findByBarcode(@PathVariable String barcode) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Product product = this.productImp.findProductByBarcode(barcode);
+
+            response.put("status", "success");
+            response.put("data", product);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('CREATE_ONE_PRODUCT')")
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(
+            @RequestParam("barcode") String barcode,
             @RequestParam("name") String name,
             @RequestParam("salePrice") BigDecimal salePrice,
             @RequestParam("expiryDate") Date expiryDate,
@@ -112,10 +130,11 @@ public class ProductController {
         try {
             final boolean isAdmin = AuthenticationRequest.isAdmin();
 
-            Product productByName = this.productImp.findProductByName(name.toUpperCase());
+            //Product productByName = this.productImp.findProductByName(name.toUpperCase());
+            Product productByCode = this.productImp.findProductByBarcode(barcode);
 
-            if (productByName != null) {
-                if (productByName.isEliminated()) {
+            if (productByCode != null) {
+                if (productByCode.isEliminated()) {
                     response.put("data","Datos Desahibilitados");
 
                     // Verifica si el rol es de administrador
@@ -131,6 +150,7 @@ public class ProductController {
             } else {
                 // Construir el objeto Product usando el patrón Builder
                 Product.ProductBuilder productBuilder = Product.builder()
+                        .barcode(barcode)
                         .name(name.toUpperCase())
                         .salePrice(salePrice)
                         .expiryDate(new Date(expiryDate.getTime()));
@@ -186,6 +206,7 @@ public class ProductController {
     @PreAuthorize("hasAuthority('UPDATE_ONE_PRODUCT')")
     @PutMapping("update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id,
+                                                      @RequestParam(value = "barcode", required = false) String barcode,
                                                       @RequestParam(value = "name", required = false) String name,
                                                       @RequestParam(value = "salePrice", required = false) BigDecimal salePrice,
                                                       @RequestParam(value = "expiryDate", required = false) Date expiryDate,
@@ -206,6 +227,10 @@ public class ProductController {
             }
 
             // Actualizar los campos del producto con los nuevos valores si se proporcionan
+            if (barcode != null) {
+                product.setBarcode(barcode);
+            }
+
             if (name != null) {
                 product.setName(name.toUpperCase());
             }
@@ -466,7 +491,7 @@ public class ProductController {
                 .append("<h3>Hola, <span>" + user.getNames() + "</span></h3>")
                 .append("<p>A continuación se muestra la lista de productos que están próximos a vencerse:</p>")
                 .append("<table>")
-                .append("<tr><th>Nombre del Producto</th><th>Fecha de Vencimiento</th><th>Días Restantes</th></tr>");
+                .append("<tr><th>Código del Producto</th><th>Nombre del Producto</th><th>Fecha de Vencimiento</th><th>Días Restantes</th></tr>");
 
         for (Map.Entry<Product, Long> entry : expiringProducts.entrySet()) {
             Product product = entry.getKey();
@@ -474,6 +499,7 @@ public class ProductController {
             LocalDate expirationDate = product.getExpiryDate().toLocalDate();
 
             messageBuilder.append("<tr>")
+                    .append("<td>").append(product.getBarcode()).append("</td>")
                     .append("<td>").append(product.getName()).append("</td>")
                     .append("<td>").append(expirationDate).append("</td>")
                     .append("<td>").append(daysToExpire).append("</td>")
@@ -510,12 +536,13 @@ public class ProductController {
                 .append("<h3>Hola, <span>" + user.getNames() + "</span></h3>")
                 .append("<p>Este es un recordatorio sobre los productos que vencen hoy. A continuación se muestra la lista:</p>")
                 .append("<table>")
-                .append("<tr><th>Nombre del Producto</th><th>Fecha de Vencimiento</th></tr>");
+                .append("<tr><th>Código del Producto</th><th>Nombre del Producto</th><th>Fecha de Vencimiento</th></tr>");
 
         for (Product product : expiringProducts) {
             LocalDate expirationDate = product.getExpiryDate().toLocalDate();
 
             messageBuilder.append("<tr>")
+                    .append("<td>").append(product.getBarcode()).append("</td>")
                     .append("<td>").append(product.getName()).append("</td>")
                     .append("<td>").append(expirationDate).append("</td>")
                     .append("</tr>");
