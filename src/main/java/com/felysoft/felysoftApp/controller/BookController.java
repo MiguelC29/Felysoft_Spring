@@ -81,7 +81,6 @@ public class BookController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
     @PreAuthorize("hasAuthority('READ_ONE_BOOK')")
     @GetMapping("list/{id}")
     public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
@@ -97,10 +96,25 @@ public class BookController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('READ_ONE_BOOK')")
+    @GetMapping("listBarcode/{barcode}")
+    public ResponseEntity<Map<String, Object>> findByBarcode(@PathVariable String barcode) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Book book = this.bookImp.findBookByBarcode(barcode);
+            response.put("status", "success");
+            response.put("data", book);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.BAD_GATEWAY);
+            response.put("data", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
     @PreAuthorize("hasAuthority('CREATE_ONE_BOOK')")
     @PostMapping("create")
     public ResponseEntity<Map<String, Object>> create(
+            @RequestParam("barcode") String barcode,
             @RequestParam("title") String title,
             @RequestParam("description") String description,
             @RequestParam("yearPublication") Year yearPublication,
@@ -114,20 +128,25 @@ public class BookController {
         try{
             final boolean isAdmin = AuthenticationRequest.isAdmin();
 
-            Book bookByTitle = this.bookImp.findBookByTitleAndEliminated(title.toUpperCase());
-            if(bookByTitle != null){
-                response.put("status",HttpStatus.BAD_GATEWAY);
-                response.put("data","Datos Desahibilitados");
+           // Book bookByTitle = this.bookImp.findBookByTitleAndEliminated(title.toUpperCase());
+            Book bookByCode = this.bookImp.findBookByBarcode(barcode);
+            if (bookByCode != null) {
+                if (bookByCode.isEliminated()) {
+                    response.put("data","Datos Desahibilitados");
 
-                // Verifica si el rol es de administrador
-                String message = (isAdmin) ? "Información ya registrada pero desahibilitada" : "Información ya registrada pero desahibilitada; Contacte al Administrador";
+                    // Verifica si el rol es de administrador
+                    String message = (isAdmin) ? "Información ya registrada pero desahibilitada" : "Información ya registrada pero desahibilitada; Contacte al Administrador";
 
-                response.put("detail", message);
-
+                    response.put("detail", message);
+                } else {
+                    response.put("status",HttpStatus.BAD_GATEWAY);
+                    response.put("data","El producto ya existe");
+                }
                 return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
-            }else{
+            } else {
             //INSTANCIA DEL OBJETO BOOK
             Book.BookBuilder bookBuilder = Book.builder()
+                    .barcode(barcode)
                     .title(title.toUpperCase())
                     .description(description.toUpperCase())
                     .yearPublication(yearPublication)
@@ -168,6 +187,7 @@ public class BookController {
     @PutMapping("update/{id}")
     public ResponseEntity<Map<String, Object>> update(
             @PathVariable Long id,
+            @RequestParam(value = "barcode", required = false) String barcode,
             @RequestParam(value = "title",required = false) String title,
             @RequestParam(value = "description",required = false) String description,
             @RequestParam(value = "yearPublication",required = false) Year yearPublication,
@@ -185,6 +205,9 @@ public class BookController {
                 response.put("status", HttpStatus.NOT_FOUND);
                 response.put("data", "Libro no encontrado");
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+            if (barcode != null) {
+                book.setBarcode(barcode);
             }
 
             if(title != null){

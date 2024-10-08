@@ -25,6 +25,9 @@ public class Book implements Serializable {
     @Column
     private Long idBook;
 
+    @Column(length = 13, unique = true, nullable = false)
+    private String barcode;
+
     private String nameImg;
 
     @Column(length = 50)

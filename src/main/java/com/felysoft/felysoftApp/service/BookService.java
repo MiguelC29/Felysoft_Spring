@@ -13,10 +13,9 @@ public interface BookService {
     Book findById(Long id);
     Book findByIdDisabled(Long id);
 
-    Book findBookByTitleAndEliminated(String title);
-
-    Book findBookTitle(String title);
-
+    // Book findBookByTitleAndEliminated(String title);
+    // Book findBookTitle(String title);
+    Book findBookByBarcode(String barcode);
     List<Book> findByIdEditorial(Long id);
 
     @Transactional

@@ -40,14 +40,19 @@ public class BookImp implements BookService {
     }
 
     @Override
-    public Book findBookByTitleAndEliminated(String title) {
-        return this.bookRepository.findBookByTitleAndEliminatedTrue(title);
+    public Book findBookByBarcode(String barcode) {
+        return this.bookRepository.findBookByBarcode(barcode);
     }
 
-    @Override
-    public Book findBookTitle(String title) {
-        return this.bookRepository.findBookByTitle(title);
-    }
+    // @Override
+    // public Book findBookByTitleAndEliminated(String title) {
+    //    return this.bookRepository.findBookByTitleAndEliminatedTrue(title);
+    //}
+
+    //@Override
+    //public Book findBookTitle(String title) {
+    //    return this.bookRepository.findBookByTitle(title);
+    //}
 
 
     @Override

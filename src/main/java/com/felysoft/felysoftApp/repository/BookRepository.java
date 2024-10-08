@@ -21,6 +21,8 @@ public interface BookRepository extends JpaRepository<Book, Long>{
 
     Book findBookByIdBookAndEliminatedFalse(Long id);
     Book findBookByIdBookAndEliminatedTrue(Long id);
-    Book findBookByTitleAndEliminatedTrue(String title);
-    Book findBookByTitle(String title);
+    Book findBookByBarcode(String barcode);
+
+   // Book findBookByTitleAndEliminatedTrue(String title);
+   // Book findBookByTitle(String title);
 }
